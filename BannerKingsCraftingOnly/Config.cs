@@ -2,21 +2,21 @@
 
 namespace BannerCraft
 {
-	public class Config
+	public class BannerCraftConfig
 	{
 		public SmithingModel SmithingModel { get; } = new();
 
-		static Config()
+		static BannerCraftConfig()
 		{
 			InformationManager.DisplayMessage(new InformationMessage("Initialising Config"));
 			ConfigHolder.CONFIG = new();
 		}
 
-		public static Config Instance => ConfigHolder.CONFIG;
+		public static BannerCraftConfig Instance => ConfigHolder.CONFIG;
 
 		private struct ConfigHolder
         {
-			public static Config CONFIG = new();
+			public static BannerCraftConfig CONFIG = new();
         }
 	}
 }

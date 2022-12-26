@@ -7,6 +7,8 @@ using TaleWorlds.Localization;
 
 namespace BannerCraft
 {
+    using Config = BannerCraftConfig;
+
     public class ArmorItemVM : ViewModel
     {
         private readonly ArmorCraftingVM _armorCrafting;
@@ -124,6 +126,9 @@ namespace BannerCraft
             }
         }
 
+        [DataSourceProperty]
+        public int Difficulty { get; }
+
         public ArmorItemVM(ArmorCraftingVM armorCrafting, ItemObject item, ArmorCraftingVM.ItemType type)
         {
             _armorCrafting = armorCrafting;
@@ -140,6 +145,8 @@ namespace BannerCraft
             {
                 ItemFlagIcons.Add(new CraftingItemFlagVM(itemFlagDetail.Item1, itemFlagDetail.Item2, isDisplayed: true));
             }
+
+            Difficulty = Config.Instance.SmithingModel.CalculateArmorDifficulty(Item);
         }
 
         public void ExecuteSelect()
