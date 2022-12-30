@@ -153,7 +153,7 @@ namespace BannerCraft
         {
             _armorCrafting.CurrentItem.IsSelected = false;
             _armorCrafting.CurrentItem = this;
-            _armorCrafting.ItemVisualModel.StringId = Item.StringId;
+            _armorCrafting.ItemVisualModel.StringId = Item?.StringId ?? "";
             IsSelected = true;
 
             _armorCrafting.RefreshStats(ItemType);

@@ -42,4 +42,10 @@
 	
 	<string id="str_bannercraft_crafting_statdisplay.ammo_stack_amount" text="{=bannercraft_crafting_statdisplay_ammo_stack_amount}Stack Amount: " />
 
+	<string id="str_bannercraft_crafting_material_type.none" text="{=bannercraft_crafting_material_type_none}None" />
+	<string id="str_bannercraft_crafting_material_type.cloth" text="{=bannercraft_crafting_material_type_none}Cloth" />
+	<string id="str_bannercraft_crafting_material_type.leather" text="{=bannercraft_crafting_material_type_none}Leather" />
+	<string id="str_bannercraft_crafting_material_type.chainmail" text="{=bannercraft_crafting_material_type_none}Chainmail" />
+	<string id="str_bannercraft_crafting_material_type.plate" text="{=bannercraft_crafting_material_type_none}Plate" />
+
 </strings>

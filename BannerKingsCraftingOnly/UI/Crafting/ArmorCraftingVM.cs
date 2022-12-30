@@ -64,6 +64,8 @@ namespace BannerCraft
 
 		private readonly CraftingMixin _mixin;
 
+		private readonly Crafting _crafting;
+
 		private readonly TierComparer _tierComparer;
 
 		private ItemType _selectedItemType;
@@ -84,6 +86,24 @@ namespace BannerCraft
 		private MBBindingList<CraftingListPropertyItem> _itemProperties;
 
 		private MBBindingList<ItemFlagVM> _itemFlagIconsList;
+
+		private string _difficultyText;
+
+		private string _currentDifficultyText;
+
+		private string _currentCraftingSkillValueText;
+
+		private int _currentHeroCraftingSkill;
+
+		private int _maxDifficulty;
+
+		private int _currentDifficulty;
+
+		private bool _isCurrentHeroAtMaxCraftingSkill;
+
+		private TextObject _currentCraftingSkillValueTextObj;
+
+		private TextObject _currentDifficultyTextObj;
 
 		[DataSourceProperty]
 		public ArmorClassSelectionPopupVM ArmorClassSelectionPopup
@@ -212,23 +232,122 @@ namespace BannerCraft
 			}
 		}
 
-        [DataSourceProperty]
+		[DataSourceProperty]
 		public MBBindingList<ItemFlagVM> ItemFlagIconsList
 		{
 			get => _itemFlagIconsList;
 			set
 			{
 				if (value != _itemFlagIconsList)
-                {
+				{
 					_itemFlagIconsList = value;
 					OnPropertyChangedWithValue(value, "ItemFlagIconsList");
-                }
+				}
 			}
 		}
 
-		public ArmorCraftingVM(CraftingMixin mixin)
+		[DataSourceProperty]
+		public string DifficultyText
+		{
+			get => _difficultyText;
+			set
+			{
+				if (value != _difficultyText)
+				{
+					_difficultyText = value;
+					OnPropertyChangedWithValue(value, "DifficultyText");
+				}
+			}
+		}
+
+		[DataSourceProperty]
+		public string CurrentDifficultyText
+		{
+			get => _currentDifficultyText;
+			set
+			{
+				if (value != _currentDifficultyText)
+				{
+					_currentDifficultyText = value;
+					OnPropertyChangedWithValue(value, "CurrentDifficultyText");
+				}
+			}
+		}
+
+		[DataSourceProperty]
+		public string CurrentCraftingSkillValueText
+		{
+			get => _currentCraftingSkillValueText;
+			set
+			{
+				if (value != _currentCraftingSkillValueText)
+				{
+					_currentCraftingSkillValueText = value;
+					OnPropertyChangedWithValue(value, "CurrentCraftingSkillValueText");
+				}
+			}
+		}
+
+		[DataSourceProperty]
+		public int CurrentHeroCraftingSkill
+		{
+			get => _currentHeroCraftingSkill;
+			set
+			{
+				if (value != _currentHeroCraftingSkill)
+				{
+					_currentHeroCraftingSkill = value;
+					OnPropertyChangedWithValue(value, "CurrentHeroCraftingSkill");
+				}
+			}
+		}
+
+		[DataSourceProperty]
+		public int MaxDifficulty
+		{
+			get => _maxDifficulty;
+			set
+			{
+				if (value != _maxDifficulty)
+				{
+					_maxDifficulty = value;
+					OnPropertyChangedWithValue(value, "MaxDifficulty");
+				}
+			}
+		}
+
+		[DataSourceProperty]
+		public int CurrentDifficulty
+		{
+			get => _currentDifficulty;
+			set
+			{
+				if (value != _currentDifficulty)
+				{
+					_currentDifficulty = value;
+					OnPropertyChangedWithValue(value, "CurrentDifficulty");
+				}
+			}
+		}
+
+		[DataSourceProperty]
+		public bool IsCurrentHeroAtMaxCraftingSkill
+		{
+			get => _isCurrentHeroAtMaxCraftingSkill;
+			set
+			{
+				if (value != _isCurrentHeroAtMaxCraftingSkill)
+				{
+					_isCurrentHeroAtMaxCraftingSkill = value;
+					OnPropertyChangedWithValue(value, "IsCurrentHeroAtMaxCraftingSkill");
+				}
+			}
+		}
+
+		public ArmorCraftingVM(CraftingMixin mixin, Crafting crafting)
 		{
 			_mixin = mixin;
+			_crafting = crafting;
 
 			_tierComparer = new TierComparer();
 
@@ -268,8 +387,14 @@ namespace BannerCraft
 			ItemVisualModel = new ItemCollectionElementViewModel();
 
 			ItemProperties = new MBBindingList<CraftingListPropertyItem>();
+			DesignResultPropertyList = new MBBindingList<WeaponDesignResultPropertyItemVM>();
 
 			ItemFlagIconsList = new MBBindingList<ItemFlagVM>();
+
+			_currentCraftingSkillValueTextObj = new TextObject("{=LEiZWuZm}{SKILL_NAME}: {SKILL_VALUE}");
+			_currentDifficultyTextObj = new TextObject("{=cbbUzYX3}Difficulty: {DIFFICULTY}");
+
+			MaxDifficulty = 300;
 
 			UpdateTierFilterFlags(ArmorPieceTierFilter.All);
 
@@ -282,6 +407,12 @@ namespace BannerCraft
 			ArmorClassSelectionPopup.ExecuteOpenPopup();
 		}
 
+		public void OnCraftingHeroChanged(CraftingAvailableHeroItemVM newHero)
+		{
+			RefreshCurrentHeroSkillLevel();
+			RefreshDifficulty();
+		}
+
 		private void RefreshArmorDesignMode(int classIndex)
 		{
 			_selectedItemType = GetItemType(classIndex);
@@ -289,6 +420,9 @@ namespace BannerCraft
 			CurrentCraftedArmorTypeText = GameTexts.FindText("str_bannercraft_crafting_itemtype", _selectedItemType.ToString().ToLower()).ToString();
 
 			RefreshValues();
+			RefreshCurrentHeroSkillLevel();
+
+			RefreshDifficulty();
 		}
 
 		public override void RefreshValues()
@@ -333,15 +467,39 @@ namespace BannerCraft
 			});
 		}
 
+		private void RefreshCurrentHeroSkillLevel()
+		{
+			CurrentHeroCraftingSkill = _mixin.CurrentCraftingHero.Hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
+			IsCurrentHeroAtMaxCraftingSkill = CurrentHeroCraftingSkill >= 300;
+			_currentCraftingSkillValueTextObj.SetTextVariable("SKILL_VALUE", CurrentHeroCraftingSkill);
+			CurrentCraftingSkillValueText = _currentCraftingSkillValueTextObj.ToString();
+		}
+
+		private void RefreshDifficulty()
+		{
+			CurrentDifficulty = CurrentItem?.Difficulty ?? 0;
+
+			_currentCraftingSkillValueTextObj.SetTextVariable("SKILL_VALUE", CurrentHeroCraftingSkill);
+			_currentCraftingSkillValueTextObj.SetTextVariable("SKILL_NAME", DefaultSkills.Crafting.Name);
+			CurrentCraftingSkillValueText = _currentCraftingSkillValueTextObj.ToString();
+
+			_currentDifficultyTextObj.SetTextVariable("DIFFICULTY", CurrentDifficulty);
+			CurrentDifficultyText = _currentDifficultyTextObj.ToString();
+
+			DifficultyText = GameTexts.FindText("str_difficulty").ToString();
+		}
+
 		public void RefreshStats(ItemType itemType)
 		{
 			ItemProperties.Clear();
 			ItemFlagIconsList.Clear();
 
+			RefreshDifficulty();
+
 			if (itemType == ItemType.Invalid)
-            {
+			{
 				return;
-            }
+			}
 
 			switch (itemType)
 			{
@@ -367,35 +525,35 @@ namespace BannerCraft
 					itemProperty = new CraftingListPropertyItem(weightDescriptionText, 50f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
 					{
 						IsValidForUsage = true
-                    };
+					};
 					ItemProperties.Add(itemProperty);
 
 					/*
 					 * Use CraftingTemplate.CraftingStatTypes.StackAmount since it's the only one that is always displayed as an integer
 					 */
 					itemProperty = new CraftingListPropertyItem(headDescriptionText, 100f, CurrentItem.Item.ArmorComponent.HeadArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
-                    {
-                        IsValidForUsage = true
-                    };
-                    ItemProperties.Add(itemProperty);
+					{
+						IsValidForUsage = true
+					};
+					ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(bodyDescriptionText, 100f, CurrentItem.Item.ArmorComponent.BodyArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
-                    {
-                        IsValidForUsage = true
-                    };
-                    ItemProperties.Add(itemProperty);
+					itemProperty = new CraftingListPropertyItem(bodyDescriptionText, 100f, CurrentItem.Item.ArmorComponent.BodyArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+					{
+						IsValidForUsage = true
+					};
+					ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(armDescriptionText, 100f, CurrentItem.Item.ArmorComponent.ArmArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
-                    {
-                        IsValidForUsage = true
-                    };
-                    ItemProperties.Add(itemProperty);
+					itemProperty = new CraftingListPropertyItem(armDescriptionText, 100f, CurrentItem.Item.ArmorComponent.ArmArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+					{
+						IsValidForUsage = true
+					};
+					ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(legDescriptionText, 100f, CurrentItem.Item.ArmorComponent.LegArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
-                    {
-                        IsValidForUsage = true
-                    };
-                    ItemProperties.Add(itemProperty);
+					itemProperty = new CraftingListPropertyItem(legDescriptionText, 100f, CurrentItem.Item.ArmorComponent.LegArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+					{
+						IsValidForUsage = true
+					};
+					ItemProperties.Add(itemProperty);
 
 					break;
 				case ItemType.Barding:
@@ -426,7 +584,7 @@ namespace BannerCraft
 					};
 					ItemProperties.Add(itemProperty);
 
-					itemProperty = new CraftingListPropertyItem(handlingDescriptionText, 100f, CurrentItem.Item.PrimaryWeapon.Handling, 0f, CraftingTemplate.CraftingStatTypes.Handling)
+					itemProperty = new CraftingListPropertyItem(handlingDescriptionText, 150f, CurrentItem.Item.PrimaryWeapon.Handling, 0f, CraftingTemplate.CraftingStatTypes.Handling)
 					{
 						IsValidForUsage = true
 					};
@@ -478,15 +636,15 @@ namespace BannerCraft
 					ItemProperties.Add(itemProperty);
 
 					if (itemType == ItemType.Crossbow)
-                    {
+					{
 						TextObject ammoLimitDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "ammo_limit");
 
-                        itemProperty = new CraftingListPropertyItem(ammoLimitDescriptionText, 3f, CurrentItem.Item.PrimaryWeapon.MaxDataValue, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
-                        {
-                            IsValidForUsage = true
-                        };
-                        ItemProperties.Add(itemProperty);
-                    }
+						itemProperty = new CraftingListPropertyItem(ammoLimitDescriptionText, 3f, CurrentItem.Item.PrimaryWeapon.MaxDataValue, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+						{
+							IsValidForUsage = true
+						};
+						ItemProperties.Add(itemProperty);
+					}
 
 					break;
 				case ItemType.Arrows:
@@ -520,6 +678,24 @@ namespace BannerCraft
 			{
 				ItemFlagIconsList.Add(new CraftingItemFlagVM(itemFlagDetail.Item1, itemFlagDetail.Item2, isDisplayed: true));
 			}
+
+			if (CurrentItem.Item.HasWeaponComponent)
+			{
+				ItemObject.ItemUsageSetFlags itemUsageFlags = TaleWorlds.MountAndBlade.MBItem.GetItemUsageSetFlags(CurrentItem.Item.WeaponComponent.PrimaryWeapon.ItemUsage);
+				foreach ((string, TextObject) flagDetail in CampaignUIHelper.GetFlagDetailsForWeapon(CurrentItem.Item.WeaponComponent.PrimaryWeapon, itemUsageFlags))
+				{
+					ItemFlagIconsList.Add(new CraftingItemFlagVM(flagDetail.Item1, flagDetail.Item2, isDisplayed: true));
+				}
+			}
+		}
+
+		public void UpdateCraftingHero(CraftingAvailableHeroItemVM currentHero)
+		{
+			CurrentHeroCraftingSkill = currentHero.Hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
+
+			IsCurrentHeroAtMaxCraftingSkill = CurrentHeroCraftingSkill >= 300;
+
+			RefreshDifficulty();
 		}
 
 		private void UpdateTierFilterFlags(ArmorPieceTierFilter filter)
@@ -583,5 +759,75 @@ namespace BannerCraft
 
 			_ => ItemType.Invalid
 		};
+
+		private ArmorCraftResultPopupVM _armorCraftResultPopup;
+
+		private bool _armorCraftResultPopupVisible;
+
+		private MBBindingList<WeaponDesignResultPropertyItemVM> _designResultPropertyList;
+
+		public void CreateCraftingResultPopup()
+		{
+			ArmorCraftResultPopup = new ArmorCraftResultPopupVM(ExecuteFinalizeCrafting, _crafting, ItemFlagIconsList, CurrentItem.Item, DesignResultPropertyList, ItemVisualModel);
+			ArmorCraftResultPopupVisible = true;
+		}
+
+		public void ExecuteFinalizeCrafting()
+		{
+			ArmorCraftResultPopupVisible = false;
+		}
+
+		[DataSourceProperty]
+		public ArmorCraftResultPopupVM ArmorCraftResultPopup
+		{
+			get => _armorCraftResultPopup;
+			set
+			{
+				if (value != _armorCraftResultPopup)
+				{
+					_armorCraftResultPopup = value;
+					OnPropertyChangedWithValue(value, "ArmorCraftResultPopup");
+				}
+			}
+		}
+
+		[DataSourceProperty]
+		public bool ArmorCraftResultPopupVisible
+		{
+			get => _armorCraftResultPopupVisible;
+			set
+			{
+				if (value != _armorCraftResultPopupVisible)
+				{
+					_armorCraftResultPopupVisible = value;
+					UpdateResultPropertyList();
+					OnPropertyChangedWithValue(value, "ArmorCraftResultPopupVisible");
+				}
+			}
+		}
+
+		[DataSourceProperty]
+		public MBBindingList<WeaponDesignResultPropertyItemVM> DesignResultPropertyList
+		{
+			get => _designResultPropertyList;
+			set
+			{
+				if (value != _designResultPropertyList)
+				{
+					_designResultPropertyList = value;
+					OnPropertyChangedWithValue(value, "DesignResultPropertyList");
+				}
+			}
+		}
+
+		private void UpdateResultPropertyList()
+		{
+			DesignResultPropertyList.Clear();
+
+			foreach (CraftingListPropertyItem propertyItem in ItemProperties)
+			{
+				DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Description, propertyItem.PropertyValue, 0f));
+			}
+		}
 	}
 }

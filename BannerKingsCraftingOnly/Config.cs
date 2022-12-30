@@ -8,7 +8,6 @@ namespace BannerCraft
 
 		static BannerCraftConfig()
 		{
-			InformationManager.DisplayMessage(new InformationMessage("Initialising Config"));
 			ConfigHolder.CONFIG = new();
 		}
 

@@ -1,17 +1,15 @@
-﻿using TaleWorlds.CampaignSystem;
+﻿using System;
+using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
+using static TaleWorlds.Core.ArmorComponent;
 
 namespace BannerCraft
 {
 	public class SmithingModel : DefaultSmithingModel
 	{
-		public SmithingModel()
-        {
-			InformationManager.DisplayMessage(new InformationMessage("Initialising SmithingModel"));
-        }
-
 		public override int[] GetSmeltingOutputForItem(ItemObject item)
         {
 			var result = base.GetSmeltingOutputForItem(item);
@@ -121,27 +119,37 @@ namespace BannerCraft
 
 					switch (item.ArmorComponent.MaterialType)
 					{
-						case ArmorComponent.ArmorMaterialTypes.Cloth:
+						case ArmorMaterialTypes.Cloth:
 							result *= 1f;
 							break;
-						case ArmorComponent.ArmorMaterialTypes.Leather:
+						case ArmorMaterialTypes.Leather:
 							result *= 1.1f;
 							break;
-						case ArmorComponent.ArmorMaterialTypes.Chainmail:
+						case ArmorMaterialTypes.Chainmail:
 							result *= 1.25f;
 							break;
-						case ArmorComponent.ArmorMaterialTypes.Plate:
+						case ArmorMaterialTypes.Plate:
 							result *= 1.4f;
 							break;
 					}
 					break;
 
 				case ArmorCraftingVM.ItemType.Shield:
+					/*
+					 * result * item.Tierf / 6f is an arbitrary attempt to balance out the difficulty of 
+					 * these so they're approximately on par with equivalent tier melee weapons
+					 */
 					result += item.WeaponComponent.PrimaryWeapon.MaxDataValue / 10f;
+					result += result * item.Tierf / 6f;
+					break;
+				case ArmorCraftingVM.ItemType.Bow:
+				case ArmorCraftingVM.ItemType.Crossbow:
+					result += result * item.Tierf / 6f;
 					break;
 				case ArmorCraftingVM.ItemType.Arrows:
 				case ArmorCraftingVM.ItemType.Bolts:
 					result += item.WeaponComponent.PrimaryWeapon.MaxDataValue * item.WeaponComponent.PrimaryWeapon.MissileDamage;
+					result += result * item.Tierf / 6f;
 					break;
             }
 
@@ -151,60 +159,239 @@ namespace BannerCraft
 
 		public int[] GetCraftingInputForArmor(ItemObject item)
         {
-			var result = new int[11];
+			/*
+			 * [0,9) are vanilla materials
+			 * [9,13) are extra materials
+			 * ie indices 0 through 8 inclusive are vanilla, indices 9 through 12 inclusive are extra
+			 * Calculate extra indices as CraftingMaterials.NumCraftingMats + ExtraCraftingMaterials.{item}
+			 */
+			const int numMaterials = (int)CraftingMaterials.NumCraftingMats + (int)ExtraCraftingMaterials.NumExtraCraftingMats;
+			var result = new int[numMaterials];
 
-			ArmorCraftingVM.ItemType itemType = ArmorCraftingVM.GetItemType(item);
-			if (itemType == ArmorCraftingVM.ItemType.Invalid)
+			if (item == null)
+            {
+				return result;
+            }
+
+            ArmorCraftingVM.ItemType itemType = ArmorCraftingVM.GetItemType(item);
+            if (itemType == ArmorCraftingVM.ItemType.Invalid)
             {
 				/*
-				 * Vanilla crafting item, should not get here
+                 * Vanilla crafting item, should not get here
 				 */
+
+                return result;
             }
+
+			/*
+			 * Get the materials used based on tier
+			 */
+			ExtraCraftingMaterials clothMaterial = item.Tierf switch
+			{
+				< 4f => ExtraCraftingMaterials.Linen,
+				_ => ExtraCraftingMaterials.Velvet
+			};
+
+			ExtraCraftingMaterials leatherMaterial = item.Tierf switch
+			{
+				< 4f => ExtraCraftingMaterials.Fur,
+				_ => ExtraCraftingMaterials.Leather
+			};
+
+			CraftingMaterials metalMaterial = item.Tierf switch
+			{
+				< 4f => CraftingMaterials.Iron3,
+				< 5f => CraftingMaterials.Iron4,
+				< 6f => CraftingMaterials.Iron5,
+				_ => CraftingMaterials.Iron6
+			};
+
+			CraftingMaterials woodMaterial = CraftingMaterials.Wood;
+
+			/*
+			 * An item low in its tier uses fewer high tier metals
+			 */
+			float tierf = (float)(item.Tierf - Math.Truncate(item.Tierf));
+			float highMetalRatio;
+			float midMetalRatio;
+			float lowMetalRatio;
+			if (tierf > 0.5f)
+			{
+				highMetalRatio = 0.8f;
+				midMetalRatio = 0.2f;
+				lowMetalRatio = 0.0f;
+			}
+			else
+			{
+				highMetalRatio = 0.6f;
+				midMetalRatio = 0.3f;
+				lowMetalRatio = 0.1f;
+			}
+
+			float weightTotal = item.Weight * 1.2f;
 
 			switch (itemType)
             {
-				case ArmorCraftingVM.ItemType.Barding:
+                case ArmorCraftingVM.ItemType.Barding:
 
-				case ArmorCraftingVM.ItemType.HeadArmor:
-				case ArmorCraftingVM.ItemType.ShoulderArmor:
-				case ArmorCraftingVM.ItemType.BodyArmor:
-				case ArmorCraftingVM.ItemType.ArmArmor:
-				case ArmorCraftingVM.ItemType.LegArmor:
-					/*
-					 * Armor requires some tier dependent metal and some material dependent "cloth"
-					 * Plate and chain requires linen and velvet
-					 * Tier 4, 5, 6 require velvet
-					 * Tier 0, 1, 2, 3 require linen
-					 * 
-					 * Tier 6 requires velvet
-					 * Tier 4 and 5 require furs
-					 * Tier 2 and 3 require linen
-					 * Tier 0 and 1 require hides
-					 */
-					var material = item.ArmorComponent.MaterialType;
-					switch (material)
+                case ArmorCraftingVM.ItemType.HeadArmor:
+                case ArmorCraftingVM.ItemType.ShoulderArmor:
+                case ArmorCraftingVM.ItemType.BodyArmor:
+                case ArmorCraftingVM.ItemType.ArmArmor:
+                case ArmorCraftingVM.ItemType.LegArmor:
+					float metalRatio = 0f;
+					float clothRatio = 0f;
+					float leatherRatio = 0f;
+					switch (item.ArmorComponent.MaterialType)
                     {
-						case ArmorComponent.ArmorMaterialTypes.Plate:
-						case ArmorComponent.ArmorMaterialTypes.Chainmail:
+                        case ArmorComponent.ArmorMaterialTypes.Plate:
+                        case ArmorComponent.ArmorMaterialTypes.Chainmail:
+							metalRatio = 0.8f;
+							clothRatio = 1f - metalRatio;
+
+							break;
+						case ArmorComponent.ArmorMaterialTypes.Cloth:
+							metalRatio = item.Tierf switch
+							{
+								< 2f => 0.1f,
+								< 4f => 0.2f,
+								_ => 0.3f
+							};
+							clothRatio = 1f - metalRatio;
+
+							metalMaterial = (CraftingMaterials)((int)metalMaterial - 1);
+
+							break;
+						case ArmorComponent.ArmorMaterialTypes.Leather:
+							metalRatio = item.Tierf switch
+							{
+								< 2f => 0.15f,
+								< 4f => 0.3f,
+								_ => 0.4f
+							};
+							leatherRatio = 1f - metalRatio;
+
+							metalMaterial = (CraftingMaterials)((int)metalMaterial - 1);
+
 							break;
                     }
+
+					int highMetalIndex = (int)metalMaterial;
+					int midMetalIndex = (int)metalMaterial - 1;
+					int lowMetalIndex = (int)metalMaterial - 2;
+
+					int clothIndex = (int)CraftingMaterials.NumCraftingMats + (int)clothMaterial;
+					int leatherIndex = (int)CraftingMaterials.NumCraftingMats + (int)leatherMaterial;
 					
-					break;
+					int numMetal = (int)Math.Round(weightTotal * metalRatio / GetCraftingMaterialItem(metalMaterial).Weight);
+					int numCloth = clothRatio > 0f ? Math.Max((int)Math.Round(weightTotal * clothRatio / GetCraftingMaterialItem(clothMaterial).Weight), 1) : 0;
+					int numLeather = leatherRatio > 0f ? Math.Max((int)Math.Round(weightTotal * leatherRatio / GetCraftingMaterialItem(leatherMaterial).Weight), 1) : 0;
 
-				case ArmorCraftingVM.ItemType.Shield:
-					break;
+					int numHighMetal = (int)Math.Round(numMetal * highMetalRatio);
+					int numMidMetal = (int)Math.Round(numMetal * midMetalRatio);
+					int numLowMetal = (int)Math.Round(numMetal * lowMetalRatio);
 
+					result[highMetalIndex] = -numHighMetal;
+					result[midMetalIndex] = -numMidMetal;
+					result[lowMetalIndex] = -numLowMetal;
+					result[leatherIndex] = -numLeather;
+					result[clothIndex] = -numCloth;
+
+					break;
+                case ArmorCraftingVM.ItemType.Shield:
+				case ArmorCraftingVM.ItemType.Bow:
+				case ArmorCraftingVM.ItemType.Crossbow:
 				case ArmorCraftingVM.ItemType.Arrows:
 				case ArmorCraftingVM.ItemType.Bolts:
-					break;
-			}
+					metalRatio = item.WeaponComponent.PrimaryWeapon.PhysicsMaterial switch
+					{
+						"shield_metal" => 0.8f,
+						_ => 0.3f
+					};
 
-			return result;
+					metalRatio = itemType switch
+					{
+						ArmorCraftingVM.ItemType.Bow => 0.3f,
+						ArmorCraftingVM.ItemType.Crossbow => 0.6f,
+						ArmorCraftingVM.ItemType.Arrows => 0.1f,
+						ArmorCraftingVM.ItemType.Bolts => 0.1f,
+						_ => metalRatio
+					};
+					float woodRatio = 1f - metalRatio;
+
+					int woodIndex = (int)CraftingMaterials.Wood;
+					highMetalIndex = (int)metalMaterial;
+					midMetalIndex = (int)metalMaterial - 1;
+					lowMetalIndex = (int)metalMaterial - 2;
+
+					numMetal = (int)Math.Max(Math.Round(weightTotal * metalRatio / GetCraftingMaterialItem(metalMaterial).Weight), 1);
+					int numWood = (int)Math.Max(Math.Round(weightTotal * woodRatio / GetCraftingMaterialItem(woodMaterial).Weight), 1);
+
+					numHighMetal = (int)Math.Round(numMetal * highMetalRatio);
+					numMidMetal = (int)Math.Round(numMetal * midMetalRatio);
+					numLowMetal = (int)Math.Round(numMetal * lowMetalRatio);
+
+					result[highMetalIndex] = -numHighMetal;
+					result[midMetalIndex] = -numMidMetal;
+					result[lowMetalIndex] = -numLowMetal;
+					result[woodIndex] = -numWood;
+
+					break;
+            }
+
+            return result;
         }
 
 		public ItemObject GetCraftingMaterialItem(ExtraCraftingMaterials craftingMaterial)
         {
 			return Game.Current.ObjectManager.GetObject<ItemObject>(craftingMaterial.ToString().ToLower()); ;
 		}
+
+		public int GetEnergyCostForArmor(ItemObject item, Hero hero)
+        {
+			float result = 0;
+
+			result += item.Weight * 5f;
+			result += item.Tierf * 5f;
+
+			ArmorCraftingVM.ItemType itemType = ArmorCraftingVM.GetItemType(item);
+
+			result += itemType switch
+			{
+				ArmorCraftingVM.ItemType.Barding => 70f,
+
+				ArmorCraftingVM.ItemType.HeadArmor => 30f,
+				ArmorCraftingVM.ItemType.ShoulderArmor => 40f,
+				ArmorCraftingVM.ItemType.BodyArmor => 50f,
+				ArmorCraftingVM.ItemType.ArmArmor => 10f,
+				ArmorCraftingVM.ItemType.LegArmor => 10f,
+
+				ArmorCraftingVM.ItemType.Shield => 20f,
+
+				ArmorCraftingVM.ItemType.Bow => 40f,
+				ArmorCraftingVM.ItemType.Crossbow => 40f,
+
+				ArmorCraftingVM.ItemType.Arrows => 1f * item.WeaponComponent.PrimaryWeapon.MaxDataValue,
+				ArmorCraftingVM.ItemType.Bolts => 1f * item.WeaponComponent.PrimaryWeapon.MaxDataValue,
+				_ => 0f
+			};
+
+			if (item.HasArmorComponent)
+            {
+				result += item.ArmorComponent.MaterialType switch
+				{
+					ArmorMaterialTypes.Plate => 40f,
+					ArmorMaterialTypes.Chainmail => 25f,
+					_ => 10f
+				};
+            }
+
+			if (hero.GetPerkValue(DefaultPerks.Crafting.PracticalSmith))
+            {
+				result = (result + 1) / 2;
+            }
+
+			return MBMath.ClampInt((int)result, 10, 300);
+        }
 	}
 }

@@ -20,11 +20,7 @@ namespace BannerCraft
                 return;
             }
 
-            campaignStarter.AddModel(Config.Instance.SmithingModel);
-
-            /*campaignStarter.AddBehavior(new BKSettlementActions());
-
-            campaignStarter.AddModel(BannerKingsConfig.Instance.SmithingModel);*/
+            campaignStarter.AddModel(BannerCraftConfig.Instance.SmithingModel);
         }
 
         protected override void OnSubModuleLoad()

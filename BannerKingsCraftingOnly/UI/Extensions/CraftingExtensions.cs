@@ -4,23 +4,31 @@ using Bannerlord.UIExtenderEx.Prefabs2;
 
 namespace BannerCraft
 {
-    [PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children", "Children")]
-    internal class CraftingInsertArmorExtraMaterialsExtension : PrefabExtensionInsertPatch
-    {
-		/*
-		 * Should be InsertType.Append but the item we're after doesn't have an Id
-		 */
-        [PrefabExtensionFileName] public string Id => "CraftingInsertArmorExtraMaterialsExtension";
-        public override InsertType Type => InsertType.Child;
-        public override int Index => 0;
-    }
-
-    [PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children", "Crafting")]
+	[PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children", "Crafting")]
 	internal class CraftingInsertArmorModelVisualExtension : PrefabExtensionInsertPatch
 	{
 		[PrefabExtensionFileName] public string Id => "CraftingInsertArmorModelVisualExtension";
 		public override InsertType Type => InsertType.Child;
-		public override int Index => 4;
+		public override int Index => 0;
+	}
+
+	[PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children", "Children")]
+	internal class CraftingInsertArmorDifficultyExtension : PrefabExtensionInsertPatch
+	{
+		[PrefabExtensionFileName] public string Id => "CraftingInsertArmorDifficultyExtension";
+		public override InsertType Type => InsertType.Child;
+		public override int Index => 0;
+	}
+
+	[PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children", "Children")]
+	internal class CraftingInsertArmorExtraMaterialsExtension : PrefabExtensionInsertPatch
+	{
+		/*
+		 * Should be InsertType.Append but the item we're after doesn't have an Id
+		 */
+		[PrefabExtensionFileName] public string Id => "CraftingInsertArmorExtraMaterialsExtension";
+		public override InsertType Type => InsertType.Child;
+		public override int Index => 0;
 	}
 
 	[PrefabExtension("Crafting", "descendant::ListPanel[@Id='CategoryParent']/Children", "Crafting")]
@@ -43,6 +51,13 @@ namespace BannerCraft
 	internal class CraftingInsertArmorClassSelectionPopupExtension : PrefabExtensionInsertPatch
 	{
 		[PrefabExtensionFileName] public string Id => "CraftingInsertArmorClassSelectionPopupExtension";
+		public override InsertType Type => InsertType.Append;
+	}
+
+	[PrefabExtension("Crafting", "descendant::NewCraftedWeaponPopup[@Id='NewCraftedWeaponPopupWidget']", "Crafting")]
+	internal class CraftingInsertNewCraftedArmorPopupExtension : PrefabExtensionInsertPatch
+	{
+		[PrefabExtensionFileName] public string Id => "CraftingInsertNewCraftedArmorPopupExtension";
 		public override InsertType Type => InsertType.Append;
 	}
 

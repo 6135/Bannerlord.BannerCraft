@@ -110,6 +110,7 @@
     <Compile Include="UI\Crafting\ArmorClassSelectionPopupVM.cs" />
     <Compile Include="UI\Crafting\ArmorClassVM.cs" />
     <Compile Include="UI\Crafting\ArmorCraftingVM.cs" />
+    <Compile Include="UI\Crafting\ArmorCraftResultPopupVM.cs" />
     <Compile Include="UI\Crafting\ArmorItemVM.cs" />
     <Compile Include="UI\Crafting\ArmorTemplate.cs" />
     <Compile Include="UI\Crafting\ArmorTierFilterTypeVM.cs" />

@@ -16,11 +16,11 @@
 
 	<Window>
 		<!-- General container -->
-		<Widget Id="ArmorModelVisual" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
+		<Widget Id="ArmorModelVisual" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
 			<Children>
-				<Widget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" MarginLeft="101" MarginTop="101" IsVisible="@IsInArmorMode">
+				<Widget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="200" MarginTop="-100" IsVisible="@IsInArmorMode">
 					<Children>
-						<ItemTableauWidget DataSource="{ArmorCrafting\ItemVisualModel}" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="1000" SuggestedHeight="1000" HorizontalAlignment="Left" VerticalAlignment="Top" ItemModifierId="@ItemModifierId" StringId="@StringId" InitialPanRotation="3"/>
+						<ItemTableauWidget DataSource="{ArmorCrafting\ItemVisualModel}" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="900" SuggestedHeight="900" HorizontalAlignment="Left" VerticalAlignment="Top" ItemModifierId="@ItemModifierId" StringId="@StringId" InitialPanRotation="3"/>
 					</Children>
 				</Widget>
 			</Children>

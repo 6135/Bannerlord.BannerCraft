@@ -6,16 +6,18 @@ using TaleWorlds.Library;
 
 namespace BannerCraft
 {
+	using Config = BannerCraftConfig;
+
 	public enum ExtraCraftingMaterials
     {
-		Linen,
 		Fur,
 		Leather,
+		Linen,
 		Velvet,
 		NumExtraCraftingMats
     }
 
-	public class ExtraCraftingResourceItemVM : ViewModel
+	public class ExtraMaterialItemVM : ViewModel
 	{
 		private string _resourceName;
 		private string _resourceItemStringId;
@@ -27,6 +29,7 @@ namespace BannerCraft
 		private ImageIdentifierVM _imageIdentifier;
 
 		public ItemObject ResourceItem { get; private set; }
+		public ItemObject Material { get => ResourceItem; }
 		
 		public ExtraCraftingMaterials ResourceMaterial { get; private set; }
 
@@ -128,7 +131,9 @@ namespace BannerCraft
             }
 		}
 
-		public ExtraCraftingResourceItemVM(ExtraCraftingMaterials material, int amount, int changeAmount = 0)
+        [DataSourceProperty] public ImageIdentifierVM Visual { get => ImageIdentifier; }
+
+		public ExtraMaterialItemVM(ExtraCraftingMaterials material, int amount, int changeAmount = 0)
 		{
 			ResourceMaterial = material;
 			ResourceItem = Config.Instance.SmithingModel.GetCraftingMaterialItem(material);
@@ -141,5 +146,18 @@ namespace BannerCraft
 
 			ImageIdentifier = new ImageIdentifierVM(ResourceItem);
 		}
+
+		public static ExtraCraftingMaterials FromItem(ItemObject item) => item.Name.ToString().ToLower() switch
+		{
+			"linen" => ExtraCraftingMaterials.Linen,
+			"fur" => ExtraCraftingMaterials.Fur,
+			"leather" => ExtraCraftingMaterials.Leather,
+			"velvet" => ExtraCraftingMaterials.Velvet,
+			_ => ExtraCraftingMaterials.NumExtraCraftingMats
+		};
+
+		public ExtraMaterialItemVM(ItemObject material) : this(FromItem(material), 0)
+        {
+        }
 	}
 }
