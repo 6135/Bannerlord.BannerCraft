@@ -122,9 +122,11 @@
 
 																		<!-- Tier Text -->
 																		<TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" MarginTop="2" MarginLeft="8" Brush="Crafting.Card.Tier.Text" Text="@TierText" />
-																		<HintWidget DataSource="{Hint}" DoNotAcceptEvents="true" HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
+																		
 																	</Children>
 																</Widget>
+
+																<HintWidget DataSource="{Hint}" DoNotAcceptEvents="true" HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
 
 																<RichTextWidget IsDisabled="true" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" SuggestedWidth="150" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="180" Brush="Smelting.Tuple.Text" Text="@ItemName" Brush.TextHorizontalAlignment="Left" />
 

@@ -72,7 +72,7 @@ namespace BannerCraft
 				if (value != _armorCrafting)
 				{
 					_armorCrafting = value;
-					ViewModel!.OnPropertyChangedWithValue(value, "ArmorCrafting");
+					ViewModel!.OnPropertyChangedWithValue(value, "ArmorCraftingBC");
 				}
 			}
 		}
@@ -96,7 +96,7 @@ namespace BannerCraft
 			_craftingVM = craftingVM;
 
 			Type type = typeof(CraftingVM);
-			var bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
 			_crafting = (Crafting)ViewModel!.GetType().GetField("_crafting", bindingFlags).GetValue(ViewModel!);
 
 			_craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
@@ -127,12 +127,33 @@ namespace BannerCraft
 			UpdateAll();
 		}
 
+		private int GetRequiredEnergy()
+        {
+			if (CurrentCraftingHero?.Hero != null)
+            {
+				if (IsInArmorMode)
+                {
+					if (ArmorCrafting.CurrentItem == null)
+                    {
+						return 0;
+                    }
+					return Config.Instance.SmithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
+                }
+				return Config.Instance.SmithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), CurrentCraftingHero.Hero);
+            }
+			return 0;
+        }
+
 		private bool HaveEnergy()
 		{
 			if (CurrentCraftingHero?.Hero != null)
 			{
 				if (IsInArmorMode)
 				{
+					if (ArmorCrafting.CurrentItem == null)
+                    {
+						return false;
+                    }
 					return _craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) > Config.Instance.SmithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
 				}
 				return _craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) > Config.Instance.SmithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), CurrentCraftingHero.Hero);
@@ -265,7 +286,11 @@ namespace BannerCraft
 				_craftingVM.IsMainActionEnabled = false;
 				if (_craftingVM.MainActionHint != null)
 				{
-					_craftingVM.MainActionHint = new BasicTooltipViewModel(() => new TextObject("{=PRE5RKpp}You must rest and spend time before you can do this action.").ToString());
+					_craftingVM.MainActionHint = new BasicTooltipViewModel(() => 
+						GameTexts.FindText("str_bannercraft_crafting_stamina_display")
+							.SetTextVariable("HERONAME", CurrentCraftingHero.Hero.Name.ToString())
+							.SetTextVariable("REQUIRED", GetRequiredEnergy())
+							.SetTextVariable("CURRENT", _craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero)).ToString());
 				}
 			}
 			else if (!HaveMaterialsNeeded())
@@ -303,6 +328,7 @@ namespace BannerCraft
 			if (_craftingVM.IsInCraftingMode || _craftingVM.IsInRefinementMode || _craftingVM.IsInSmeltingMode)
 			{
 				IsInArmorMode = false;
+				return;
 			}
 
 			ArmorCrafting?.UpdateCraftingHero(CurrentCraftingHero);
@@ -418,8 +444,36 @@ namespace BannerCraft
 				}
 				else
 				{
-					ArmorCrafting.CreateCraftingResultPopup();
-					MobileParty.MainParty.ItemRoster.AddToCounts(ArmorCrafting.CurrentItem.Item, 1);
+					EquipmentElement element = new EquipmentElement(ArmorCrafting.CurrentItem.Item);
+
+					int modifierTier = Config.Instance.SmithingModel.GetModifierTierForItem(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
+					if (modifierTier >= 0)
+					{
+						/*
+						 * Non-negative modifier tiers are for the special ones
+						 */
+						ItemModifier modifier = null;
+						if (   ArmorCrafting.CurrentItem.Item.HasArmorComponent
+							&& ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup != null)
+						{
+							ItemModifierGroup modifierGroup = ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup;
+							modifier = modifierGroup.GetRandomModifierWithTarget(modifierTier);	
+						}
+						else if (   ArmorCrafting.CurrentItem.Item.HasWeaponComponent
+							     && ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup != null)
+                        {
+							ItemModifierGroup modifierGroup = ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup;
+							modifier = modifierGroup.GetRandomModifierWithTarget(modifierTier);
+						}
+
+						if (modifier != null)
+						{
+							element.SetModifier(modifier);
+						}
+					}
+
+					ArmorCrafting.CreateCraftingResultPopup(element);
+					MobileParty.MainParty.ItemRoster.AddToCounts(element, 1);
 				}
 
 				craftingBehavior.SetHeroCraftingStamina(CurrentCraftingHero.Hero, craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) - energyCostForCrafting);

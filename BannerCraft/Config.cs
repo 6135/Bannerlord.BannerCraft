@@ -1,10 +1,21 @@
-﻿using TaleWorlds.Library;
+﻿using System;
 
 namespace BannerCraft
 {
 	public class BannerCraftConfig
 	{
-		public SmithingModel SmithingModel { get; } = new();
+		private SmithingModelBC _smithingModel;
+		public SmithingModelBC SmithingModel { 
+			get => _smithingModel;
+			set
+            {
+				if (_smithingModel != null)
+                {
+					throw new InvalidOperationException("SmithingModel is already set");
+                }
+				_smithingModel = value;
+            }
+		}
 
 		static BannerCraftConfig()
 		{

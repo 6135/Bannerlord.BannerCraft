@@ -31,23 +31,23 @@ namespace BannerCraft
 		public override int Index => 0;
 	}
 
-	[PrefabExtension("Crafting", "descendant::ListPanel[@Id='CategoryParent']/Children", "Crafting")]
-	internal class CraftingInsertArmorCategoryExtension : PrefabExtensionInsertPatch
-	{
-		[PrefabExtensionFileName] public string Id => "CraftingInsertArmorCategoryExtension";
-		public override InsertType Type => InsertType.Child;
-		public override int Index => 2;
-	}
+    [PrefabExtension("Crafting", "descendant::ListPanel[@Id='CategoryParent']/Children", "Crafting")]
+    internal class CraftingInsertArmorCategoryExtension : PrefabExtensionInsertPatch
+    {
+        [PrefabExtensionFileName] public string Id => "CraftingInsertArmorCategoryExtension";
+        public override InsertType Type => InsertType.Child;
+        public override int Index => 2;
+    }
 
-	[PrefabExtension("Crafting", "descendant::Widget[@Id='RightPanel']/Children", "Crafting")]
-	internal class CraftingInsertArmorCategoryPanelExtension : PrefabExtensionInsertPatch
-	{
-		[PrefabExtensionFileName] public string Id => "CraftingInsertArmorCategoryPanelExtension";
-		public override InsertType Type => InsertType.Child;
-		public override int Index => 3;
-	}
+    [PrefabExtension("Crafting", "descendant::Widget[@Id='RightPanel']/Children", "Crafting")]
+    internal class CraftingInsertArmorCategoryPanelExtension : PrefabExtensionInsertPatch
+    {
+        [PrefabExtensionFileName] public string Id => "CraftingInsertArmorCategoryPanelExtension";
+        public override InsertType Type => InsertType.Child;
+        public override int Index => 3;
+    }
 
-	[PrefabExtension("Crafting", "descendant::CraftingTemplateSelectionPopup[@Id='WeaponClassSelectionPopup']", "Crafting")]
+    [PrefabExtension("Crafting", "descendant::CraftingTemplateSelectionPopup[@Id='WeaponClassSelectionPopup']", "Crafting")]
 	internal class CraftingInsertArmorClassSelectionPopupExtension : PrefabExtensionInsertPatch
 	{
 		[PrefabExtensionFileName] public string Id => "CraftingInsertArmorClassSelectionPopupExtension";
@@ -96,13 +96,4 @@ namespace BannerCraft
 			new Attribute("Command.Click", "ExecuteMainActionBannerCraft")
 		};
 	}
-
-/*	[PrefabExtension("Crafting", "descendant::ListPanel[@Id='MainActionListPanel']/Children/ButtonWidget[1]", "Crafting")]
-	internal class CraftingCancelButtonPatch : PrefabExtensionSetAttributePatch
-	{
-		public override List<Attribute> Attributes => new()
-		{
-			new Attribute("Command.Click", "CloseWithWait")
-		};
-	}*/
 }

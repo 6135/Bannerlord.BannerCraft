@@ -1,0 +1,21 @@
+Changelog
+1.0.5
+Fixed mismatched ordering between what's shown on armor crafting result popup and the actual result.
+
+1.0.4
+Changed ordering of armor stats to match vanilla hints
+Vanilla hints are stupid and go Head Body Leg Arm which doesn't match inventory total values
+Added negative item prefix chance based on skill level. Positive prefixes require Experienced/Master/Legendary Smith perks.
+Added mouseover tooltips to items. They look bad but the vanilla ones are done via more hidden magic code.
+
+Version 1.0.3
+Added botching chance and smelting to MCM menu
+
+Version 1.0.2
+Fixed issue with refinement selection being reset. Repacked to be single folder instead of loose files.
+
+Version 1.0.1
+Fixed exception when no items are shown
+
+Version 1.0.0
+Initial release

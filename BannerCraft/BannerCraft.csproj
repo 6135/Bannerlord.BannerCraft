@@ -33,12 +33,36 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\..\..\..\..\Program Files %28x86%29\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\BannerCraft\bin\Win64_Shipping_Client\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>9.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>..\..\..\..\..\..\Program Files %28x86%29\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\BannerCraft\bin\Win64_Shipping_Client\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>9.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lib.Harmony.2.2.2\lib\net472\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="0Harmony_2.0.0.10, Version=2.0.0.10, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UIExtenderLib.2.0.0.3\lib\net472\0Harmony_2.0.0.10.dll</HintPath>
     </Reference>
     <Reference Include="Bannerlord.UIExtenderEx">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\Bannerlord.UIExtenderEx\bin\Win64_Shipping_Client\Bannerlord.UIExtenderEx.dll</HintPath>
+    </Reference>
+    <Reference Include="MCMv5, Version=5.5.4.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Bannerlord.MCM.5.5.4\lib\net472\MCMv5.dll</HintPath>
     </Reference>
     <Reference Include="SandBox.View, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -103,7 +127,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\CraftingBehavior.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Extensions\ItemModifierGroupExtension.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Models\Vanilla\SmithingModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -119,6 +145,7 @@
     <Compile Include="UI\Extensions\CraftingMixin.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="_Module\GUI\Prefabs\Crafting\ArmorCategory.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

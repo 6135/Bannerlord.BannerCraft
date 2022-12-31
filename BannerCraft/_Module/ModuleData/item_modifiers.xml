@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+10% chance fine
+10% chance masterwork
+(5 + (max(Smithing - 300, 0)))% chance legendary
+-->
+<ItemModifiers>
+	<!-- Bows -->
+	<ItemModifier modifier_group="ItemModifierGroup.bow"
+				  id="masterwork_bow"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  damage="9"
+				  speed="6"
+				  missile_speed="6"
+				  price_factor="2.5" />
+	<!-- Crossbows -->
+	<ItemModifier modifier_group="ItemModifierGroup.crossbow"
+				  id="masterwork_crossbow"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  damage="6"
+				  speed="6"
+				  missile_speed="35"
+				  price_factor="2.5" />
+	<!-- Arrows -->
+	<ItemModifier modifier_group="ItemModifierGroup.arrow"
+				  id="balanced_arrows"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  damage="5"
+				  stack_count="10"
+				  price_factor="2.5" />
+	<!-- Bolts -->
+	<ItemModifier modifier_group="ItemModifierGroup.bolt"
+				  id="balanced_bolts"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  damage="5"
+				  stack_count="10"
+				  price_factor="2.5" />
+	<!-- Shields -->
+	<ItemModifier modifier_group="ItemModifierGroup.shield"
+				  id="lordly_shield"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  hit_points="210"
+				  speed="0"
+				  armor="8"
+				  price_factor="2.5" />
+	<!-- Plate Armors -->
+	<ItemModifier modifier_group="ItemModifierGroup.plate"
+				  id="legendary_plate"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  armor="12"
+				  price_factor="2.5" />
+	<!-- Chain Armors -->
+	<ItemModifier modifier_group="ItemModifierGroup.chain"
+				  id="legendary_chain"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  armor="9"
+				  price_factor="2.5" />
+	<!-- Leather Armors -->
+	<ItemModifier modifier_group="ItemModifierGroup.leather"
+				  id="legendary_leather"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  armor="8"
+				  price_factor="2.5" />
+	<!-- Cloth Armors -->
+	<ItemModifier modifier_group="ItemModifierGroup.cloth"
+				  id="legendary_cloth"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  armor="5"
+				  price_factor="2.5" />
+	<!-- Clothing -->
+	<ItemModifier modifier_group="ItemModifierGroup.cloth_unarmoured"
+				  id="legendary_cloth_unarmoured"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  armor="4"
+				  price_factor="2.5" />
+</ItemModifiers>

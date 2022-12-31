@@ -48,4 +48,8 @@
 	<string id="str_bannercraft_crafting_material_type.chainmail" text="{=bannercraft_crafting_material_type_none}Chainmail" />
 	<string id="str_bannercraft_crafting_material_type.plate" text="{=bannercraft_crafting_material_type_none}Plate" />
 
+	<string id="str_bannercraft_crafting_stamina_display" text="{=bannercraft_crafting_stamina_display}{HERONAME} requires more stamina for this action. {HERONAME} has {CURRENT} stamina and needs {REQUIRED} stamina." />
+
+	<string id="str_bannercraft_item_modifiers_legendary" text="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}" />
+	
 </strings>

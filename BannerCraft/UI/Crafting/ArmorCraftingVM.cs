@@ -1,6 +1,8 @@
 ﻿using Bannerlord.UIExtenderEx.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting;
@@ -489,6 +491,120 @@ namespace BannerCraft
 			DifficultyText = GameTexts.FindText("str_difficulty").ToString();
 		}
 
+		private List<int> GenerateModifierValues(ItemType itemType, EquipmentElement element)
+        {
+			/*
+			 * This is a very fragile function that should be refactored alongside RefreshStats
+			 * But not right now
+			 */
+			if (itemType == ItemType.Invalid)
+            {
+				return null;
+            }
+
+			List<int> ret = new List<int>();
+			/*
+			 * Weight is always the first element in the stats list and it can't be changed from the modifier
+			 */
+			ret.Add(0);
+
+			/*
+			 * Once again we need to get private values
+			 */
+			BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+			switch (itemType)
+			{
+				case ItemType.Invalid:
+					/*
+					 * Never reached, so let's use this to declare switch local variables
+					 */
+					int armor;
+
+					int shieldSpeed;
+					short shieldHitPoints;
+					break;
+				case ItemType.HeadArmor:
+				case ItemType.ShoulderArmor:
+				case ItemType.BodyArmor:
+				case ItemType.ArmArmor:
+				case ItemType.LegArmor:
+					armor = 0;
+					if (element.ItemModifier != null)
+					{
+						armor = (int)element.ItemModifier?.GetType().GetField("_armor", bindingFlags)?.GetValue(element.ItemModifier);
+					}
+
+					ret.Add(CurrentItem.Item.ArmorComponent.HeadArmor > 0 ? armor : 0);
+					ret.Add(CurrentItem.Item.ArmorComponent.BodyArmor > 0 ? armor : 0);
+					ret.Add(CurrentItem.Item.ArmorComponent.LegArmor > 0 ? armor : 0);
+					ret.Add(CurrentItem.Item.ArmorComponent.ArmArmor > 0 ? armor : 0);
+
+					break;
+				case ItemType.Barding:
+					armor = 0;
+					if (element.ItemModifier != null)
+					{
+						armor = (int)element.ItemModifier.GetType().GetField("_armor", bindingFlags).GetValue(element.ItemModifier);
+					}
+
+					ret.Add(armor);
+
+					break;
+				case ItemType.Shield:
+					shieldSpeed = 0;
+					shieldHitPoints = 0;
+					if (element.ItemModifier != null)
+                    {
+						shieldSpeed = (int)element.ItemModifier.GetType().GetField("_speed", bindingFlags).GetValue(element.ItemModifier);
+						shieldHitPoints = (short)element.ItemModifier.GetType().GetField("_hitPoints", bindingFlags).GetValue(element.ItemModifier);
+					}
+
+					ret.Add(shieldSpeed);
+					ret.Add(shieldHitPoints);
+
+					break;
+				case ItemType.Bow:
+				case ItemType.Crossbow:
+					int speed = 0;
+					int missileSpeed = 0;
+					int missileDamage = 0;
+					if (element.ItemModifier != null)
+                    {
+						speed = (int)element.ItemModifier.GetType().GetField("_speed", bindingFlags).GetValue(element.ItemModifier);
+						missileSpeed = (int)element.ItemModifier.GetType().GetField("_missileSpeed", bindingFlags).GetValue(element.ItemModifier);
+						missileDamage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
+					}
+
+					ret.Add(speed);
+					ret.Add(missileDamage);
+					ret.Add(0); // Accuracy can't be changed here for some stupid reason
+					ret.Add(missileSpeed);
+
+					if (itemType == ItemType.Crossbow)
+                    {
+						ret.Add(0); // Ammo limit can't be changed
+                    }
+
+					break;
+				case ItemType.Arrows:
+				case ItemType.Bolts:
+					missileDamage = 0;
+					short stackCount = 0;
+					if (element.ItemModifier != null)
+					{
+						missileDamage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
+						stackCount = (short)element.ItemModifier.GetType().GetField("_stackCount", bindingFlags).GetValue(element.ItemModifier);
+					}
+
+					ret.Add(missileDamage);
+					ret.Add(stackCount);
+
+					break;
+			}
+
+			return ret;
+        }
+
 		public void RefreshStats(ItemType itemType)
 		{
 			ItemProperties.Clear();
@@ -501,13 +617,13 @@ namespace BannerCraft
 				return;
 			}
 
+			TextObject weightDescriptionText = GameTexts.FindText("str_crafting_stat", "Weight"); ;
 			switch (itemType)
 			{
 				case ItemType.Invalid:
 					/*
 					 * Never reached, so let's use this to declare switch local variables
 					 */
-					TextObject weightDescriptionText;
 
 					CraftingListPropertyItem itemProperty;
 					break;
@@ -516,11 +632,10 @@ namespace BannerCraft
 				case ItemType.BodyArmor:
 				case ItemType.ArmArmor:
 				case ItemType.LegArmor:
-					weightDescriptionText = GameTexts.FindText("str_crafting_stat", "Weight");
 					TextObject headDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.HeadArmor.ToString().ToLower());
 					TextObject bodyDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.BodyArmor.ToString().ToLower());
-					TextObject armDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.ArmArmor.ToString().ToLower());
 					TextObject legDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.LegArmor.ToString().ToLower());
+					TextObject armDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.ArmArmor.ToString().ToLower());
 
 					itemProperty = new CraftingListPropertyItem(weightDescriptionText, 50f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
 					{
@@ -543,13 +658,17 @@ namespace BannerCraft
 					};
 					ItemProperties.Add(itemProperty);
 
-					itemProperty = new CraftingListPropertyItem(armDescriptionText, 100f, CurrentItem.Item.ArmorComponent.ArmArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+					itemProperty = new CraftingListPropertyItem(legDescriptionText, 100f, CurrentItem.Item.ArmorComponent.LegArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
 					{
 						IsValidForUsage = true
 					};
 					ItemProperties.Add(itemProperty);
 
-					itemProperty = new CraftingListPropertyItem(legDescriptionText, 100f, CurrentItem.Item.ArmorComponent.LegArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+					/*
+					 * Armor is shown Head Body Leg Arm in item hints in the vanilla UI
+					 * It's ordered Head Body Arm Leg in the inventory totals, but who needs consistency
+					 */
+					itemProperty = new CraftingListPropertyItem(armDescriptionText, 100f, CurrentItem.Item.ArmorComponent.ArmArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
 					{
 						IsValidForUsage = true
 					};
@@ -557,7 +676,6 @@ namespace BannerCraft
 
 					break;
 				case ItemType.Barding:
-					weightDescriptionText = GameTexts.FindText("str_crafting_stat", "Weight");
 					TextObject horseDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.Barding.ToString().ToLower());
 
 					itemProperty = new CraftingListPropertyItem(weightDescriptionText, 150f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
@@ -574,7 +692,6 @@ namespace BannerCraft
 
 					break;
 				case ItemType.Shield:
-					weightDescriptionText = GameTexts.FindText("str_crafting_stat", "Weight");
 					TextObject handlingDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "speed");
 					TextObject shieldHitPointsDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "shield_hitpoints");
 
@@ -599,7 +716,6 @@ namespace BannerCraft
 					break;
 				case ItemType.Bow:
 				case ItemType.Crossbow:
-					weightDescriptionText = GameTexts.FindText("str_crafting_stat", "Weight");
 					TextObject rangedWeaponSpeedDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "ranged_weapon_speed");
 					TextObject damageDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "missile_damage");
 					TextObject accuracyDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "accuracy");
@@ -649,7 +765,6 @@ namespace BannerCraft
 					break;
 				case ItemType.Arrows:
 				case ItemType.Bolts:
-					weightDescriptionText = GameTexts.FindText("str_crafting_stat", "Weight");
 					TextObject ammoDamageDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "missile_damage");
 					TextObject ammoStackAmountDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "ammo_stack_amount");
 
@@ -766,9 +881,18 @@ namespace BannerCraft
 
 		private MBBindingList<WeaponDesignResultPropertyItemVM> _designResultPropertyList;
 
-		public void CreateCraftingResultPopup()
+		public void CreateCraftingResultPopup(EquipmentElement equipmentElement)
 		{
-			ArmorCraftResultPopup = new ArmorCraftResultPopupVM(ExecuteFinalizeCrafting, _crafting, ItemFlagIconsList, CurrentItem.Item, DesignResultPropertyList, ItemVisualModel);
+			_equipmentElement = equipmentElement;
+
+			string itemName = "";
+			if (_equipmentElement.ItemModifier != null)
+            {
+				itemName += _equipmentElement.ItemModifier.Name.ToString();
+            };
+			itemName += CurrentItem.Item.Name.ToString();
+
+			ArmorCraftResultPopup = new ArmorCraftResultPopupVM(ExecuteFinalizeCrafting, _crafting, ItemFlagIconsList, CurrentItem.Item, itemName, DesignResultPropertyList, ItemVisualModel);
 			ArmorCraftResultPopupVisible = true;
 		}
 
@@ -824,10 +948,16 @@ namespace BannerCraft
 		{
 			DesignResultPropertyList.Clear();
 
-			foreach (CraftingListPropertyItem propertyItem in ItemProperties)
+			var modifiedValues = GenerateModifierValues(GetItemType(CurrentItem.Item), _equipmentElement);
+
+			foreach (Tuple<CraftingListPropertyItem, int> propertyItem in ItemProperties.Zip(modifiedValues, Tuple.Create))
+			//foreach (CraftingListPropertyItem propertyItem in ItemProperties)
 			{
-				DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Description, propertyItem.PropertyValue, 0f));
+				//DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Description, propertyItem.PropertyValue, 0f));
+				DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Item1.Description, propertyItem.Item1.PropertyValue, propertyItem.Item2));
 			}
 		}
+
+		private EquipmentElement _equipmentElement;
 	}
 }

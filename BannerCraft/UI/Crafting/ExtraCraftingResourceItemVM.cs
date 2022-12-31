@@ -3,6 +3,7 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.Information;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 
 namespace BannerCraft
 {
@@ -138,7 +139,7 @@ namespace BannerCraft
 			ResourceMaterial = material;
 			ResourceItem = Config.Instance.SmithingModel.GetCraftingMaterialItem(material);
 			ResourceName = ResourceItem?.Name?.ToString() ?? "none";
-			ResourceHint = new HintViewModel(new TaleWorlds.Localization.TextObject("{=!}" + ResourceName));
+			ResourceHint = new HintViewModel(new TextObject("{=!}" + ResourceName));
 			ResourceAmount = amount;
 			ResourceItemStringId = ResourceItem?.StringId ?? "none";
 			ResourceMaterialTypeAsStr = ResourceMaterial.ToString();

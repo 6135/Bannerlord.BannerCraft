@@ -146,7 +146,7 @@ namespace BannerCraft
 			}
 		}
 
-		public ArmorCraftResultPopupVM(Action onFinalize, Crafting crafting, MBBindingList<ItemFlagVM> itemFlagIconsList, ItemObject craftedItem, MBBindingList<WeaponDesignResultPropertyItemVM> designResultPropertyList, ItemCollectionElementViewModel itemVisualModel)
+		public ArmorCraftResultPopupVM(Action onFinalize, Crafting crafting, MBBindingList<ItemFlagVM> itemFlagIconsList, ItemObject craftedItem, string itemName, MBBindingList<WeaponDesignResultPropertyItemVM> designResultPropertyList, ItemCollectionElementViewModel itemVisualModel)
 		{
 			_onFinalize = onFinalize;
 			_crafting = crafting;
@@ -155,7 +155,7 @@ namespace BannerCraft
 			_craftedItem = craftedItem;
 			_itemVisualModel = itemVisualModel;
 
-			ItemName = _craftedItem.Name.ToString();
+			ItemName = itemName;
 
 			DoneLbl = GameTexts.FindText("str_done").ToString();
 		}
