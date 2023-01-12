@@ -16,7 +16,7 @@ namespace BannerCraft
         {
 			_model = model;
         }
-
+		
         public override int GetCraftingPartDifficulty(CraftingPiece craftingPiece) => _model.GetCraftingPartDifficulty(craftingPiece);
         public override int CalculateWeaponDesignDifficulty(WeaponDesign weaponDesign) => _model.CalculateWeaponDesignDifficulty(weaponDesign);
         public override int GetModifierTierForSmithedWeapon(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetModifierTierForSmithedWeapon(weaponDesign, weaponsmith);
@@ -54,7 +54,7 @@ namespace BannerCraft
                 }
             }
 
-			if (item.WeaponComponent is { PrimaryWeapon: { } })
+			if (ArmorCraftingVM.GetItemType(item) == ArmorCraftingVM.ItemType.Invalid)
             {
 				var metalCap = GetMetalMax(item.WeaponComponent.PrimaryWeapon.WeaponClass);
 				if (metalCount > 0 && metalCap > 0)
@@ -81,6 +81,20 @@ namespace BannerCraft
                 {
 					result[1]++;
                 }
+            }
+			else
+            {
+				int[] cost = GetCraftingInputForArmor(item);
+
+				for (int i = (int)CraftingMaterials.Iron6; i >= (int)CraftingMaterials.Iron3; i--)
+                {
+					if (cost[i] < 0)
+                    {
+						result[i - 1] -= (int)(cost[i] * 0.3f);
+						result[i - 2] -= (int)(cost[i] * 0.5f);
+                    }
+				}
+				result[(int)CraftingMaterials.Charcoal] = -(int)Math.Max(Math.Ceiling(item.Weight * 0.75 / GetCraftingMaterialItem(CraftingMaterials.Charcoal).Weight), 1f);
             }
 
 			return result;
@@ -187,7 +201,16 @@ namespace BannerCraft
 					result += item.WeaponComponent.PrimaryWeapon.MaxDataValue * item.WeaponComponent.PrimaryWeapon.MissileDamage;
 					result += result * item.Tierf / 6f;
 					break;
-            }
+				case ArmorCraftingVM.ItemType.Banner:
+					result += result * item.Tierf / 4f;
+					break;
+				case ArmorCraftingVM.ItemType.OneHandedWeapon:
+				case ArmorCraftingVM.ItemType.TwoHandedWeapon:
+				case ArmorCraftingVM.ItemType.Polearm:
+				case ArmorCraftingVM.ItemType.Thrown:
+					result += result * item.Tierf / 3f;
+					break;
+			}
 
 			return MBMath.ClampInt((int)result, 10, 300);
 
@@ -264,6 +287,8 @@ namespace BannerCraft
 				lowMetalRatio = 0.1f;
 			}
 
+			int woodIndex = (int)CraftingMaterials.Wood;
+
 			float weightTotal = item.Weight * 1.2f;
 
 			switch (itemType)
@@ -313,19 +338,19 @@ namespace BannerCraft
                     }
 
 					int highMetalIndex = (int)metalMaterial;
-					int midMetalIndex = (int)metalMaterial - 1;
-					int lowMetalIndex = (int)metalMaterial - 2;
+					int midMetalIndex = highMetalIndex - 1;
+					int lowMetalIndex = highMetalIndex - 2;
 
 					int clothIndex = (int)CraftingMaterials.NumCraftingMats + (int)clothMaterial;
 					int leatherIndex = (int)CraftingMaterials.NumCraftingMats + (int)leatherMaterial;
 					
-					int numMetal = (int)Math.Round(weightTotal * metalRatio / GetCraftingMaterialItem(metalMaterial).Weight);
-					int numCloth = clothRatio > 0f ? Math.Max((int)Math.Round(weightTotal * clothRatio / GetCraftingMaterialItem(clothMaterial).Weight), 1) : 0;
-					int numLeather = leatherRatio > 0f ? Math.Max((int)Math.Round(weightTotal * leatherRatio / GetCraftingMaterialItem(leatherMaterial).Weight), 1) : 0;
+					int numMetal = (int)Math.Ceiling(weightTotal * metalRatio / GetCraftingMaterialItem(metalMaterial).Weight);
+					int numCloth = clothRatio > 0f ? Math.Max((int)Math.Ceiling(weightTotal * clothRatio / GetCraftingMaterialItem(clothMaterial).Weight), 1) : 0;
+					int numLeather = leatherRatio > 0f ? Math.Max((int)Math.Ceiling(weightTotal * leatherRatio / GetCraftingMaterialItem(leatherMaterial).Weight), 1) : 0;
 
-					int numHighMetal = (int)Math.Round(numMetal * highMetalRatio);
-					int numMidMetal = (int)Math.Round(numMetal * midMetalRatio);
-					int numLowMetal = (int)Math.Round(numMetal * lowMetalRatio);
+					int numHighMetal = (int)Math.Ceiling(numMetal * highMetalRatio);
+					int numMidMetal = (int)Math.Ceiling(numMetal * midMetalRatio);
+					int numLowMetal = (int)Math.Ceiling(numMetal * lowMetalRatio);
 
 					result[highMetalIndex] = -numHighMetal;
 					result[midMetalIndex] = -numMidMetal;
@@ -347,31 +372,77 @@ namespace BannerCraft
 
 					metalRatio = itemType switch
 					{
-						ArmorCraftingVM.ItemType.Bow => 0.3f,
-						ArmorCraftingVM.ItemType.Crossbow => 0.6f,
-						ArmorCraftingVM.ItemType.Arrows => 0.1f,
-						ArmorCraftingVM.ItemType.Bolts => 0.1f,
+						ArmorCraftingVM.ItemType.Bow => 0.8f,
+						ArmorCraftingVM.ItemType.Crossbow => 1f,
+						ArmorCraftingVM.ItemType.Arrows => 0.4f,
+						ArmorCraftingVM.ItemType.Bolts => 0.4f,
 						_ => metalRatio
 					};
+
+					weightTotal = itemType switch
+					{
+						ArmorCraftingVM.ItemType.Bow => weightTotal * 4f,
+						ArmorCraftingVM.ItemType.Crossbow => weightTotal * 4f,
+						ArmorCraftingVM.ItemType.Arrows => weightTotal * item.PrimaryWeapon.MaxDataValue * 4f,
+						ArmorCraftingVM.ItemType.Bolts => weightTotal * item.PrimaryWeapon.MaxDataValue * 4f,
+						_ => weightTotal
+					};
+
 					float woodRatio = 1f - metalRatio;
 
-					int woodIndex = (int)CraftingMaterials.Wood;
 					highMetalIndex = (int)metalMaterial;
-					midMetalIndex = (int)metalMaterial - 1;
-					lowMetalIndex = (int)metalMaterial - 2;
+					midMetalIndex = highMetalIndex - 1;
+					lowMetalIndex = highMetalIndex - 2;
 
-					numMetal = (int)Math.Max(Math.Round(weightTotal * metalRatio / GetCraftingMaterialItem(metalMaterial).Weight), 1);
-					int numWood = (int)Math.Max(Math.Round(weightTotal * woodRatio / GetCraftingMaterialItem(woodMaterial).Weight), 1);
+					numMetal = (int)Math.Max(Math.Ceiling(weightTotal * metalRatio / GetCraftingMaterialItem(metalMaterial).Weight), 1);
+					int numWood = (int)Math.Max(Math.Ceiling(weightTotal * woodRatio / GetCraftingMaterialItem(woodMaterial).Weight), 1);
 
-					numHighMetal = (int)Math.Round(numMetal * highMetalRatio);
-					numMidMetal = (int)Math.Round(numMetal * midMetalRatio);
-					numLowMetal = (int)Math.Round(numMetal * lowMetalRatio);
+					numHighMetal = (int)Math.Ceiling(numMetal * highMetalRatio);
+					numMidMetal = (int)Math.Ceiling(numMetal * midMetalRatio);
+					numLowMetal = (int)Math.Ceiling(numMetal * lowMetalRatio);
 
 					result[highMetalIndex] = -numHighMetal;
 					result[midMetalIndex] = -numMidMetal;
 					result[lowMetalIndex] = -numLowMetal;
 					result[woodIndex] = -numWood;
 
+					break;
+				case ArmorCraftingVM.ItemType.Banner:
+					weightTotal *= 2f;
+
+					clothMaterial = ExtraCraftingMaterials.Velvet;
+
+					metalRatio = 0.8f;
+					clothRatio = (1f - metalRatio) / 2f;
+					woodRatio = (1f - metalRatio) / 2f;
+
+					clothIndex = (int)CraftingMaterials.NumCraftingMats + (int)clothMaterial;
+					highMetalIndex = (int)metalMaterial;
+
+					numCloth = (int)Math.Max(Math.Ceiling(weightTotal * clothRatio / GetCraftingMaterialItem(clothMaterial).Weight), 1);
+					numWood = (int)Math.Max(Math.Ceiling(weightTotal * woodRatio / GetCraftingMaterialItem(woodMaterial).Weight), 1);
+					numMetal = (int)Math.Max(Math.Ceiling(weightTotal * metalRatio / GetCraftingMaterialItem(metalMaterial).Weight), 1);
+
+					result[highMetalIndex] = -numMetal;
+					result[woodIndex] = -numWood;
+					result[clothIndex] = -numCloth;
+
+					break;
+				case ArmorCraftingVM.ItemType.OneHandedWeapon:
+				case ArmorCraftingVM.ItemType.TwoHandedWeapon:
+				case ArmorCraftingVM.ItemType.Polearm:
+				case ArmorCraftingVM.ItemType.Thrown:
+					/*
+					 * Let's not do anything fancy
+					 */
+					if (item != null && item.WeaponDesign != null)
+					{
+						var result2 = GetSmithingCostsForWeaponDesign(item.WeaponDesign);
+						for (int i = 0; i < result2.Length; i++)
+						{
+							result[i] = result2[i];
+						}
+					}
 					break;
             }
 

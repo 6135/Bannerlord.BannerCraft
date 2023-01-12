@@ -5,9 +5,88 @@
 (5 + (max(Smithing - 300, 0)))% chance legendary
 -->
 <ItemModifiers>
+	<!-- Swords -->
+	<ItemModifier modifier_group="ItemModifierGroup.sword"
+				  id="legendary_sword"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  damage="9"
+				  speed="4"
+				  price_factor="2.5" />
+	<!-- Cheap weapons (clubs and stuff?) -->
+	<ItemModifier modifier_group="ItemModifierGroup.cheap_weapon"
+				  id="legendary_cheap"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  damage="9"
+				  speed="4"
+				  price_factor="2.5" />
+	<!-- Polearms -->
+	<ItemModifier modifier_group="ItemModifierGroup.polearm"
+				  id="legendary_polearm"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  damage="9"
+				  speed="4"
+				  price_factor="2.5" />
+	<!-- Maces -->
+	<ItemModifier modifier_group="ItemModifierGroup.mace"
+				  id="legendary_mace"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  damage="9"
+				  speed="4"
+				  price_factor="2.5" />
+	<!-- Axes -->
+	<ItemModifier modifier_group="ItemModifierGroup.axe"
+				  id="legendary_axe"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  damage="9"
+				  speed="4"
+				  price_factor="2.5" />
+	<!-- Throwing Axes -->
+	<ItemModifier modifier_group="ItemModifierGroup.axe_throwing"
+				  id="legendary_axe_throwing"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  stack_count="4"
+				  damage="1"
+				  speed="1"
+				  missile_speed="9"
+				  price_factor="2.5" />
+	<!-- Throwing knives -->
+	<ItemModifier modifier_group="ItemModifierGroup.knife_throwing"
+				  id="legendary_knife_throwing"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  stack_count="6"
+				  damage="2"
+				  speed="2"
+				  missile_speed="8"
+				  price_factor="2.5" />
+	<!-- Throwing spears and darts -->
+	<ItemModifier modifier_group="ItemModifierGroup.spear_dart_throwing"
+				  id="legendary_spear_dart_throwing"
+				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
+				  loot_drop_score="0"
+				  production_drop_score="0"
+				  stack_count="4"
+				  damage="4"
+				  speed="2"
+				  missile_speed="6"
+				  price_factor="2.5" />
+	
 	<!-- Bows -->
 	<ItemModifier modifier_group="ItemModifierGroup.bow"
-				  id="masterwork_bow"
+				  id="legendary_bow"
 				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
 				  loot_drop_score="0"
 				  production_drop_score="0"
@@ -17,7 +96,7 @@
 				  price_factor="2.5" />
 	<!-- Crossbows -->
 	<ItemModifier modifier_group="ItemModifierGroup.crossbow"
-				  id="masterwork_crossbow"
+				  id="legendary_crossbow"
 				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
 				  loot_drop_score="0"
 				  production_drop_score="0"
@@ -27,7 +106,7 @@
 				  price_factor="2.5" />
 	<!-- Arrows -->
 	<ItemModifier modifier_group="ItemModifierGroup.arrow"
-				  id="balanced_arrows"
+				  id="legendary_arrows"
 				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
 				  loot_drop_score="0"
 				  production_drop_score="0"
@@ -36,7 +115,7 @@
 				  price_factor="2.5" />
 	<!-- Bolts -->
 	<ItemModifier modifier_group="ItemModifierGroup.bolt"
-				  id="balanced_bolts"
+				  id="legendary_bolts"
 				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
 				  loot_drop_score="0"
 				  production_drop_score="0"
@@ -45,7 +124,7 @@
 				  price_factor="2.5" />
 	<!-- Shields -->
 	<ItemModifier modifier_group="ItemModifierGroup.shield"
-				  id="lordly_shield"
+				  id="legendary_shield"
 				  name="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}"
 				  loot_drop_score="0"
 				  production_drop_score="0"

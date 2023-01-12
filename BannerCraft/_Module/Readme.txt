@@ -8,6 +8,8 @@ Adds armor (and other) crafting to crafting system. Adds failure chance to craft
 
 Adds armor, horse armor, shield, bow, crossbow, arrow, and bolt crafting to the game. All can be crafted even if added by mods, as long as they're in one of those categories.
 
+Adds armor, horse armor, shield, bow, crossbow, arrow, and bolt smelting to the game. All can be smelted even if added by mods, as long as they're in one of those categories and will give at least one material. Only enabled if not using vanilla smelting mode.
+
 Material costs for all are based on item tier, class, and weight. Low tier cloth and leather armors need linen or leather and some metal. High tier plate and chainmail armors need velvet and lots of metal.
 
 Smelting payouts for weapons are based on weapon class, so pugios no longer give everything you need to craft two handed swords (configurable via MCM).
@@ -22,5 +24,6 @@ Crafting skill below difficulty has a chance to add negative prefixes. The level
 
 Known issues:
 No sound when pressing the "Craft" button. The sound doesn't seem to come from anywhere in the UI system, and I wasn't able to find anything about it in the crafting code.
+When used with Better Smithing Continued, smelting non-vanilla smeltable items will remove them from the list.
 
 Special thanks to the Banner Kings mod team https://www.nexusmods.com/mountandblade2bannerlord/mods/3826 for showing how to edit the crafting system.

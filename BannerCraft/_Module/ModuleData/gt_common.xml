@@ -22,6 +22,14 @@
 	<string id="str_bannercraft_crafting_itemtype.arrows" text="{=bannercraft_crafting_itemtype_arrow}Arrows" />
 	<string id="str_bannercraft_crafting_itemtype.bolts" text="{=bannercraft_crafting_itemtype_bolt}Bolts" />
 
+	<string id="str_bannercraft_crafting_itemtype.banner" text="{=bannercraft_crafting_itemtype_barding}Banner" />
+
+	<string id="str_bannercraft_crafting_itemtype.onehandedweapon" text="{=bannercraft_crafting_itemtype_onehandedweapon}One Handed Weapon" />
+	<string id="str_bannercraft_crafting_itemtype.twohandedweapon" text="{=bannercraft_crafting_itemtype_twohandedweapon}Two Handed Weapon" />
+	<string id="str_bannercraft_crafting_itemtype.polearm" text="{=bannercraft_crafting_itemtype_polearm}Polearm" />
+	<string id="str_bannercraft_crafting_itemtype.thrown" text="{=bannercraft_crafting_itemtype_thrown}Thrown" />
+
+	<!-- Comment to break up ItemType from StatDisplay -->
 	<string id="str_bannercraft_crafting_statdisplay.headarmor" text="{=bannercraft_crafting_statdisplay_headarmor}Head Armor: " />
 	<string id="str_bannercraft_crafting_statdisplay.shoulderarmor" text="{=bannercraft_crafting_statdisplay_shoulderarmor}Shoulder Armor: " />
 	<string id="str_bannercraft_crafting_statdisplay.bodyarmor" text="{=bannercraft_crafting_statdisplay_bodyarmor}Body Armor: " />
@@ -51,5 +59,18 @@
 	<string id="str_bannercraft_crafting_stamina_display" text="{=bannercraft_crafting_stamina_display}{HERONAME} requires more stamina for this action. {HERONAME} has {CURRENT} stamina and needs {REQUIRED} stamina." />
 
 	<string id="str_bannercraft_item_modifiers_legendary" text="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}" />
+
+	<!-- MCM options go here -->
+	<string id="str_bannercraft_mcm_maximum_botch_chance" text="{=bannercraft_mcm_maximum_botch_chance}Maximum botch chance" />
+	<string id="str_bannercraft_mcm_maximum_botch_chance_description" text="{=bannercraft_mcm_maximum_botch_chance_description}Maximum chance to botch crafting when Crafting skill level is lower than difficulty." />
+	
+	<string id="str_bannercraft_mcm_use_vanilla_smelting_calculations" text="{=bannercraft_mcm_use_vanilla_smelting_calculations}Use Vanilla smelting calculations" />
+	<string id="str_bannercraft_mcm_use_vanilla_smelting_calculations_description" text="{=bannercraft_mcm_use_vanilla_smelting_calculations_description}Use vanilla smelting calculations that turn 0.8 weight pugios into 2.5 weight of materials." />
+
+	<string id="str_bannercraft_mcm_allow_smelting_other_items" text="{=bannercraft_mcm_allow_smelting_other_items}Allow smelting other items" />
+	<string id="str_bannercraft_mcm_allow_smelting_other_items_description" text="{=bannercraft_mcm_allow_smelting_other_items_description}Allow smelting other items such as armor, shields, etc as long as they return at least one material" />
+	
+	<string id="str_bannercraft_mcm_crafting_penalty_threshold" text="{=bannercraft_mcm_crafting_penalty_threshold}Crafting penalty threshold" />
+	<string id="str_bannercraft_mcm_crafting_penalty_threshold_description" text="{=bannercraft_mcm_crafting_penalty_threshold_description}How much higher your skill has to be than the item difficulty before you have no chance of making a bad item." />
 	
 </strings>

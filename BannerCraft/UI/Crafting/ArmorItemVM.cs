@@ -26,8 +26,6 @@ namespace BannerCraft
 
 		private MBBindingList<CraftingItemFlagVM> _itemFlagIcons;
 
-		private HintViewModel _hint;
-
 		[DataSourceProperty]
 		public ImageIdentifierVM ImageIdentifier
 		{
@@ -132,20 +130,7 @@ namespace BannerCraft
 		[DataSourceProperty]
 		public int Difficulty { get; }
 
-		[DataSourceProperty]
-		public HintViewModel Hint
-		{
-			get => _hint;
-			set
-            {
-				if (value != _hint)
-                {
-					_hint = value;
-					OnPropertyChangedWithValue(value, "Hint");
-                }
-            }
-		}
-
+		public EquipmentElement EquipmentElement { get; private set; }
 
 		public ArmorItemVM(ArmorCraftingVM armorCrafting, ItemObject item, ArmorCraftingVM.ItemType type)
 		{
@@ -166,7 +151,7 @@ namespace BannerCraft
 
 			Difficulty = Config.Instance.SmithingModel.CalculateArmorDifficulty(Item);
 
-			Hint = new HintViewModel(new TextObject(GenerateHintText()));
+            EquipmentElement = new EquipmentElement(item);
 		}
 
 		public void ExecuteSelect()
@@ -179,74 +164,14 @@ namespace BannerCraft
 			_armorCrafting.RefreshStats(ItemType);
 		}
 
-		private string GenerateHintText()
-        {
-			string ret = "";
-			TextObject weightDescriptionText = GameTexts.FindText("str_crafting_stat", "Weight");
-			ret += string.Format("{0}{1}\n", weightDescriptionText.ToString(), Item.Weight);
-			switch (ItemType)
-            {
-				case ArmorCraftingVM.ItemType.Invalid:
-					/*
-					 * Never reached, so let's use this to declare switch local variables
-					 */
-					
-					break;
-				case ArmorCraftingVM.ItemType.HeadArmor:
-				case ArmorCraftingVM.ItemType.ShoulderArmor:
-				case ArmorCraftingVM.ItemType.BodyArmor:
-				case ArmorCraftingVM.ItemType.ArmArmor:
-				case ArmorCraftingVM.ItemType.LegArmor:
-					TextObject headDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ArmorCraftingVM.ItemType.HeadArmor.ToString().ToLower());
-					TextObject bodyDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ArmorCraftingVM.ItemType.BodyArmor.ToString().ToLower());
-					TextObject legDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ArmorCraftingVM.ItemType.LegArmor.ToString().ToLower());
-					TextObject armDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ArmorCraftingVM.ItemType.ArmArmor.ToString().ToLower());
-					
-					ret += string.Format("{0}{1}\n", headDescriptionText.ToString(), Item.ArmorComponent.HeadArmor);
-					ret += string.Format("{0}{1}\n", bodyDescriptionText.ToString(), Item.ArmorComponent.BodyArmor);
-					ret += string.Format("{0}{1}\n", legDescriptionText.ToString(), Item.ArmorComponent.LegArmor);
-					ret += string.Format("{0}{1}", armDescriptionText.ToString(), Item.ArmorComponent.ArmArmor);
+		public void ExecuteShowItemTooltip()
+		{
+			InformationManager.ShowTooltip(typeof(ItemObject), EquipmentElement);
+		}
 
-					break;
-				case ArmorCraftingVM.ItemType.Barding:
-					TextObject horseDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ArmorCraftingVM.ItemType.Barding.ToString().ToLower());
-
-					ret += string.Format("{0}{1}", horseDescriptionText.ToString(), Item.ArmorComponent.BodyArmor);
-
-					break;
-				case ArmorCraftingVM.ItemType.Shield:
-					TextObject handlingDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "speed");
-					TextObject shieldHitPointsDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "shield_hitpoints");
-
-					ret += string.Format("{0}{1}\n", handlingDescriptionText.ToString(), Item.PrimaryWeapon.Handling);
-					ret += string.Format("{0}{1}", shieldHitPointsDescriptionText.ToString(), Item.PrimaryWeapon.MaxDataValue);
-
-					break;
-				case ArmorCraftingVM.ItemType.Bow:
-				case ArmorCraftingVM.ItemType.Crossbow:
-					TextObject rangedWeaponSpeedDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "ranged_weapon_speed");
-					TextObject damageDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "missile_damage");
-					TextObject accuracyDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "accuracy");
-					TextObject missileSpeedDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "missile_speed");
-
-					ret += string.Format("{0}{1}\n", rangedWeaponSpeedDescriptionText.ToString(), Item.PrimaryWeapon.SwingSpeed);
-					ret += string.Format("{0}{1}\n", damageDescriptionText.ToString(), Item.PrimaryWeapon.MissileDamage);
-					ret += string.Format("{0}{1}\n", accuracyDescriptionText.ToString(), Item.PrimaryWeapon.Accuracy);
-					ret += string.Format("{0}{1}", missileSpeedDescriptionText.ToString(), Item.PrimaryWeapon.MissileSpeed);
-
-					break;
-
-				case ArmorCraftingVM.ItemType.Arrows:
-				case ArmorCraftingVM.ItemType.Bolts:
-					TextObject ammoDamageDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "missile_damage");
-					TextObject ammoStackAmountDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "ammo_stack_amount");
-
-					ret += string.Format("{0}{1}\n", ammoDamageDescriptionText.ToString(), Item.PrimaryWeapon.MissileDamage);
-					ret += string.Format("{0}{1}", ammoStackAmountDescriptionText.ToString(), Item.PrimaryWeapon.MaxDataValue);
-
-					break;
-			}
-			return ret;
-        }
+		public void ExecuteHideItemTooltip()
+		{
+			MBInformationManager.HideInformations();
+		}
 	}
 }

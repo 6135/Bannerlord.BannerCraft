@@ -2,14 +2,15 @@ using Bannerlord.UIExtenderEx.Attributes;
 using Bannerlord.UIExtenderEx.ViewModels;
 using Helpers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
-using TaleWorlds.CampaignSystem.CraftingSystem;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting;
+using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.Smelting;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.Information;
 using TaleWorlds.Library;
@@ -96,7 +97,7 @@ namespace BannerCraft
 			_craftingVM = craftingVM;
 
 			Type type = typeof(CraftingVM);
-            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+			BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
 			_crafting = (Crafting)ViewModel!.GetType().GetField("_crafting", bindingFlags).GetValue(ViewModel!);
 
 			_craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
@@ -128,21 +129,21 @@ namespace BannerCraft
 		}
 
 		private int GetRequiredEnergy()
-        {
+		{
 			if (CurrentCraftingHero?.Hero != null)
-            {
+			{
 				if (IsInArmorMode)
-                {
+				{
 					if (ArmorCrafting.CurrentItem == null)
-                    {
+					{
 						return 0;
-                    }
+					}
 					return Config.Instance.SmithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
-                }
+				}
 				return Config.Instance.SmithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), CurrentCraftingHero.Hero);
-            }
+			}
 			return 0;
-        }
+		}
 
 		private bool HaveEnergy()
 		{
@@ -151,9 +152,9 @@ namespace BannerCraft
 				if (IsInArmorMode)
 				{
 					if (ArmorCrafting.CurrentItem == null)
-                    {
+					{
 						return false;
-                    }
+					}
 					return _craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) > Config.Instance.SmithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
 				}
 				return _craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) > Config.Instance.SmithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), CurrentCraftingHero.Hero);
@@ -452,19 +453,33 @@ namespace BannerCraft
 						/*
 						 * Non-negative modifier tiers are for the special ones
 						 */
-						ItemModifier modifier = null;
+						ItemModifierGroup modifierGroup = null;
 						if (   ArmorCrafting.CurrentItem.Item.HasArmorComponent
 							&& ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup != null)
 						{
-							ItemModifierGroup modifierGroup = ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup;
-							modifier = modifierGroup.GetRandomModifierWithTarget(modifierTier);	
+							modifierGroup = ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup;
 						}
-						else if (   ArmorCrafting.CurrentItem.Item.HasWeaponComponent
-							     && ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup != null)
+						else if (   ArmorCrafting.CurrentItem.Item.HasArmorComponent
+							     && ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup == null)
                         {
-							ItemModifierGroup modifierGroup = ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup;
-							modifier = modifierGroup.GetRandomModifierWithTarget(modifierTier);
+							var dict = new Dictionary<ArmorComponent.ArmorMaterialTypes, string>
+							{
+								{ ArmorComponent.ArmorMaterialTypes.Plate, "plate" },
+								{ ArmorComponent.ArmorMaterialTypes.Chainmail, "chain" },
+								{ ArmorComponent.ArmorMaterialTypes.Leather, "leather" },
+								{ ArmorComponent.ArmorMaterialTypes.Cloth, "cloth" },
+								{ ArmorComponent.ArmorMaterialTypes.None, "cloth_unarmored" }
+							};
+
+							var lookup = dict[ArmorCrafting.CurrentItem.Item.ArmorComponent.MaterialType];
+							modifierGroup = Game.Current.ObjectManager.GetObjectTypeList<ItemModifierGroup>().FirstOrDefault((ItemModifierGroup x) => x.GetName().ToString().ToLower() == lookup);
+                        }
+						else if (   ArmorCrafting.CurrentItem.Item.HasWeaponComponent
+								 && ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup != null)
+						{
+							modifierGroup = ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup;
 						}
+						ItemModifier modifier = modifierGroup?.GetRandomModifierWithTarget(modifierTier) ?? null;
 
 						if (modifier != null)
 						{

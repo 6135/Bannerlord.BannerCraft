@@ -9,6 +9,7 @@ using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.WeaponDesign;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection;
+using TaleWorlds.Core.ViewModelCollection.Selector;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 
@@ -47,6 +48,13 @@ namespace BannerCraft
 
 			Arrows,
 			Bolts,
+
+			Banner,
+
+			OneHandedWeapon,
+			TwoHandedWeapon,
+			Polearm,
+			Thrown,
 
 			Invalid
 		}
@@ -188,6 +196,7 @@ namespace BannerCraft
 					_currentItem = value;
 					OnPropertyChangedWithValue(value, "CurrentItem");
 					_mixin.OnRefresh();
+					RefreshSecondaryUsages();
 				}
 			}
 		}
@@ -346,6 +355,21 @@ namespace BannerCraft
 			}
 		}
 
+		private bool AllowItemType(ItemType itemType)
+		{
+			if (!MCMUISettings.Instance.AllowCraftingNormalWeapons)
+			{
+				if (   itemType == ItemType.OneHandedWeapon
+					|| itemType == ItemType.TwoHandedWeapon
+					|| itemType == ItemType.Polearm
+					|| itemType == ItemType.Thrown)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
 		public ArmorCraftingVM(CraftingMixin mixin, Crafting crafting)
 		{
 			_mixin = mixin;
@@ -362,6 +386,12 @@ namespace BannerCraft
 				{
 					continue;
 				}
+
+				if (!AllowItemType(value))
+				{
+					continue;
+				}
+
 				armorClasses.Add(GameTexts.FindText("str_bannercraft_crafting_itemtype", value.ToString().ToLower()));
 			}
 
@@ -398,6 +428,10 @@ namespace BannerCraft
 
 			MaxDifficulty = 300;
 
+			SecondaryUsageSelector = new SelectorVM<CraftingSecondaryUsageItemVM>(new List<string>(), 0, null);
+
+			BannerDescriptionText = "";
+
 			UpdateTierFilterFlags(ArmorPieceTierFilter.All);
 
 			RefreshArmorDesignMode(0);
@@ -415,6 +449,38 @@ namespace BannerCraft
 			RefreshDifficulty();
 		}
 
+		private bool _inBannerMode;
+
+		private string _bannerDescriptionText;
+
+        [DataSourceProperty]
+		public bool InBannerMode 
+		{ 
+			get => _inBannerMode;
+			private set
+            {
+				if (value != _inBannerMode)
+                {
+					_inBannerMode = value;
+					OnPropertyChangedWithValue(value, "InBannerMode");
+                }
+            }
+		}
+
+        [DataSourceProperty]
+		public string BannerDescriptionText
+        {
+			get => _bannerDescriptionText;
+			set
+            {
+				if (value != _bannerDescriptionText)
+                {
+					_bannerDescriptionText = value;
+					OnPropertyChangedWithValue(value, "BannerDescriptionText");
+                }
+            }
+		}
+
 		private void RefreshArmorDesignMode(int classIndex)
 		{
 			_selectedItemType = GetItemType(classIndex);
@@ -425,6 +491,36 @@ namespace BannerCraft
 			RefreshCurrentHeroSkillLevel();
 
 			RefreshDifficulty();
+
+			RefreshSecondaryUsages();
+
+			InBannerMode = false;
+			if (GetItemType(classIndex) == ItemType.Banner)
+            {
+				InBannerMode = true;
+            }
+		}
+
+		private void RefreshSecondaryUsages()
+		{
+			int usageIndex = SecondaryUsageSelector?.SelectedIndex ?? 0;
+			SecondaryUsageSelector.Refresh(new List<string>(), 0, UpdateSecondaryUsageIndex);
+
+			if (CurrentItem != null && CurrentItem.Item.Weapons != null)
+			{
+				int num = 0;
+				for (int i = 0; i < CurrentItem.Item.Weapons.Count; i++)
+				{
+					if (CampaignUIHelper.IsItemUsageApplicable(CurrentItem.Item.Weapons[i]))
+					{
+						TextObject name = GameTexts.FindText("str_weapon_usage", CurrentItem.Item.Weapons[i].WeaponDescriptionId);
+						SecondaryUsageSelector.AddItem(new CraftingSecondaryUsageItemVM(name, num, i, SecondaryUsageSelector));
+
+						num++;
+					}
+				}
+				TrySetSecondaryUsageIndex(usageIndex);
+			}
 		}
 
 		public override void RefreshValues()
@@ -437,7 +533,8 @@ namespace BannerCraft
 			{
 				ItemType itemType = GetItemType(item);
 				if (   itemType == ItemType.Invalid
-					|| itemType != _selectedItemType)
+					|| itemType != _selectedItemType
+					|| item.IsCraftedByPlayer)
 				{
 					continue;
 				}
@@ -448,6 +545,11 @@ namespace BannerCraft
 				}
 
 				Armors.Add(new ArmorItemVM(this, item, itemType));
+			}
+
+			if (!AllowItemType(_selectedItemType))
+			{
+				Armors.Clear();
 			}
 
 			Armors.Sort(_tierComparer);
@@ -492,21 +594,23 @@ namespace BannerCraft
 		}
 
 		private List<int> GenerateModifierValues(ItemType itemType, EquipmentElement element)
-        {
+		{
 			/*
 			 * This is a very fragile function that should be refactored alongside RefreshStats
 			 * But not right now
 			 */
 			if (itemType == ItemType.Invalid)
-            {
+			{
 				return null;
-            }
+			}
 
-			List<int> ret = new List<int>();
-			/*
-			 * Weight is always the first element in the stats list and it can't be changed from the modifier
-			 */
-			ret.Add(0);
+			List<int> ret = new List<int>
+			{
+				/*
+				 * Weight is always the first element in the stats list and it can't be changed from the modifier
+				*/
+				0
+			};
 
 			/*
 			 * Once again we need to get private values
@@ -554,7 +658,7 @@ namespace BannerCraft
 					shieldSpeed = 0;
 					shieldHitPoints = 0;
 					if (element.ItemModifier != null)
-                    {
+					{
 						shieldSpeed = (int)element.ItemModifier.GetType().GetField("_speed", bindingFlags).GetValue(element.ItemModifier);
 						shieldHitPoints = (short)element.ItemModifier.GetType().GetField("_hitPoints", bindingFlags).GetValue(element.ItemModifier);
 					}
@@ -569,7 +673,7 @@ namespace BannerCraft
 					int missileSpeed = 0;
 					int missileDamage = 0;
 					if (element.ItemModifier != null)
-                    {
+					{
 						speed = (int)element.ItemModifier.GetType().GetField("_speed", bindingFlags).GetValue(element.ItemModifier);
 						missileSpeed = (int)element.ItemModifier.GetType().GetField("_missileSpeed", bindingFlags).GetValue(element.ItemModifier);
 						missileDamage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
@@ -581,9 +685,9 @@ namespace BannerCraft
 					ret.Add(missileSpeed);
 
 					if (itemType == ItemType.Crossbow)
-                    {
+					{
 						ret.Add(0); // Ammo limit can't be changed
-                    }
+					}
 
 					break;
 				case ItemType.Arrows:
@@ -600,10 +704,85 @@ namespace BannerCraft
 					ret.Add(stackCount);
 
 					break;
+				case ItemType.Banner:
+
+					break;
+				case ItemType.OneHandedWeapon:
+				case ItemType.TwoHandedWeapon:
+				case ItemType.Polearm:
+				case ItemType.Thrown:
+					WeaponComponentData weaponData = element.Item.PrimaryWeapon;
+					ret.Add(0); // Can't change weapon reach
+					if (weaponData.IsMeleeWeapon)
+					{
+						if (weaponData.ThrustDamageType != DamageTypes.Invalid
+							&& weaponData.ThrustDamage > 0)
+						{
+							speed = 0;
+							if (element.ItemModifier != null)
+							{
+								speed = (int)element.ItemModifier.GetType().GetField("_speed", bindingFlags).GetValue(element.ItemModifier);
+							}
+							ret.Add(speed);
+						}
+
+						if (weaponData.SwingDamageType != DamageTypes.Invalid
+							&& weaponData.SwingDamage > 0)
+						{
+							speed = 0;
+							if (element.ItemModifier != null)
+							{
+								speed = (int)element.ItemModifier.GetType().GetField("_speed", bindingFlags).GetValue(element.ItemModifier);
+							}
+							ret.Add(speed);
+						}
+
+						if (weaponData.ThrustDamageType != DamageTypes.Invalid
+							&& weaponData.ThrustDamage > 0)
+						{
+							int damage = 0;
+							if (element.ItemModifier != null)
+							{
+								damage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
+							}
+							ret.Add(damage);
+						}
+
+						if (weaponData.SwingDamageType != DamageTypes.Invalid
+							&& weaponData.SwingDamage > 0)
+						{
+							int damage = 0;
+							if (element.ItemModifier != null)
+							{
+								damage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
+							}
+							ret.Add(damage);
+						}
+
+						ret.Add(0); // Can't change handling
+					}
+					else if (weaponData.IsRangedWeapon)
+					{
+						int damage = 0;
+						missileSpeed = 0;
+						stackCount = 0;
+						if (element.ItemModifier != null)
+						{
+							damage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
+							missileSpeed = (int)element.ItemModifier.GetType().GetField("_missileSpeed", bindingFlags).GetValue(element.ItemModifier);
+							stackCount = (short)element.ItemModifier.GetType().GetField("_stackCount", bindingFlags).GetValue(element.ItemModifier);
+						}
+						ret.Add(damage);
+						ret.Add(missileSpeed);
+						ret.Add(0); // Can't change accuracy
+						ret.Add(stackCount);
+					}
+
+					break;
 			}
 
 			return ret;
-        }
+		}
 
 		public void RefreshStats(ItemType itemType)
 		{
@@ -692,7 +871,7 @@ namespace BannerCraft
 
 					break;
 				case ItemType.Shield:
-					TextObject handlingDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "speed");
+					TextObject shieldSpeedDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "speed");
 					TextObject shieldHitPointsDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "shield_hitpoints");
 
 					itemProperty = new CraftingListPropertyItem(weightDescriptionText, 10f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
@@ -701,7 +880,7 @@ namespace BannerCraft
 					};
 					ItemProperties.Add(itemProperty);
 
-					itemProperty = new CraftingListPropertyItem(handlingDescriptionText, 150f, CurrentItem.Item.PrimaryWeapon.Handling, 0f, CraftingTemplate.CraftingStatTypes.Handling)
+					itemProperty = new CraftingListPropertyItem(shieldSpeedDescriptionText, 150f, CurrentItem.Item.PrimaryWeapon.Handling, 0f, CraftingTemplate.CraftingStatTypes.Handling)
 					{
 						IsValidForUsage = true
 					};
@@ -717,9 +896,9 @@ namespace BannerCraft
 				case ItemType.Bow:
 				case ItemType.Crossbow:
 					TextObject rangedWeaponSpeedDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "ranged_weapon_speed");
-					TextObject damageDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "missile_damage");
-					TextObject accuracyDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "accuracy");
-					TextObject missileSpeedDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "missile_speed");
+					TextObject missileDamageDescriptionText = GameTexts.FindText("str_crafting_stat", "MissileDamage");
+					TextObject accuracyDescriptionText = GameTexts.FindText("str_crafting_stat", "Accuracy");
+					TextObject missileSpeedDescriptionText = GameTexts.FindText("str_crafting_stat", "MissileSpeed");
 
 					itemProperty = new CraftingListPropertyItem(weightDescriptionText, 10f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
 					{
@@ -733,7 +912,7 @@ namespace BannerCraft
 					};
 					ItemProperties.Add(itemProperty);
 
-					itemProperty = new CraftingListPropertyItem(damageDescriptionText, 150f, CurrentItem.Item.PrimaryWeapon.MissileDamage, 0f, CraftingTemplate.CraftingStatTypes.MissileDamage)
+					itemProperty = new CraftingListPropertyItem(missileDamageDescriptionText, 150f, CurrentItem.Item.PrimaryWeapon.MissileDamage, 0f, CraftingTemplate.CraftingStatTypes.MissileDamage)
 					{
 						IsValidForUsage = true
 					};
@@ -765,8 +944,8 @@ namespace BannerCraft
 					break;
 				case ItemType.Arrows:
 				case ItemType.Bolts:
-					TextObject ammoDamageDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "missile_damage");
-					TextObject ammoStackAmountDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "ammo_stack_amount");
+					missileDamageDescriptionText = GameTexts.FindText("str_crafting_stat", "MissileDamage");
+					TextObject ammoStackAmountDescriptionText = GameTexts.FindText("str_crafting_stat", "StackAmount");
 
 					itemProperty = new CraftingListPropertyItem(weightDescriptionText, 100f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
 					{
@@ -774,7 +953,7 @@ namespace BannerCraft
 					};
 					ItemProperties.Add(itemProperty);
 
-					itemProperty = new CraftingListPropertyItem(ammoDamageDescriptionText, 10f, CurrentItem.Item.WeaponComponent.PrimaryWeapon.MissileDamage, 0f, CraftingTemplate.CraftingStatTypes.MissileDamage)
+					itemProperty = new CraftingListPropertyItem(missileDamageDescriptionText, 10f, CurrentItem.Item.WeaponComponent.PrimaryWeapon.MissileDamage, 0f, CraftingTemplate.CraftingStatTypes.MissileDamage)
 					{
 						IsValidForUsage = true
 					};
@@ -787,6 +966,141 @@ namespace BannerCraft
 					ItemProperties.Add(itemProperty);
 
 					break;
+				case ItemType.Banner:
+					itemProperty = new CraftingListPropertyItem(weightDescriptionText, 2f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
+					{
+						IsValidForUsage = true
+					};
+					ItemProperties.Add(itemProperty);
+
+					if (CurrentItem.Item.BannerComponent != null && CurrentItem.Item.BannerComponent.BannerEffect != null)
+					{
+						BannerDescriptionText = CurrentItem.Item.BannerComponent.BannerEffect.GetDescription(CurrentItem.Item.BannerComponent.BannerLevel).ToString();
+					}
+					else
+                    {
+						BannerDescriptionText = "";
+                    }
+
+					break;
+				case ItemType.OneHandedWeapon:
+				case ItemType.TwoHandedWeapon:
+				case ItemType.Polearm:
+				case ItemType.Thrown:
+					TextObject weaponReachDescriptionText = GameTexts.FindText("str_crafting_stat", "WeaponReach");
+					TextObject thrustDamageDescriptionText = GameTexts.FindText("str_crafting_stat", "ThrustDamage");
+					TextObject swingDamageDescriptionText = GameTexts.FindText("str_crafting_stat", "SwingDamage");
+					TextObject thrustSpeedDescriptionText = GameTexts.FindText("str_crafting_stat", "ThrustSpeed");
+					TextObject swingSpeedDescriptionText = GameTexts.FindText("str_crafting_stat", "SwingSpeed");
+					TextObject handlingDescriptionText = GameTexts.FindText("str_crafting_stat", "Handling");
+
+					missileDamageDescriptionText = GameTexts.FindText("str_crafting_stat", "MissileDamage");
+					missileSpeedDescriptionText = GameTexts.FindText("str_crafting_stat", "MissileSpeed");
+					accuracyDescriptionText = GameTexts.FindText("str_crafting_stat", "Accuracy");
+					ammoStackAmountDescriptionText = GameTexts.FindText("str_crafting_stat", "StackAmount");
+
+					WeaponComponentData weaponData = CurrentItem.Item.GetWeaponWithUsageIndex(SecondaryUsageSelector.SelectedIndex);
+
+					itemProperty = new CraftingListPropertyItem(weightDescriptionText, 15f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
+					{
+						IsValidForUsage = true
+					};
+					ItemProperties.Add(itemProperty);
+
+					itemProperty = new CraftingListPropertyItem(weaponReachDescriptionText, 400f, weaponData.WeaponLength, 0f, CraftingTemplate.CraftingStatTypes.WeaponReach)
+					{
+						IsValidForUsage = true
+					};
+					ItemProperties.Add(itemProperty);
+
+					if (weaponData.IsMeleeWeapon)
+					{
+						if (weaponData.ThrustDamageType != DamageTypes.Invalid
+							&& weaponData.ThrustDamage > 0)
+						{
+							itemProperty = new CraftingListPropertyItem(thrustSpeedDescriptionText, 150f, weaponData.ThrustSpeed, 0f, CraftingTemplate.CraftingStatTypes.ThrustSpeed)
+							{
+								IsValidForUsage = true
+							};
+							ItemProperties.Add(itemProperty);
+						}
+
+						if (weaponData.SwingDamageType != DamageTypes.Invalid
+							&& weaponData.SwingDamage > 0)
+						{
+							itemProperty = new CraftingListPropertyItem(swingSpeedDescriptionText, 150f, weaponData.SwingSpeed, 0f, CraftingTemplate.CraftingStatTypes.SwingSpeed)
+							{
+								IsValidForUsage = true
+							};
+							ItemProperties.Add(itemProperty);
+						}
+
+						if (weaponData.ThrustDamageType != DamageTypes.Invalid
+							&& weaponData.ThrustDamage > 0)
+						{
+							thrustDamageDescriptionText = thrustDamageDescriptionText.SetTextVariable("THRUST_DAMAGE_TYPE", GameTexts.FindText("str_inventory_dmg_type", ((int)CurrentItem.Item.PrimaryWeapon.ThrustDamageType).ToString()));
+							itemProperty = new CraftingListPropertyItem(thrustDamageDescriptionText, 200f, weaponData.ThrustDamage, 0f, CraftingTemplate.CraftingStatTypes.ThrustDamage)
+							{
+								IsValidForUsage = true
+							};
+							ItemProperties.Add(itemProperty);
+						}
+
+						if (weaponData.SwingDamageType != DamageTypes.Invalid
+							&& weaponData.SwingDamage > 0)
+						{
+							swingDamageDescriptionText = swingDamageDescriptionText.SetTextVariable("SWING_DAMAGE_TYPE", GameTexts.FindText("str_inventory_dmg_type", ((int)CurrentItem.Item.PrimaryWeapon.SwingDamageType).ToString()));
+							itemProperty = new CraftingListPropertyItem(swingDamageDescriptionText, 200f, weaponData.SwingDamage, 0f, CraftingTemplate.CraftingStatTypes.SwingDamage)
+							{
+								IsValidForUsage = true
+							};
+							ItemProperties.Add(itemProperty);
+						}
+
+						itemProperty = new CraftingListPropertyItem(handlingDescriptionText, 150f, weaponData.Handling, 0f, CraftingTemplate.CraftingStatTypes.Handling)
+						{
+							IsValidForUsage = true
+						};
+						ItemProperties.Add(itemProperty);
+					}
+
+					else if (weaponData.IsRangedWeapon)
+					{
+						if (weaponData.ThrustDamageType != DamageTypes.Invalid)
+						{
+							missileDamageDescriptionText = missileDamageDescriptionText.SetTextVariable("THRUST_DAMAGE_TYPE", GameTexts.FindText("str_inventory_dmg_type", ((int)weaponData.ThrustDamageType).ToString()));
+						}
+						else if (weaponData.SwingDamageType != DamageTypes.Invalid)
+						{
+							missileDamageDescriptionText = missileDamageDescriptionText.SetTextVariable("SWING_DAMAGE_TYPE", GameTexts.FindText("str_inventory_dmg_type", ((int)weaponData.SwingDamageType).ToString()));
+						}
+
+						itemProperty = new CraftingListPropertyItem(missileDamageDescriptionText, 200f, weaponData.MissileDamage, 0f, CraftingTemplate.CraftingStatTypes.MissileDamage)
+						{
+							IsValidForUsage = true
+						};
+						ItemProperties.Add(itemProperty);
+
+						itemProperty = new CraftingListPropertyItem(missileSpeedDescriptionText, 150f, weaponData.MissileSpeed, 0f, CraftingTemplate.CraftingStatTypes.MissileSpeed)
+						{
+							IsValidForUsage = true
+						};
+						ItemProperties.Add(itemProperty);
+
+						itemProperty = new CraftingListPropertyItem(accuracyDescriptionText, 150f, weaponData.Accuracy, 0f, CraftingTemplate.CraftingStatTypes.Accuracy)
+						{
+							IsValidForUsage = true
+						};
+						ItemProperties.Add(itemProperty);
+
+						itemProperty = new CraftingListPropertyItem(ammoStackAmountDescriptionText, 10f, weaponData.MaxDataValue, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+						{
+							IsValidForUsage = true
+						};
+						ItemProperties.Add(itemProperty);
+					}
+
+					break;
 			}
 
 			foreach (Tuple<string, TextObject> itemFlagDetail in CampaignUIHelper.GetItemFlagDetails(CurrentItem.Item.ItemFlags))
@@ -796,8 +1110,9 @@ namespace BannerCraft
 
 			if (CurrentItem.Item.HasWeaponComponent)
 			{
-				ItemObject.ItemUsageSetFlags itemUsageFlags = TaleWorlds.MountAndBlade.MBItem.GetItemUsageSetFlags(CurrentItem.Item.WeaponComponent.PrimaryWeapon.ItemUsage);
-				foreach ((string, TextObject) flagDetail in CampaignUIHelper.GetFlagDetailsForWeapon(CurrentItem.Item.WeaponComponent.PrimaryWeapon, itemUsageFlags))
+				WeaponComponentData weaponData = CurrentItem.Item.GetWeaponWithUsageIndex(SecondaryUsageSelector.SelectedIndex);
+				ItemObject.ItemUsageSetFlags itemUsageFlags = TaleWorlds.MountAndBlade.MBItem.GetItemUsageSetFlags(weaponData.ItemUsage);
+				foreach ((string, TextObject) flagDetail in CampaignUIHelper.GetFlagDetailsForWeapon(weaponData, itemUsageFlags))
 				{
 					ItemFlagIconsList.Add(new CraftingItemFlagVM(flagDetail.Item1, flagDetail.Item2, isDisplayed: true));
 				}
@@ -833,26 +1148,48 @@ namespace BannerCraft
 			}
 		}
 
-		public static ItemType GetItemType(ItemObject item) => item.ItemType switch
+		public static ItemType GetItemType(ItemObject item)
 		{
-			ItemObject.ItemTypeEnum.HeadArmor => ItemType.HeadArmor,
-			ItemObject.ItemTypeEnum.Cape => ItemType.ShoulderArmor,
-			ItemObject.ItemTypeEnum.BodyArmor => ItemType.BodyArmor,
-			ItemObject.ItemTypeEnum.HandArmor => ItemType.ArmArmor,
-			ItemObject.ItemTypeEnum.LegArmor => ItemType.LegArmor,
+			switch (item.ItemType)
+			{
+				case ItemObject.ItemTypeEnum.HeadArmor: return ItemType.HeadArmor;
+				case ItemObject.ItemTypeEnum.Cape: return ItemType.ShoulderArmor;
+				case ItemObject.ItemTypeEnum.BodyArmor: return ItemType.BodyArmor;
+				case ItemObject.ItemTypeEnum.HandArmor: return ItemType.ArmArmor;
+				case ItemObject.ItemTypeEnum.LegArmor: return ItemType.LegArmor;
 
-			ItemObject.ItemTypeEnum.HorseHarness => ItemType.Barding,
+				case ItemObject.ItemTypeEnum.HorseHarness: return ItemType.Barding;
 
-			ItemObject.ItemTypeEnum.Shield => ItemType.Shield,
+				case ItemObject.ItemTypeEnum.Shield: return ItemType.Shield;
 
-			ItemObject.ItemTypeEnum.Bow => ItemType.Bow,
-			ItemObject.ItemTypeEnum.Crossbow => ItemType.Crossbow,
+				case ItemObject.ItemTypeEnum.Bow: return ItemType.Bow;
+				case ItemObject.ItemTypeEnum.Crossbow: return ItemType.Crossbow;
 
-			ItemObject.ItemTypeEnum.Arrows => ItemType.Arrows,
-			ItemObject.ItemTypeEnum.Bolts => ItemType.Bolts,
+				case ItemObject.ItemTypeEnum.Arrows: return ItemType.Arrows;
+				case ItemObject.ItemTypeEnum.Bolts: return ItemType.Bolts;
 
-			_ => ItemType.Invalid
-		};
+				case ItemObject.ItemTypeEnum.Banner: return ItemType.Banner;
+
+				case ItemObject.ItemTypeEnum.OneHandedWeapon:
+				case ItemObject.ItemTypeEnum.TwoHandedWeapon:
+				case ItemObject.ItemTypeEnum.Polearm:
+				case ItemObject.ItemTypeEnum.Thrown:
+					if (MCMUISettings.Instance.AllowCraftingNormalWeapons)
+					{
+						switch (item.ItemType)
+						{
+							case ItemObject.ItemTypeEnum.OneHandedWeapon: return ItemType.OneHandedWeapon;
+							case ItemObject.ItemTypeEnum.TwoHandedWeapon: return ItemType.TwoHandedWeapon;
+							case ItemObject.ItemTypeEnum.Polearm: return ItemType.Polearm;
+							case ItemObject.ItemTypeEnum.Thrown: return ItemType.Thrown;
+							default: return ItemType.Invalid;
+						}
+					}
+					return ItemType.Invalid;
+
+				default: return ItemType.Invalid;
+			}
+		}
 
 		private static ItemType GetItemType(int itemType) => itemType switch
 		{
@@ -872,6 +1209,13 @@ namespace BannerCraft
 			9 => ItemType.Arrows,
 			10 => ItemType.Bolts,
 
+			11 => ItemType.Banner,
+
+			12 => ItemType.OneHandedWeapon,
+			13 => ItemType.TwoHandedWeapon,
+			14 => ItemType.Polearm,
+			15 => ItemType.Thrown,
+
 			_ => ItemType.Invalid
 		};
 
@@ -887,9 +1231,9 @@ namespace BannerCraft
 
 			string itemName = "";
 			if (_equipmentElement.ItemModifier != null)
-            {
+			{
 				itemName += _equipmentElement.ItemModifier.Name.ToString();
-            };
+			};
 			itemName += CurrentItem.Item.Name.ToString();
 
 			ArmorCraftResultPopup = new ArmorCraftResultPopupVM(ExecuteFinalizeCrafting, _crafting, ItemFlagIconsList, CurrentItem.Item, itemName, DesignResultPropertyList, ItemVisualModel);
@@ -951,13 +1295,64 @@ namespace BannerCraft
 			var modifiedValues = GenerateModifierValues(GetItemType(CurrentItem.Item), _equipmentElement);
 
 			foreach (Tuple<CraftingListPropertyItem, int> propertyItem in ItemProperties.Zip(modifiedValues, Tuple.Create))
-			//foreach (CraftingListPropertyItem propertyItem in ItemProperties)
 			{
-				//DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Description, propertyItem.PropertyValue, 0f));
 				DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Item1.Description, propertyItem.Item1.PropertyValue, propertyItem.Item2));
 			}
 		}
 
 		private EquipmentElement _equipmentElement;
+
+		private SelectorVM<CraftingSecondaryUsageItemVM> _secondaryUsageSelector;
+
+		public SelectorVM<CraftingSecondaryUsageItemVM> SecondaryUsageSelector
+		{
+			get => _secondaryUsageSelector;
+			set
+			{
+				if (value != _secondaryUsageSelector)
+				{
+					_secondaryUsageSelector = value;
+					OnPropertyChangedWithValue(value, "SecondaryUsageSelector");
+				}
+			}
+		}
+
+		private void UpdateSecondaryUsageIndex(SelectorVM<CraftingSecondaryUsageItemVM> selector)
+		{
+			if (selector.SelectedIndex != -1 && CurrentItem != null)
+			{
+				RefreshStats(CurrentItem.ItemType);
+			}
+			else
+			{
+				RefreshStats(ItemType.Invalid);
+			}
+		}
+
+		private void TrySetSecondaryUsageIndex(int usageIndex)
+		{
+			int num = 0;
+			if (DoesCurrentItemHaveSecondaryUsage(usageIndex))
+			{
+				CraftingSecondaryUsageItemVM craftingSecondaryUsageItemVM = SecondaryUsageSelector.ItemList.FirstOrDefault((CraftingSecondaryUsageItemVM x) => x.UsageIndex == usageIndex);
+				num = craftingSecondaryUsageItemVM?.SelectorIndex ?? 0;
+			}
+
+			if (num >= 0 && num < SecondaryUsageSelector.ItemList.Count)
+			{
+				SecondaryUsageSelector.SelectedIndex = num;
+				SecondaryUsageSelector.ItemList[num].IsSelected = true;
+			}
+		}
+
+		private bool DoesCurrentItemHaveSecondaryUsage(int usageIndex)
+		{
+			if (usageIndex >= 0)
+			{
+				return usageIndex < CurrentItem.Item.Weapons.Count;
+			}
+
+			return false;
+		}
 	}
 }
