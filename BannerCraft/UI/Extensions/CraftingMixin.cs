@@ -155,9 +155,9 @@ namespace BannerCraft
 					{
 						return false;
 					}
-					return _craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) > Config.Instance.SmithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
+					return _craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) >= Config.Instance.SmithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
 				}
-				return _craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) > Config.Instance.SmithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), CurrentCraftingHero.Hero);
+				return _craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) >= Config.Instance.SmithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), CurrentCraftingHero.Hero);
 			}
 
 			return true;

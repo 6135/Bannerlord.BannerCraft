@@ -198,7 +198,7 @@ namespace BannerCraft
                 }
             }
 
-			MethodInfo original = typeof(CraftingCampaignBehavior).GetMethod(nameof(CraftingCampaignBehavior.DoSmelting));
+            MethodInfo original = typeof(CraftingCampaignBehavior).GetMethod(nameof(CraftingCampaignBehavior.DoSmelting));
 			MethodInfo prefix = typeof(CraftingCampaignBehaviorPatch).GetMethod(nameof(CraftingCampaignBehaviorPatch.DoSmeltingPrefix));
 			harmony.Patch(original, prefix: new HarmonyMethod(prefix));
 

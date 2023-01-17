@@ -36,7 +36,7 @@ namespace BannerCraft
 			for (int i = 0; i < playerItemRoster.Count; i++)
 			{
 				ItemRosterElement elementCopyAtIndex = playerItemRoster.GetElementCopyAtIndex(i);
-				if (ArmorCraftingVM.GetItemType(elementCopyAtIndex.EquipmentElement.Item) != ArmorCraftingVM.ItemType.Invalid
+				if (!ArmorCraftingVM.ItemTypeIsWeapon(ArmorCraftingVM.GetItemType(elementCopyAtIndex.EquipmentElement.Item))
 					&& BannerCraftConfig.Instance.SmithingModel.GetSmeltingOutputForItem(elementCopyAtIndex.EquipmentElement.Item).Any((int x) => x > 0))
 				{
 					bool isLocked = isItemLocked(elementCopyAtIndex.EquipmentElement);
@@ -82,49 +82,49 @@ namespace BannerCraft
 		}
 	}
 
-	internal class BSCSmeltingItemRosterWrapperPatch
-	{
-		public static void PerformFullRefreshPostFix(ref bool __result, ItemRosterElement x)
-		{
-			__result = __result || ArmorCraftingVM.GetItemType(x.EquipmentElement.Item) != ArmorCraftingVM.ItemType.Invalid;
-		}
-	}
+    internal class BSCSmeltingItemRosterWrapperPatch
+    {
+        public static void PerformFullRefreshPostFix(ref bool __result, ItemRosterElement x)
+        {
+            __result = __result || ArmorCraftingVM.GetItemType(x.EquipmentElement.Item) != ArmorCraftingVM.ItemType.Invalid;
+        }
+    }
 
-	internal class BSCBetterSmeltingVMPatch
-	{
-		public static bool ItemIsVisiblePreFix(SmeltingSettings ___m_SmeltingSettings, SmithingManager ___m_SmithingManager, ref bool __result, EquipmentElement _equipmentElement)
-		{
-			ItemObject item = _equipmentElement.Item;
-			if (ArmorCraftingVM.GetItemType(item) == ArmorCraftingVM.ItemType.Invalid)
-			{
-				return true;
-			}
+    internal class BSCBetterSmeltingVMPatch
+    {
+        public static bool ItemIsVisiblePreFix(SmeltingSettings ___m_SmeltingSettings, SmithingManager ___m_SmithingManager, ref bool __result, EquipmentElement _equipmentElement)
+        {
+            ItemObject item = _equipmentElement.Item;
+            if (ArmorCraftingVM.GetItemType(item) == ArmorCraftingVM.ItemType.Invalid)
+            {
+                return true;
+            }
 
-			if (___m_SmeltingSettings.DisplayLockedWeapons && ___m_SmithingManager.SmeltingItemRoster.IsItemLocked(_equipmentElement))
-			{
-				__result = false;
-				return false;
-			}
+            if (___m_SmeltingSettings.DisplayLockedWeapons && ___m_SmithingManager.SmeltingItemRoster.IsItemLocked(_equipmentElement))
+            {
+                __result = false;
+                return false;
+            }
 
-			SmithingModel smithingModel = Campaign.Current.Models.SmithingModel;
-			int[] array = (smithingModel != null) ? smithingModel.GetSmeltingOutputForItem(item) : null;
-			if (array == null)
-			{
-				__result = false;
-				return false;
-			}
+            SmithingModel smithingModel = Campaign.Current.Models.SmithingModel;
+            int[] array = (smithingModel != null) ? smithingModel.GetSmeltingOutputForItem(item) : null;
+            if (array == null)
+            {
+                __result = false;
+                return false;
+            }
 
-			for (int i = 0; i < (int)CraftingMaterials.NumCraftingMats; i++)
-			{
-				if (array[i] > 0 && ___m_SmeltingSettings.GetMaterialIsDisplayed((CraftingMaterials)i))
-				{
-					__result = true;
-					return false;
-				}
-			}
+            for (int i = 0; i < (int)CraftingMaterials.NumCraftingMats; i++)
+            {
+                if (array[i] > 0 && ___m_SmeltingSettings.GetMaterialIsDisplayed((CraftingMaterials)i))
+                {
+                    __result = true;
+                    return false;
+                }
+            }
 
-			__result = false;
-			return false;
-		}
-	}
+            __result = false;
+            return false;
+        }
+    }
 }

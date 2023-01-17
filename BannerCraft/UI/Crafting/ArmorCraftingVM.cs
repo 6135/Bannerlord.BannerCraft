@@ -115,6 +115,8 @@ namespace BannerCraft
 
 		private TextObject _currentDifficultyTextObj;
 
+		private string _itemSearchText;
+
 		[DataSourceProperty]
 		public ArmorClassSelectionPopupVM ArmorClassSelectionPopup
 		{
@@ -355,14 +357,39 @@ namespace BannerCraft
 			}
 		}
 
-		private bool AllowItemType(ItemType itemType)
+        [DataSourceProperty]
+		public string ItemSearchText
+        {
+			get => _itemSearchText;
+			set
+            {
+				if (value != _itemSearchText)
+                {
+					_itemSearchText = value;
+					OnPropertyChangedWithValue(value, "ItemSearchText");
+					RefreshValues();
+                }
+            }
+        }
+
+		public static bool ItemTypeIsWeapon(ItemType itemType)
+		{
+			if (itemType == ItemType.OneHandedWeapon
+				|| itemType == ItemType.TwoHandedWeapon
+				|| itemType == ItemType.Polearm
+				|| itemType == ItemType.Thrown)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public static bool AllowItemType(ItemType itemType)
 		{
 			if (!MCMUISettings.Instance.AllowCraftingNormalWeapons)
 			{
-				if (   itemType == ItemType.OneHandedWeapon
-					|| itemType == ItemType.TwoHandedWeapon
-					|| itemType == ItemType.Polearm
-					|| itemType == ItemType.Thrown)
+				if (ItemTypeIsWeapon(itemType))
 				{
 					return false;
 				}
@@ -540,6 +567,12 @@ namespace BannerCraft
 				}
 
 				if (((int)_currentTierFilter & (1 << ((int)item.Tier + 1))) == 0)
+				{
+					continue;
+				}
+
+				if (!string.IsNullOrEmpty(ItemSearchText)
+					&& item.Name.ToString().IndexOf(ItemSearchText, StringComparison.OrdinalIgnoreCase) < 0)
 				{
 					continue;
 				}

@@ -1,7 +1,7 @@
  <Module>
      <Name value="BannerCraft"/>
      <Id value="BannerCraft"/>
-     <Version value="v1.0.13"/>
+     <Version value="v1.0.16"/>
      <SingleplayerModule value="true"/>
      <MultiplayerModule value="false"/>
      <DependedModules>

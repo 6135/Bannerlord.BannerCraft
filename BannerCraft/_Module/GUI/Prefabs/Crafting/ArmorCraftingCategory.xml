@@ -71,11 +71,18 @@
 						<Widget Id="ModeSelection" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginTop="10">
 							<Children>
 								<!-- Select Armor Category -->
-								<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="269" SuggestedHeight="41" VerticalAlignment="Center" HorizontalAlignment="Center" MarginRight="55" Command.Click="ExecuteOpenArmorClassSelectionPopup" Brush="Crafting.Order.CraftingModeButton" DominantSelectedState="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" GamepadNavigationIndex="1">
+								<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="269" SuggestedHeight="41" VerticalAlignment="Center" HorizontalAlignment="Left" MarginLeft="55" Command.Click="ExecuteOpenArmorClassSelectionPopup" Brush="Crafting.Order.CraftingModeButton" DominantSelectedState="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" GamepadNavigationIndex="1">
 									<Children>
-										<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginTop="10" MarginBottom="3" MarginLeft="3" MarginRight="3" Text="@ChooseArmorTypeText" Brush="Crafting.Mode.Selection.Text" />
+										<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" Text="@ChooseArmorTypeText" Brush="Crafting.Mode.Selection.Text" />
 									</Children>
 								</ButtonWidget>
+								
+								<!-- Search -->
+								<BrushWidget DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="269" SuggestedHeight="41" VerticalAlignment="Center" HorizontalAlignment="Right" MarginRight="55" Brush="SPOptions.Dropdown.Center" >
+									<Children>
+										<EditableTextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="10" MarginRight="10" MarginTop="12" MarginBottom="12" Brush="Crafting.NameInput.Text" Text="@ItemSearchText" />
+									</Children>
+								</BrushWidget>
 							</Children>
 						</Widget>
 

@@ -40,6 +40,11 @@ namespace BannerCraft
         {
 			var result = _model.GetSmeltingOutputForItem(item);
 
+			if (item == null)
+			{
+				return result;
+			}
+
 			if (MCMUISettings.Instance.DefaultSmeltingModel)
             {
 				return result;
@@ -54,7 +59,7 @@ namespace BannerCraft
                 }
             }
 
-			if (ArmorCraftingVM.GetItemType(item) == ArmorCraftingVM.ItemType.Invalid)
+			if (ArmorCraftingVM.ItemTypeIsWeapon(ArmorCraftingVM.GetItemType(item)))
             {
 				var metalCap = GetMetalMax(item.WeaponComponent.PrimaryWeapon.WeaponClass);
 				if (metalCount > 0 && metalCap > 0)
