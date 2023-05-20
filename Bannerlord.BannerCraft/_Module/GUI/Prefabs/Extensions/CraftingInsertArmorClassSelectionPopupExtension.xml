@@ -1,0 +1,1 @@
+﻿<ArmorClassSelectionPopup Id="ArmorClassSelectionPopup" DataSource="{ArmorCrafting\ArmorClassSelectionPopup}" IsVisible="@IsVisible" />

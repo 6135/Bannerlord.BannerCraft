@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<strings>
+	<string id="str_crafting_difficulty" text="{=LuF75ia3}Crafting Difficulty" />
+
+	<string id="str_bannercraft_crafting_category_armor" text="{=bannercraft_crafting_category_armor}Craft" />
+
+	<!-- These shouldn't have spaces/underscores since they map directly to the enums in the code -->
+	<string id="str_bannercraft_crafting_itemtype.headarmor" text="{=bannercraft_crafting_itemtype_headarmor}Head Armors" />
+	<string id="str_bannercraft_crafting_itemtype.shoulderarmor" text="{=bannercraft_crafting_itemtype_shoulderarmor}Shoulder Armors" />
+	<string id="str_bannercraft_crafting_itemtype.bodyarmor" text="{=bannercraft_crafting_itemtype_bodyarmor}Body Armors" />
+	<string id="str_bannercraft_crafting_itemtype.armarmor" text="{=bannercraft_crafting_itemtype_armarmor}Arm Armors" />
+	<string id="str_bannercraft_crafting_itemtype.legarmor" text="{=bannercraft_crafting_itemtype_legarmor}Leg Armors" />
+	
+	<string id="str_bannercraft_crafting_itemtype.barding" text="{=bannercraft_crafting_itemtype_barding}Bardings" />
+	
+	<string id="str_bannercraft_crafting_itemtype.shield" text="{=bannercraft_crafting_itemtype_shield}Shields" />
+
+	<string id="str_bannercraft_crafting_itemtype.bow" text="{=bannercraft_crafting_itemtype_bow}Bows" />
+	<string id="str_bannercraft_crafting_itemtype.crossbow" text="{=bannercraft_crafting_itemtype_crossbow}Crossbows" />
+
+	<string id="str_bannercraft_crafting_itemtype.arrows" text="{=bannercraft_crafting_itemtype_arrow}Arrows" />
+	<string id="str_bannercraft_crafting_itemtype.bolts" text="{=bannercraft_crafting_itemtype_bolt}Bolts" />
+
+	<string id="str_bannercraft_crafting_itemtype.banner" text="{=bannercraft_crafting_itemtype_barding}Banner" />
+
+	<string id="str_bannercraft_crafting_itemtype.onehandedweapon" text="{=bannercraft_crafting_itemtype_onehandedweapon}One Handed Weapon" />
+	<string id="str_bannercraft_crafting_itemtype.twohandedweapon" text="{=bannercraft_crafting_itemtype_twohandedweapon}Two Handed Weapon" />
+	<string id="str_bannercraft_crafting_itemtype.polearm" text="{=bannercraft_crafting_itemtype_polearm}Polearm" />
+	<string id="str_bannercraft_crafting_itemtype.thrown" text="{=bannercraft_crafting_itemtype_thrown}Thrown" />
+
+	<!-- Comment to break up ItemType from StatDisplay -->
+	<string id="str_bannercraft_crafting_statdisplay.headarmor" text="{=bannercraft_crafting_statdisplay_headarmor}Head Armor: " />
+	<string id="str_bannercraft_crafting_statdisplay.shoulderarmor" text="{=bannercraft_crafting_statdisplay_shoulderarmor}Shoulder Armor: " />
+	<string id="str_bannercraft_crafting_statdisplay.bodyarmor" text="{=bannercraft_crafting_statdisplay_bodyarmor}Body Armor: " />
+	<string id="str_bannercraft_crafting_statdisplay.armarmor" text="{=bannercraft_crafting_statdisplay_armarmor}Arm Armor: " />
+	<string id="str_bannercraft_crafting_statdisplay.legarmor" text="{=bannercraft_crafting_statdisplay_legarmor}Leg Armor: " />
+
+	<string id="str_bannercraft_crafting_statdisplay.barding" text="{=bannercraft_crafting_statdisplay_barding}Horse Armor: " />
+	
+	<!-- These are manually set, so underscores ahoy -->
+	<string id="str_bannercraft_crafting_statdisplay.speed" text="{=bannercraft_crafting_statdisplay_speed}Speed: " />
+	<string id="str_bannercraft_crafting_statdisplay.shield_hitpoints" text="{=bannercraft_crafting_statdisplay_shield_speed}Hit Points: " />
+
+	<string id="str_bannercraft_crafting_statdisplay.ranged_weapon_speed" text="{=bannercraft_crafting_statdisplay_ranged_weapon_speed}Speed: " />
+	<string id="str_bannercraft_crafting_statdisplay.missile_damage" text="{=bannercraft_crafting_statdisplay_missile_damage}Damage: " />
+	<string id="str_bannercraft_crafting_statdisplay.accuracy" text="{=bannercraft_crafting_statdisplay_accuracy}Accuracy: " />
+	<string id="str_bannercraft_crafting_statdisplay.missile_speed" text="{=bannercraft_crafting_statdisplay_missile_speed}Missile Speed: " />
+	<string id="str_bannercraft_crafting_statdisplay.ammo_limit" text="{=bannercraft_crafting_statdisplay_ammo_limit}Ammo Limit: " />
+	
+	<string id="str_bannercraft_crafting_statdisplay.ammo_stack_amount" text="{=bannercraft_crafting_statdisplay_ammo_stack_amount}Stack Amount: " />
+
+	<string id="str_bannercraft_crafting_material_type.none" text="{=bannercraft_crafting_material_type_none}None" />
+	<string id="str_bannercraft_crafting_material_type.cloth" text="{=bannercraft_crafting_material_type_none}Cloth" />
+	<string id="str_bannercraft_crafting_material_type.leather" text="{=bannercraft_crafting_material_type_none}Leather" />
+	<string id="str_bannercraft_crafting_material_type.chainmail" text="{=bannercraft_crafting_material_type_none}Chainmail" />
+	<string id="str_bannercraft_crafting_material_type.plate" text="{=bannercraft_crafting_material_type_none}Plate" />
+
+	<string id="str_bannercraft_crafting_stamina_display" text="{=bannercraft_crafting_stamina_display}{HERONAME} requires more stamina for this action. {HERONAME} has {CURRENT} stamina and needs {REQUIRED} stamina." />
+
+	<string id="str_bannercraft_item_modifiers_legendary" text="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}" />
+
+	<!-- MCM options go here -->
+	<string id="str_bannercraft_mcm_maximum_botch_chance" text="{=bannercraft_mcm_maximum_botch_chance}Maximum botch chance" />
+	<string id="str_bannercraft_mcm_maximum_botch_chance_description" text="{=bannercraft_mcm_maximum_botch_chance_description}Maximum chance to botch crafting when Crafting skill level is lower than difficulty." />
+	
+	<string id="str_bannercraft_mcm_use_vanilla_smelting_calculations" text="{=bannercraft_mcm_use_vanilla_smelting_calculations}Use Vanilla smelting calculations" />
+	<string id="str_bannercraft_mcm_use_vanilla_smelting_calculations_description" text="{=bannercraft_mcm_use_vanilla_smelting_calculations_description}Use vanilla smelting calculations that turn 0.8 weight pugios into 2.5 weight of materials." />
+
+	<string id="str_bannercraft_mcm_allow_smelting_other_items" text="{=bannercraft_mcm_allow_smelting_other_items}Allow smelting other items" />
+	<string id="str_bannercraft_mcm_allow_smelting_other_items_description" text="{=bannercraft_mcm_allow_smelting_other_items_description}Allow smelting other items such as armor, shields, etc as long as they return at least one material" />
+	
+	<string id="str_bannercraft_mcm_crafting_penalty_threshold" text="{=bannercraft_mcm_crafting_penalty_threshold}Crafting penalty threshold" />
+	<string id="str_bannercraft_mcm_crafting_penalty_threshold_description" text="{=bannercraft_mcm_crafting_penalty_threshold_description}How much higher your skill has to be than the item difficulty before you have no chance of making a bad item." />
+	
+</strings>
