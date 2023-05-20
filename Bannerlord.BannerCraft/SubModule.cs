@@ -110,9 +110,9 @@ namespace BannerCraft
         }
 	}
 
-	public class Main : MBSubModuleBase
+	public class SubModule : MBSubModuleBase
 	{
-		private static readonly string Namespace = typeof(Main).Namespace;
+		private static readonly string Namespace = typeof(SubModule).Namespace;
 
         private static readonly UIExtender _extender = new UIExtender(Namespace);
 		private readonly Harmony _harmony = new Harmony(Namespace);
@@ -138,7 +138,7 @@ namespace BannerCraft
 		{
 			base.OnSubModuleLoad();
 
-			_extender.Register(typeof(Main).Assembly);
+			_extender.Register(typeof(SubModule).Assembly);
 			_extender.Enable();
 
             MethodInfo original = typeof(CraftingCampaignBehavior).GetMethod(nameof(CraftingCampaignBehavior.DoSmelting));
