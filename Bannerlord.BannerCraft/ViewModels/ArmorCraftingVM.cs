@@ -1,4 +1,4 @@
-﻿using BannerCraft;
+﻿using Bannerlord.BannerCraft.UI.Extensions;
 using Bannerlord.UIExtenderEx.Attributes;
 using System;
 using System.Collections.Generic;

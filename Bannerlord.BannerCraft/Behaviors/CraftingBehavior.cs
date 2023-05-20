@@ -4,20 +4,20 @@ using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.Core;
 using TaleWorlds.CampaignSystem.Roster;
 
-namespace BannerCraft
+namespace Bannerlord.BannerCraft.Behaviors
 {
-	public class CraftingBehaviorBC : CraftingCampaignBehavior, ICraftingCampaignBehavior, ICampaignBehavior
-	{
-		public new void DoSmelting(Hero hero, EquipmentElement equipmentElement)
+    public class CraftingBehaviorBC : CraftingCampaignBehavior, ICraftingCampaignBehavior, ICampaignBehavior
+    {
+        public new void DoSmelting(Hero hero, EquipmentElement equipmentElement)
         {
-			ItemObject item = equipmentElement.Item;
-			if (item.WeaponDesign != null && item.WeaponDesign.Template != null)
+            ItemObject item = equipmentElement.Item;
+            if (item.WeaponDesign != null && item.WeaponDesign.Template != null)
             {
-				base.DoSmelting(hero, equipmentElement);
+                base.DoSmelting(hero, equipmentElement);
             }
 
-			ItemRoster itemRoster = MobileParty.MainParty.ItemRoster;
-			int[] smeltingOutputForItem = Campaign.Current.Models.SmithingModel.GetSmeltingOutputForItem(item);
+            ItemRoster itemRoster = MobileParty.MainParty.ItemRoster;
+            int[] smeltingOutputForItem = Campaign.Current.Models.SmithingModel.GetSmeltingOutputForItem(item);
             for (int num = 8; num >= 0; num--)
             {
                 if (smeltingOutputForItem[num] != 0)
@@ -32,5 +32,5 @@ namespace BannerCraft
             SetHeroCraftingStamina(hero, GetHeroCraftingStamina(hero) - energyCostForSmelting);
             CampaignEventDispatcher.Instance.OnEquipmentSmeltedByHero(hero, equipmentElement);
         }
-	}
+    }
 }

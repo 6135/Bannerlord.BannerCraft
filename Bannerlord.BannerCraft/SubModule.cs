@@ -3,7 +3,6 @@ using HarmonyLib;
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
-using System;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.CampaignSystem;
@@ -11,11 +10,9 @@ using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.Smelting;
 using TaleWorlds.Core;
-using TaleWorlds.Library;
-using TaleWorlds.ModuleManager;
 using TaleWorlds.MountAndBlade;
 
-namespace BannerCraft
+namespace Bannerlord.BannerCraft
 {
 	internal sealed class MCMUISettings : AttributeGlobalSettings<MCMUISettings>
 	{

@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using BannerCraft;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.Information;
