@@ -1,22 +1,16 @@
-﻿using BetterSmithingContinued.MainFrame;
-using BetterSmithingContinued.MainFrame.Persistence;
-using BetterSmithingContinued.MainFrame.UI.ViewModels;
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
-using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.Smelting;
 using TaleWorlds.Core;
-using TaleWorlds.Library;
 
 namespace BannerCraft
 {
-	internal class SmeltingVMPatch
+    internal class SmeltingVMPatch
 	{
 		public static void RefreshListPostfix(SmeltingVM __instance)
 		{
@@ -81,50 +75,4 @@ namespace BannerCraft
 			return false;
 		}
 	}
-
-    internal class BSCSmeltingItemRosterWrapperPatch
-    {
-        public static void PerformFullRefreshPostFix(ref bool __result, ItemRosterElement x)
-        {
-            __result = __result || ArmorCraftingVM.GetItemType(x.EquipmentElement.Item) != ArmorCraftingVM.ItemType.Invalid;
-        }
-    }
-
-    internal class BSCBetterSmeltingVMPatch
-    {
-        public static bool ItemIsVisiblePreFix(SmeltingSettings ___m_SmeltingSettings, SmithingManager ___m_SmithingManager, ref bool __result, EquipmentElement _equipmentElement)
-        {
-            ItemObject item = _equipmentElement.Item;
-            if (ArmorCraftingVM.GetItemType(item) == ArmorCraftingVM.ItemType.Invalid)
-            {
-                return true;
-            }
-
-            if (___m_SmeltingSettings.DisplayLockedWeapons && ___m_SmithingManager.SmeltingItemRoster.IsItemLocked(_equipmentElement))
-            {
-                __result = false;
-                return false;
-            }
-
-            SmithingModel smithingModel = Campaign.Current.Models.SmithingModel;
-            int[] array = (smithingModel != null) ? smithingModel.GetSmeltingOutputForItem(item) : null;
-            if (array == null)
-            {
-                __result = false;
-                return false;
-            }
-
-            for (int i = 0; i < (int)CraftingMaterials.NumCraftingMats; i++)
-            {
-                if (array[i] > 0 && ___m_SmeltingSettings.GetMaterialIsDisplayed((CraftingMaterials)i))
-                {
-                    __result = true;
-                    return false;
-                }
-            }
-
-            __result = false;
-            return false;
-        }
-    }
 }

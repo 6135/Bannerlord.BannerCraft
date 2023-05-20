@@ -112,11 +112,10 @@ namespace BannerCraft
 
 	public class Main : MBSubModuleBase
 	{
-		private static readonly UIExtender _extender = new(typeof(Main).Namespace!);
+		private static readonly string Namespace = typeof(Main).Namespace;
 
-		private bool OnBeforeInitialModuleScreenSetAsRootCalled {  get; set; }
-
-		private bool PatchedBSC;
+        private static readonly UIExtender _extender = new UIExtender(Namespace);
+		private readonly Harmony _harmony = new Harmony(Namespace);
 
 		protected override void OnGameStart(Game game, IGameStarter gameStarter)
 		{
@@ -140,95 +139,15 @@ namespace BannerCraft
 			base.OnSubModuleLoad();
 
 			_extender.Register(typeof(Main).Assembly);
-
 			_extender.Enable();
-
-			Harmony harmony = new Harmony("BannerCraft");
-
-            Assembly BSCMainFrameAssembly = null;
-            Type BSCSmeltingItemRosterWrapperType = null;
-            Type BSCBetterSmeltingVMType = null;
-
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            for (int i = 0; i < assemblies.Count(); i++)
-            {
-                var assembly = assemblies[i];
-                if (assembly.FullName.Contains("BetterSmithingContinued.MainFrame"))
-                {
-                    var types = assembly.GetTypes();
-                    for (int j = 0; j < types.Count(); j++)
-                    {
-                        var type = types[j];
-                        if (type.Name.Contains("Smelting"))
-                        {
-                            InformationManager.DisplayMessage(new InformationMessage(string.Format("Type {0}", type.Name)));
-                        }
-
-                        if (type.Name.Equals("SmeltingItemRosterWrapper"))
-                        {
-                            InformationManager.DisplayMessage(new InformationMessage(string.Format("Found type {0}", type.Name)));
-                            BSCSmeltingItemRosterWrapperType = type;
-                        }
-
-                        if (type.Name.Equals("BetterSmeltingVM"))
-                        {
-                            InformationManager.DisplayMessage(new InformationMessage(string.Format("Found type {0}", type.Name)));
-                            BSCBetterSmeltingVMType = type;
-                        }
-                    }
-
-                    BSCMainFrameAssembly = assembly;
-                }
-            }
-
-            if (BSCMainFrameAssembly != null && BSCSmeltingItemRosterWrapperType != null && BSCBetterSmeltingVMType != null)
-            {
-                BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                MethodInfo smeltingItemRosterWrapperOriginal = BSCSmeltingItemRosterWrapperType.GetMethod("PerformFullRefreshCheck", bindingFlags);
-                MethodInfo smeltingItemRosterWrapperPostfix = typeof(BSCSmeltingItemRosterWrapperPatch).GetMethod(nameof(BSCSmeltingItemRosterWrapperPatch.PerformFullRefreshPostFix));
-
-                MethodInfo betterSmeltingVMOriginal = BSCBetterSmeltingVMType.GetMethod("ItemIsVisible", bindingFlags);
-                MethodInfo betterSmeltingVMPrefix = typeof(BSCBetterSmeltingVMPatch).GetMethod(nameof(BSCBetterSmeltingVMPatch.ItemIsVisiblePreFix));
-
-                if (smeltingItemRosterWrapperOriginal != null && betterSmeltingVMOriginal != null)
-                {
-                    harmony.Patch(smeltingItemRosterWrapperOriginal, postfix: new HarmonyMethod(smeltingItemRosterWrapperPostfix));
-                    harmony.Patch(betterSmeltingVMOriginal, prefix: new HarmonyMethod(betterSmeltingVMPrefix));
-                    PatchedBSC = true;
-                }
-            }
 
             MethodInfo original = typeof(CraftingCampaignBehavior).GetMethod(nameof(CraftingCampaignBehavior.DoSmelting));
 			MethodInfo prefix = typeof(CraftingCampaignBehaviorPatch).GetMethod(nameof(CraftingCampaignBehaviorPatch.DoSmeltingPrefix));
-			harmony.Patch(original, prefix: new HarmonyMethod(prefix));
+			_harmony.Patch(original, prefix: new HarmonyMethod(prefix));
 
-			if (!PatchedBSC)
-			{
-				MethodInfo SmeltingVMOriginal = typeof(SmeltingVM).GetMethod(nameof(SmeltingVM.RefreshList));
-				MethodInfo SmeltingVMPostfix = typeof(SmeltingVMPatch).GetMethod(nameof(SmeltingVMPatch.RefreshListPostfix));
-				harmony.Patch(SmeltingVMOriginal, postfix: new HarmonyMethod(SmeltingVMPostfix));
-			}
-		}
-
-		protected override void OnBeforeInitialModuleScreenSetAsRoot()
-		{
-			base.OnBeforeInitialModuleScreenSetAsRoot();
-
-			if (OnBeforeInitialModuleScreenSetAsRootCalled)
-			{
-				return;
-			}
-
-			OnBeforeInitialModuleScreenSetAsRootCalled = true;
-
-			if (PatchedBSC)
-			{
-				InformationManager.DisplayMessage(new InformationMessage("BannerCraft with Better Smithing Continued patches loaded"));
-			}
-			else
-			{
-				InformationManager.DisplayMessage(new InformationMessage("BannerCraft loaded"));
-			}
+			MethodInfo SmeltingVMOriginal = typeof(SmeltingVM).GetMethod(nameof(SmeltingVM.RefreshList));
+			MethodInfo SmeltingVMPostfix = typeof(SmeltingVMPatch).GetMethod(nameof(SmeltingVMPatch.RefreshListPostfix));
+			_harmony.Patch(SmeltingVMOriginal, postfix: new HarmonyMethod(SmeltingVMPostfix));
 		}
 	}
 }
