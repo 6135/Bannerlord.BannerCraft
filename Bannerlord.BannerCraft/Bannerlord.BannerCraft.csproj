@@ -50,5 +50,10 @@
       <Replacement>$(MCMVersion)</Replacement>
     </SubModuleOverrides>
   </ItemGroup>
+  <ItemGroup>
+    <None Update="_Module\SubModule.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>
