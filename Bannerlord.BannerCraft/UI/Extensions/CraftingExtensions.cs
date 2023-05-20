@@ -4,7 +4,7 @@ using Bannerlord.UIExtenderEx.Prefabs2;
 
 namespace BannerCraft
 {
-	[PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children", "Crafting")]
+	[PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children")]
 	internal class CraftingInsertArmorModelVisualExtension : PrefabExtensionInsertPatch
 	{
 		[PrefabExtensionFileName] public string Id => "CraftingInsertArmorModelVisualExtension";
@@ -12,7 +12,7 @@ namespace BannerCraft
 		public override int Index => 0;
 	}
 
-	[PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children", "Children")]
+	[PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children")]
 	internal class CraftingInsertArmorDifficultyExtension : PrefabExtensionInsertPatch
 	{
 		[PrefabExtensionFileName] public string Id => "CraftingInsertArmorDifficultyExtension";
@@ -20,7 +20,7 @@ namespace BannerCraft
 		public override int Index => 0;
 	}
 
-	[PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children", "Children")]
+	[PrefabExtension("Crafting", "descendant::CraftingScreenWidget/Children")]
 	internal class CraftingInsertArmorExtraMaterialsExtension : PrefabExtensionInsertPatch
 	{
 		/*
@@ -31,7 +31,7 @@ namespace BannerCraft
 		public override int Index => 0;
 	}
 
-    [PrefabExtension("Crafting", "descendant::ListPanel[@Id='CategoryParent']/Children", "Crafting")]
+    [PrefabExtension("Crafting", "descendant::ListPanel[@Id='CategoryParent']/Children")]
     internal class CraftingInsertArmorCategoryExtension : PrefabExtensionInsertPatch
     {
         [PrefabExtensionFileName] public string Id => "CraftingInsertArmorCategoryExtension";
@@ -39,7 +39,7 @@ namespace BannerCraft
         public override int Index => 2;
     }
 
-    [PrefabExtension("Crafting", "descendant::Widget[@Id='RightPanel']/Children", "Crafting")]
+    [PrefabExtension("Crafting", "descendant::Widget[@Id='RightPanel']/Children")]
     internal class CraftingInsertArmorCategoryPanelExtension : PrefabExtensionInsertPatch
     {
         [PrefabExtensionFileName] public string Id => "CraftingInsertArmorCategoryPanelExtension";
@@ -47,21 +47,21 @@ namespace BannerCraft
         public override int Index => 3;
     }
 
-    [PrefabExtension("Crafting", "descendant::CraftingTemplateSelectionPopup[@Id='WeaponClassSelectionPopup']", "Crafting")]
+    [PrefabExtension("Crafting", "descendant::CraftingTemplateSelectionPopup[@Id='WeaponClassSelectionPopup']")]
 	internal class CraftingInsertArmorClassSelectionPopupExtension : PrefabExtensionInsertPatch
 	{
 		[PrefabExtensionFileName] public string Id => "CraftingInsertArmorClassSelectionPopupExtension";
 		public override InsertType Type => InsertType.Append;
 	}
 
-	[PrefabExtension("Crafting", "descendant::NewCraftedWeaponPopup[@Id='NewCraftedWeaponPopupWidget']", "Crafting")]
+	[PrefabExtension("Crafting", "descendant::NewCraftedWeaponPopup[@Id='NewCraftedWeaponPopupWidget']")]
 	internal class CraftingInsertNewCraftedArmorPopupExtension : PrefabExtensionInsertPatch
 	{
 		[PrefabExtensionFileName] public string Id => "CraftingInsertNewCraftedArmorPopupExtension";
 		public override InsertType Type => InsertType.Append;
 	}
 
-	[PrefabExtension("Crafting", "descendant::ButtonWidget[@Id='RefinementCategoryButton']", "Crafting")]
+	[PrefabExtension("Crafting", "descendant::ButtonWidget[@Id='RefinementCategoryButton']")]
 	internal class RefinementCategoryButtonPatch : PrefabExtensionSetAttributePatch
 	{
 		public override List<Attribute> Attributes => new()
@@ -70,7 +70,7 @@ namespace BannerCraft
 		};
 	}
 
-	[PrefabExtension("Crafting", "descendant::ButtonWidget[@Id='CraftingCategoryButton']", "Crafting")]
+	[PrefabExtension("Crafting", "descendant::ButtonWidget[@Id='CraftingCategoryButton']")]
 	internal class CraftingCategoryButtonPatch : PrefabExtensionSetAttributePatch
 	{
 		public override List<Attribute> Attributes => new()
@@ -79,7 +79,7 @@ namespace BannerCraft
 		};
 	}
 
-	[PrefabExtension("Crafting", "descendant::ButtonWidget[@Id='SmeltingCategoryButton']", "Crafting")]
+	[PrefabExtension("Crafting", "descendant::ButtonWidget[@Id='SmeltingCategoryButton']")]
 	internal class SmeltingCategoryButtonPatch : PrefabExtensionSetAttributePatch
 	{
 		public override List<Attribute> Attributes => new()
@@ -88,7 +88,7 @@ namespace BannerCraft
 		};
 	}
 
-	[PrefabExtension("Crafting", "descendant::ButtonWidget[@Id='MainActionButtonWidget']", "Crafting")]
+	[PrefabExtension("Crafting", "descendant::ButtonWidget[@Id='MainActionButtonWidget']")]
 	internal class MainActionButtonPatch : PrefabExtensionSetAttributePatch
 	{
 		public override List<Attribute> Attributes => new()
