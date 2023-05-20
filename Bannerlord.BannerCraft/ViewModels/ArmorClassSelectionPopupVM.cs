@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 
-namespace BannerCraft
+namespace Bannerlord.BannerCraft.ViewModels
 {
-	public class ArmorClassSelectionPopupVM : ViewModel
+    public class ArmorClassSelectionPopupVM : ViewModel
     {
         private MBBindingList<ArmorClassVM> _armorClasses;
 

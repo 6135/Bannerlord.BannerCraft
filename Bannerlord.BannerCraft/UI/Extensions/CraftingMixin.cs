@@ -1,3 +1,4 @@
+using Bannerlord.BannerCraft.ViewModels;
 using Bannerlord.UIExtenderEx.Attributes;
 using Bannerlord.UIExtenderEx.ViewModels;
 using Helpers;
@@ -18,9 +19,9 @@ using TaleWorlds.Localization;
 
 namespace BannerCraft
 {
-	using Config = BannerCraftConfig;
+    using Config = BannerCraftConfig;
 
-	[ViewModelMixin("UpdateAll")]
+    [ViewModelMixin("UpdateAll")]
 	public class CraftingMixin : BaseViewModelMixin<CraftingVM>
 	{
 		private readonly Crafting _crafting;

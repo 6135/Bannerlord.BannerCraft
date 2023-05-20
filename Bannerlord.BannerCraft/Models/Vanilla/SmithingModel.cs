@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bannerlord.BannerCraft.ViewModels;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
@@ -9,7 +10,7 @@ using static TaleWorlds.Core.ArmorComponent;
 
 namespace BannerCraft
 {
-	public class SmithingModelBC : SmithingModel
+    public class SmithingModelBC : SmithingModel
 	{
 		private SmithingModel _model;
 		public SmithingModelBC(SmithingModel model)

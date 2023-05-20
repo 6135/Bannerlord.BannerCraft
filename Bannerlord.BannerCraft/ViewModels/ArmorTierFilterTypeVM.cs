@@ -1,7 +1,7 @@
 ﻿using System;
 using TaleWorlds.Library;
 
-namespace BannerCraft
+namespace Bannerlord.BannerCraft.ViewModels
 {
     public class ArmorTierFilterTypeVM : ViewModel
     {
