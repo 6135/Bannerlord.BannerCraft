@@ -66,7 +66,7 @@ namespace BannerCraft
 				if (value != _itemType)
 				{
 					_itemType = value;
-					OnPropertyChangedWithValue(value, "ItemType");
+					OnPropertyChangedWithValue((int)value, "ItemType");
 				}
 			}
 		}
@@ -94,7 +94,7 @@ namespace BannerCraft
 				if (value != _tier)
 				{
 					_tier = value;
-					OnPropertyChangedWithValue(value, "Tier");
+					OnPropertyChangedWithValue((int)value, "Tier");
 				}
 			}
 		}
