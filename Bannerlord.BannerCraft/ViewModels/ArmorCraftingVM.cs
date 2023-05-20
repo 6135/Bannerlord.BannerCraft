@@ -1330,7 +1330,11 @@ namespace Bannerlord.BannerCraft.ViewModels
 
             foreach (Tuple<CraftingListPropertyItem, int> propertyItem in ItemProperties.Zip(modifiedValues, Tuple.Create))
             {
+#if v100 || v101 || v102 || v103
+                DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Item1.Description, propertyItem.Item1.PropertyValue, propertyItem.Item2));
+#else
                 DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Item1.Description, propertyItem.Item1.PropertyValue, propertyItem.Item2, true));
+#endif
             }
         }
 
