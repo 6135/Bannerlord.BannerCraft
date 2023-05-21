@@ -9,15 +9,6 @@ namespace Bannerlord.BannerCraft.ViewModels
 {
     using Config = BannerCraftConfig;
 
-    public enum ExtraCraftingMaterials
-    {
-        Fur,
-        Leather,
-        Linen,
-        Velvet,
-        NumExtraCraftingMats
-    }
-
     public class ExtraMaterialItemVM : ViewModel
     {
         private string _resourceName;
