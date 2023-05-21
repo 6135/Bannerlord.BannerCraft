@@ -16,6 +16,20 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private ImageIdentifierVM _imageIdentifier;
 
+        public ExtraMaterialItemVM(ExtraCraftingMaterials material, ItemObject resourceItem, int amount, int changeAmount = 0)
+        {
+            ResourceMaterial = material;
+            ResourceItem = resourceItem;
+            ResourceName = ResourceItem?.Name?.ToString() ?? "none";
+            ResourceHint = new HintViewModel(new TextObject("{=!}" + ResourceName));
+            ResourceAmount = amount;
+            ResourceItemStringId = ResourceItem?.StringId ?? "none";
+            ResourceMaterialTypeAsStr = ResourceMaterial.ToString();
+            ResourceChangeAmount = changeAmount;
+
+            ImageIdentifier = new ImageIdentifierVM(ResourceItem);
+        }
+
         public ItemObject ResourceItem { get; private set; }
         public ItemObject Material { get => ResourceItem; }
 
@@ -120,19 +134,5 @@ namespace Bannerlord.BannerCraft.ViewModels
         }
 
         [DataSourceProperty] public ImageIdentifierVM Visual { get => ImageIdentifier; }
-
-        public ExtraMaterialItemVM(ExtraCraftingMaterials material, ItemObject resourceItem, int amount, int changeAmount = 0)
-        {
-            ResourceMaterial = material;
-            ResourceItem = resourceItem;
-            ResourceName = ResourceItem?.Name?.ToString() ?? "none";
-            ResourceHint = new HintViewModel(new TextObject("{=!}" + ResourceName));
-            ResourceAmount = amount;
-            ResourceItemStringId = ResourceItem?.StringId ?? "none";
-            ResourceMaterialTypeAsStr = ResourceMaterial.ToString();
-            ResourceChangeAmount = changeAmount;
-
-            ImageIdentifier = new ImageIdentifierVM(ResourceItem);
-        }
     }
 }

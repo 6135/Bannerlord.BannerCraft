@@ -36,7 +36,7 @@
 
 								<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginTop="60" MarginBottom="60" MarginLeft="40" MarginRight="40" HorizontalAlignment="Center" Sprite="scrollable_field_9">
 									<Children>
-										<ScrollablePanel Id="ScrollablePanel" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" AutoHideScrollBars="true" ClipRect="ClipRect" InnerPanel="ClipRect\Grid" VerticalScrollbar="..\VerticalScrollbar" >
+										<ScrollablePanel Id="ScrollablePanel" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" AutoHideScrollBars="true" ClipRect="ClipRect" InnerPanel="ClipRect\Grid" VerticalScrollbar="..\VerticalScrollbar">
 											<Children>
 												<NavigationForcedScopeCollectionTargeter CollectionParent="..\ClipRect" />
 												<NavigationScopeTargeter ScopeID="TemplateSelectionScope" ScopeParent="..\ClipRect" ScopeMovements="Horizontal" AlternateScopeMovements="Vertical" AlternateMovementStepSize="6" />
@@ -48,16 +48,15 @@
 																<ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" DoNotPassEventsToChildren="true" Brush="Crafting.Order.Card" IsSelected="@IsSelected" MarginTop="!Card.Outer.Vertical.Margin" MarginBottom="!Card.Outer.Vertical.Margin" MarginLeft="!Card.Outer.Horizontal.Margin" MarginRight="!Card.Outer.Horizontal.Margin" Command.Click="ExecuteSelect" UpdateChildrenStates="true">
 																	<Children>
 																		<!-- Gradient -->
-																		<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="StdAssets\Popup\scrollable_field_gradient"/>
+																		<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="StdAssets\Popup\scrollable_field_gradient" />
 
 																		<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginTop="!Card.Inner.Vertical.Margin" MarginBottom="!Card.Inner.Vertical.Margin" MarginLeft="!Card.Inner.Horizontal.Margin" MarginRight="!Card.Inner.Horizontal.Margin" UpdateChildrenStates="true">
 																			<Children>
-																				<CraftingCardHighlightBrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="15" SuggestedHeight="15" VerticalAlignment="Top" HorizontalAlignment="Right" PositionXOffset="7" PositionYOffset="-3" Brush="Crafting.Piece.Card.NewlyUnlocked.Dot" IsVisible="@HasNewlyUnlockedPieces"/>
+																				<CraftingCardHighlightBrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="15" SuggestedHeight="15" VerticalAlignment="Top" HorizontalAlignment="Right" PositionXOffset="7" PositionYOffset="-3" Brush="Crafting.Piece.Card.NewlyUnlocked.Dot" IsVisible="@HasNewlyUnlockedPieces" />
 																				<ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="VerticalBottomToTop" MarginTop="10" UpdateChildrenStates="true">
 																					<Children>
 																						<!-- Header -->
 																						<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="40" Text="@TemplateName" Brush="Crafting.Order.Card.Header" VerticalAlignment="Center" HorizontalAlignment="Center" />
-
 																					</Children>
 																				</ListPanel>
 																			</Children>
@@ -69,7 +68,6 @@
 													</Children>
 												</Widget>
 											</Children>
-
 										</ScrollablePanel>
 
 										<ScrollbarWidget Id="VerticalScrollbar" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="8" HorizontalAlignment="Right" VerticalAlignment="Center" MarginRight="8" MarginTop="15" MarginBottom="15" AlignmentAxis="Vertical" Handle="VerticalScrollbarHandle" MaxValue="100" MinValue="0">
@@ -83,7 +81,7 @@
 
 								<!-- Close Button -->
 								<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="70" HorizontalAlignment="Right" VerticalAlignment="Top" Brush="Popup.CloseButton" Command.Click="ExecuteClosePopup" />
-							</Children>							
+							</Children>
 						</Widget>
 					</Children>
 				</Widget>

@@ -33,6 +33,20 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private MBBindingList<WeaponDesignResultPropertyItemVM> _designResultPropertyList;
 
+        public ArmorCraftResultPopupVM(Action onFinalize, Crafting crafting, MBBindingList<ItemFlagVM> itemFlagIconsList, ItemObject craftedItem, string itemName, MBBindingList<WeaponDesignResultPropertyItemVM> designResultPropertyList, ItemCollectionElementViewModel itemVisualModel)
+        {
+            _onFinalize = onFinalize;
+            _crafting = crafting;
+            ItemFlagIconsList = itemFlagIconsList;
+            DesignResultPropertyList = designResultPropertyList;
+            _craftedItem = craftedItem;
+            _itemVisualModel = itemVisualModel;
+
+            ItemName = itemName;
+
+            DoneLbl = GameTexts.FindText("str_done").ToString();
+        }
+
         [DataSourceProperty]
         public ItemCollectionElementViewModel ItemVisualModel
         {
@@ -146,20 +160,6 @@ namespace Bannerlord.BannerCraft.ViewModels
             }
         }
 
-        public ArmorCraftResultPopupVM(Action onFinalize, Crafting crafting, MBBindingList<ItemFlagVM> itemFlagIconsList, ItemObject craftedItem, string itemName, MBBindingList<WeaponDesignResultPropertyItemVM> designResultPropertyList, ItemCollectionElementViewModel itemVisualModel)
-        {
-            _onFinalize = onFinalize;
-            _crafting = crafting;
-            ItemFlagIconsList = itemFlagIconsList;
-            DesignResultPropertyList = designResultPropertyList;
-            _craftedItem = craftedItem;
-            _itemVisualModel = itemVisualModel;
-
-            ItemName = itemName;
-
-            DoneLbl = GameTexts.FindText("str_done").ToString();
-        }
-
         public override void RefreshValues()
         {
             base.RefreshValues();
@@ -180,7 +180,11 @@ namespace Bannerlord.BannerCraft.ViewModels
                 ItemType.Bolts => "Bolts Crafted!",
                 _ => "Something Crafted!"
             };
+        }
 
+        public void ExecuteFinalizeCrafting()
+        {
+            _onFinalize?.Invoke();
         }
 
         private void UpdateCanConfirmAvailability()
@@ -191,11 +195,6 @@ namespace Bannerlord.BannerCraft.ViewModels
                 CanConfirm = false;
                 ConfirmDisabledReasonHint = new HintViewModel(new TextObject("{=QQ03J6sf}Item name can not be empty."));
             }
-        }
-
-        public void ExecuteFinalizeCrafting()
-        {
-            _onFinalize?.Invoke();
         }
     }
 }

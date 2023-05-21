@@ -1,10 +1,10 @@
-﻿using Bannerlord.BannerCraft.Models;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.Patches;
 using Bannerlord.UIExtenderEx;
 using HarmonyLib;
-using System;
-using System.Linq;
-using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
@@ -16,7 +16,7 @@ namespace Bannerlord.BannerCraft
 {
     public class SubModule : MBSubModuleBase
     {
-		private static readonly string Namespace = typeof(SubModule).Namespace;
+        private static readonly string Namespace = typeof(SubModule).Namespace;
 
         private readonly UIExtender _extender = new UIExtender(Namespace);
         private readonly Harmony _harmony = new Harmony(Namespace);
@@ -36,7 +36,7 @@ namespace Bannerlord.BannerCraft
             {
                 throw new InvalidOperationException("Default SmithingModel was not found.");
             }
-            
+
             gameStarter.AddModel(new BannerCraftSmithingModel(smithingModel));
         }
 

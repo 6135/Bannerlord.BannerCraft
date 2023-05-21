@@ -1,13 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Bannerlord.BannerCraft.Extensions;
 using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.ViewModels;
 using Bannerlord.UIExtenderEx.Attributes;
 using Bannerlord.UIExtenderEx.ViewModels;
 using Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Party;
@@ -15,7 +15,6 @@ using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.Information;
-using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 
@@ -36,6 +35,42 @@ namespace Bannerlord.BannerCraft.UI.Extensions
         private ArmorCraftingVM _armorCrafting;
 
         private MBBindingList<ExtraMaterialItemVM> _craftingResourceItems;
+
+        public CraftingMixin(CraftingVM craftingVM) : base(craftingVM)
+        {
+            _craftingVM = craftingVM;
+
+            Type type = typeof(CraftingVM);
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+            _crafting = (Crafting)ViewModel!.GetType().GetField("_crafting", bindingFlags).GetValue(ViewModel!);
+
+            _craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
+
+            ArmorText = GameTexts.FindText("str_bannercraft_crafting_category_armor").ToString();
+
+            ArmorCrafting = new ArmorCraftingVM(this, _crafting);
+
+            if (Campaign.Current.GameMode == CampaignGameMode.Campaign)
+            {
+                _craftingVM.AvailableCharactersForSmithing.Clear();
+                foreach (Hero item in CraftingHelper.GetAvailableHeroesForCrafting())
+                {
+                    AvailableCharactersForSmithing.Add(new CraftingAvailableHeroItemVM(item, UpdateCraftingHero));
+                }
+
+                CurrentCraftingHero = AvailableCharactersForSmithing.FirstOrDefault();
+            }
+            else
+            {
+                CurrentCraftingHero = new CraftingAvailableHeroItemVM(Hero.MainHero, UpdateCraftingHero);
+            }
+
+            CurrentCraftingHero = AvailableCharactersForSmithing.FirstOrDefault();
+
+            _craftingVM.ExecuteSwitchToCrafting();
+
+            UpdateAll();
+        }
 
         [DataSourceProperty]
         public bool IsInArmorMode
@@ -93,40 +128,220 @@ namespace Bannerlord.BannerCraft.UI.Extensions
             }
         }
 
-        public CraftingMixin(CraftingVM craftingVM) : base(craftingVM)
+        [DataSourceProperty]
+        public MBBindingList<CraftingAvailableHeroItemVM> AvailableCharactersForSmithing
         {
-            _craftingVM = craftingVM;
-
-            Type type = typeof(CraftingVM);
-            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-            _crafting = (Crafting)ViewModel!.GetType().GetField("_crafting", bindingFlags).GetValue(ViewModel!);
-
-            _craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
-
-            ArmorText = GameTexts.FindText("str_bannercraft_crafting_category_armor").ToString();
-
-            ArmorCrafting = new ArmorCraftingVM(this, _crafting);
-
-            if (Campaign.Current.GameMode == CampaignGameMode.Campaign)
+            get => _craftingVM.AvailableCharactersForSmithing;
+            set
             {
-                _craftingVM.AvailableCharactersForSmithing.Clear();
-                foreach (Hero item in CraftingHelper.GetAvailableHeroesForCrafting())
+                if (value != _craftingVM.AvailableCharactersForSmithing)
                 {
-                    AvailableCharactersForSmithing.Add(new CraftingAvailableHeroItemVM(item, UpdateCraftingHero));
+                    _craftingVM.AvailableCharactersForSmithing = value;
+                    ViewModel!.OnPropertyChangedWithValue(value, "AvailableCharactersForSmithing");
+                }
+            }
+        }
+
+        [DataSourceProperty]
+        public CraftingAvailableHeroItemVM CurrentCraftingHero
+        {
+            get => _craftingVM.CurrentCraftingHero;
+            set
+            {
+                if (value != _craftingVM.CurrentCraftingHero)
+                {
+                    _craftingVM.CurrentCraftingHero = value;
+                    ViewModel!.OnPropertyChangedWithValue(value, "CurrentCraftingHero");
+                }
+            }
+        }
+
+        public override void OnRefresh()
+        {
+            base.OnRefresh();
+
+            if (_craftingVM.IsInCraftingMode || _craftingVM.IsInRefinementMode || _craftingVM.IsInSmeltingMode)
+            {
+                IsInArmorMode = false;
+                return;
+            }
+
+            ArmorCrafting?.UpdateCraftingHero(CurrentCraftingHero);
+
+            UpdateAll();
+        }
+
+        [DataSourceMethod]
+        public void ExecuteMainActionBannerCraft()
+        {
+            if (_craftingVM.IsInRefinementMode || _craftingVM.IsInSmeltingMode)
+            {
+                _craftingVM.ExecuteMainAction();
+                return;
+            }
+
+            ICraftingCampaignBehavior craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
+
+            if (!HaveMaterialsNeeded() || !HaveEnergy())
+            {
+                return;
+            }
+
+            var baseSmithingModel = Campaign.Current.Models.SmithingModel;
+            var smithingModel = baseSmithingModel as BannerCraftSmithingModel;
+
+            if (smithingModel is null)
+            {
+                throw new InvalidOperationException("BannerCraft's SmithingModel is null.");
+            }
+
+            int craftingXp;
+            if (!IsInArmorMode)
+            {
+                float botchChance;
+                if (_craftingVM.WeaponDesign.IsInOrderMode)
+                {
+                    botchChance = smithingModel.CalculateBotchingChance(_craftingVM.CurrentCraftingHero.Hero, _craftingVM.WeaponDesign.CurrentOrderDifficulty);
+                }
+                else
+                {
+                    botchChance = smithingModel.CalculateBotchingChance(_craftingVM.CurrentCraftingHero.Hero, _craftingVM.WeaponDesign.CurrentDifficulty);
                 }
 
-                CurrentCraftingHero = AvailableCharactersForSmithing.FirstOrDefault();
+                if (MBRandom.RandomFloat < botchChance)
+                {
+                    SpendMaterials(_crafting.CurrentWeaponDesign);
+
+                    /*
+					 * Crafting is botched, materials spent, item not crafted
+					 */
+                    MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
+                            .SetTextVariable("HERO", CurrentCraftingHero.Hero.Name)
+                            .SetTextVariable("ITEM", _crafting.CraftedWeaponName),
+                        0, null, "event:/ui/notification/relation");
+
+                    int energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), CurrentCraftingHero.Hero) / 2;
+                    craftingBehavior.SetHeroCraftingStamina(CurrentCraftingHero.Hero, craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) - energyCostForSmithing);
+                }
+                else
+                {
+                    _craftingVM.ExecuteMainAction();
+                }
             }
             else
             {
-                CurrentCraftingHero = new CraftingAvailableHeroItemVM(Hero.MainHero, UpdateCraftingHero);
+                float botchChance = smithingModel.CalculateBotchingChance(_craftingVM.CurrentCraftingHero.Hero, ArmorCrafting.CurrentItem.Difficulty);
+
+                SpendMaterials();
+
+                int energyCostForCrafting = smithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
+
+                craftingXp = smithingModel.GetSkillXpForSmithingInFreeBuildMode(ArmorCrafting.CurrentItem.Item);
+
+                if (MBRandom.RandomFloat < botchChance)
+                {
+                    /*
+					 * Crafting is botched, materials spent, item not crafted
+					 */
+                    MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
+                            .SetTextVariable("HERO", CurrentCraftingHero.Hero.Name)
+                            .SetTextVariable("ITEM", ArmorCrafting.CurrentItem.Item.Name),
+                        0, null, "event:/ui/notification/relation");
+
+                    energyCostForCrafting /= 2;
+                }
+                else
+                {
+                    EquipmentElement element = new EquipmentElement(ArmorCrafting.CurrentItem.Item);
+
+                    int modifierTier = smithingModel.GetModifierTierForItem(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
+                    if (modifierTier >= 0)
+                    {
+                        /*
+						 * Non-negative modifier tiers are for the special ones
+						 */
+                        ItemModifierGroup modifierGroup = null;
+                        if (ArmorCrafting.CurrentItem.Item.HasArmorComponent
+                            && ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup != null)
+                        {
+                            modifierGroup = ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup;
+                        }
+                        else if (ArmorCrafting.CurrentItem.Item.HasArmorComponent
+                                 && ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup == null)
+                        {
+                            var dict = new Dictionary<ArmorComponent.ArmorMaterialTypes, string>
+                            {
+                                { ArmorComponent.ArmorMaterialTypes.Plate, "plate" },
+                                { ArmorComponent.ArmorMaterialTypes.Chainmail, "chain" },
+                                { ArmorComponent.ArmorMaterialTypes.Leather, "leather" },
+                                { ArmorComponent.ArmorMaterialTypes.Cloth, "cloth" },
+                                { ArmorComponent.ArmorMaterialTypes.None, "cloth_unarmored" }
+                            };
+
+                            var lookup = dict[ArmorCrafting.CurrentItem.Item.ArmorComponent.MaterialType];
+                            modifierGroup = Game.Current.ObjectManager.GetObjectTypeList<ItemModifierGroup>().FirstOrDefault((x) => x.GetName().ToString().ToLower() == lookup);
+                        }
+                        else if (ArmorCrafting.CurrentItem.Item.HasWeaponComponent
+                                 && ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup != null)
+                        {
+                            modifierGroup = ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup;
+                        }
+                        ItemModifier modifier = modifierGroup?.GetRandomModifierWithTarget(modifierTier) ?? null;
+
+                        if (modifier != null)
+                        {
+                            element.SetModifier(modifier);
+                        }
+                    }
+
+                    ArmorCrafting.CreateCraftingResultPopup(element);
+                    MobileParty.MainParty.ItemRoster.AddToCounts(element, 1);
+                }
+
+                craftingBehavior.SetHeroCraftingStamina(CurrentCraftingHero.Hero, craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) - energyCostForCrafting);
+                CurrentCraftingHero.Hero.AddSkillXp(DefaultSkills.Crafting, craftingXp);
+
+                ArmorCrafting.UpdateCraftingHero(CurrentCraftingHero);
             }
 
-            CurrentCraftingHero = AvailableCharactersForSmithing.FirstOrDefault();
+            UpdateAll();
+        }
 
-            _craftingVM.ExecuteSwitchToCrafting();
+        [DataSourceMethod]
+        public void ExecuteSwitchToArmor()
+        {
+            _craftingVM.IsInSmeltingMode = false;
+            _craftingVM.IsInCraftingMode = false;
+            _craftingVM.IsInRefinementMode = false;
+            IsInArmorMode = true;
+
+            ViewModel?.OnItemRefreshed?.Invoke(isItemVisible: false);
+
+            string t = GameTexts.FindText("str_bannercraft_crafting_category_armor").ToString();
+            _craftingVM.CurrentCategoryText = t;
+            _craftingVM.MainActionText = t;
+
+            ArmorCrafting?.UpdateCraftingHero(CurrentCraftingHero);
 
             UpdateAll();
+        }
+
+        [DataSourceMethod]
+        public void CloseWithWait()
+        {
+            _craftingVM.ExecuteCancel();
+        }
+
+        public void UpdateCraftingHero(CraftingAvailableHeroItemVM newHero)
+        {
+            _craftingVM.UpdateCraftingHero(newHero);
+
+            ArmorCrafting.UpdateCraftingHero(newHero);
+
+            UpdateCurrentMaterialCosts();
+
+            RefreshEnableMainAction();
+            UpdateCraftingSkills();
         }
 
         private int GetRequiredEnergy()
@@ -340,21 +555,6 @@ namespace Bannerlord.BannerCraft.UI.Extensions
             UpdateCraftingSkills();
         }
 
-        public override void OnRefresh()
-        {
-            base.OnRefresh();
-
-            if (_craftingVM.IsInCraftingMode || _craftingVM.IsInRefinementMode || _craftingVM.IsInSmeltingMode)
-            {
-                IsInArmorMode = false;
-                return;
-            }
-
-            ArmorCrafting?.UpdateCraftingHero(CurrentCraftingHero);
-
-            UpdateAll();
-        }
-
         private void SpendMaterials(WeaponDesign weaponDesign)
         {
             ItemRoster itemRoster = MobileParty.MainParty.ItemRoster;
@@ -392,208 +592,6 @@ namespace Bannerlord.BannerCraft.UI.Extensions
                     }
                 }
             }
-        }
-
-        [DataSourceMethod]
-        public void ExecuteMainActionBannerCraft()
-        {
-            if (_craftingVM.IsInRefinementMode || _craftingVM.IsInSmeltingMode)
-            {
-                _craftingVM.ExecuteMainAction();
-                return;
-            }
-
-            ICraftingCampaignBehavior craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
-
-            if (!HaveMaterialsNeeded() || !HaveEnergy())
-            {
-                return;
-            }
-
-            var baseSmithingModel = Campaign.Current.Models.SmithingModel;
-            var smithingModel = baseSmithingModel as BannerCraftSmithingModel;
-
-            if (smithingModel is null)
-            {
-                throw new InvalidOperationException("BannerCraft's SmithingModel is null.");
-            }
-
-            int craftingXp;
-            if (!IsInArmorMode)
-            {
-                float botchChance;
-                if (_craftingVM.WeaponDesign.IsInOrderMode)
-                {
-                    botchChance = smithingModel.CalculateBotchingChance(_craftingVM.CurrentCraftingHero.Hero, _craftingVM.WeaponDesign.CurrentOrderDifficulty);
-                }
-                else
-                {
-                    botchChance = smithingModel.CalculateBotchingChance(_craftingVM.CurrentCraftingHero.Hero, _craftingVM.WeaponDesign.CurrentDifficulty);
-                }
-
-                if (MBRandom.RandomFloat < botchChance)
-                {
-                    SpendMaterials(_crafting.CurrentWeaponDesign);
-
-                    /*
-					 * Crafting is botched, materials spent, item not crafted
-					 */
-                    MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
-                            .SetTextVariable("HERO", CurrentCraftingHero.Hero.Name)
-                            .SetTextVariable("ITEM", _crafting.CraftedWeaponName),
-                        0, null, "event:/ui/notification/relation");
-
-
-                    int energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), CurrentCraftingHero.Hero) / 2;
-                    craftingBehavior.SetHeroCraftingStamina(CurrentCraftingHero.Hero, craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) - energyCostForSmithing);
-                }
-                else
-                {
-                    _craftingVM.ExecuteMainAction();
-                }
-            }
-            else
-            {
-                float botchChance = smithingModel.CalculateBotchingChance(_craftingVM.CurrentCraftingHero.Hero, ArmorCrafting.CurrentItem.Difficulty);
-
-                SpendMaterials();
-
-                int energyCostForCrafting = smithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
-
-                craftingXp = smithingModel.GetSkillXpForSmithingInFreeBuildMode(ArmorCrafting.CurrentItem.Item);
-
-                if (MBRandom.RandomFloat < botchChance)
-                {
-                    /*
-					 * Crafting is botched, materials spent, item not crafted
-					 */
-                    MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
-                            .SetTextVariable("HERO", CurrentCraftingHero.Hero.Name)
-                            .SetTextVariable("ITEM", ArmorCrafting.CurrentItem.Item.Name),
-                        0, null, "event:/ui/notification/relation");
-
-                    energyCostForCrafting /= 2;
-                }
-                else
-                {
-                    EquipmentElement element = new EquipmentElement(ArmorCrafting.CurrentItem.Item);
-
-                    int modifierTier = smithingModel.GetModifierTierForItem(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
-                    if (modifierTier >= 0)
-                    {
-                        /*
-						 * Non-negative modifier tiers are for the special ones
-						 */
-                        ItemModifierGroup modifierGroup = null;
-                        if (ArmorCrafting.CurrentItem.Item.HasArmorComponent
-                            && ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup != null)
-                        {
-                            modifierGroup = ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup;
-                        }
-                        else if (ArmorCrafting.CurrentItem.Item.HasArmorComponent
-                                 && ArmorCrafting.CurrentItem.Item.ArmorComponent.ItemModifierGroup == null)
-                        {
-                            var dict = new Dictionary<ArmorComponent.ArmorMaterialTypes, string>
-                            {
-                                { ArmorComponent.ArmorMaterialTypes.Plate, "plate" },
-                                { ArmorComponent.ArmorMaterialTypes.Chainmail, "chain" },
-                                { ArmorComponent.ArmorMaterialTypes.Leather, "leather" },
-                                { ArmorComponent.ArmorMaterialTypes.Cloth, "cloth" },
-                                { ArmorComponent.ArmorMaterialTypes.None, "cloth_unarmored" }
-                            };
-
-                            var lookup = dict[ArmorCrafting.CurrentItem.Item.ArmorComponent.MaterialType];
-                            modifierGroup = Game.Current.ObjectManager.GetObjectTypeList<ItemModifierGroup>().FirstOrDefault((x) => x.GetName().ToString().ToLower() == lookup);
-                        }
-                        else if (ArmorCrafting.CurrentItem.Item.HasWeaponComponent
-                                 && ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup != null)
-                        {
-                            modifierGroup = ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup;
-                        }
-                        ItemModifier modifier = modifierGroup?.GetRandomModifierWithTarget(modifierTier) ?? null;
-
-                        if (modifier != null)
-                        {
-                            element.SetModifier(modifier);
-                        }
-                    }
-
-                    ArmorCrafting.CreateCraftingResultPopup(element);
-                    MobileParty.MainParty.ItemRoster.AddToCounts(element, 1);
-                }
-
-                craftingBehavior.SetHeroCraftingStamina(CurrentCraftingHero.Hero, craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) - energyCostForCrafting);
-                CurrentCraftingHero.Hero.AddSkillXp(DefaultSkills.Crafting, craftingXp);
-
-                ArmorCrafting.UpdateCraftingHero(CurrentCraftingHero);
-            }
-
-            UpdateAll();
-        }
-
-        [DataSourceMethod]
-        public void ExecuteSwitchToArmor()
-        {
-            _craftingVM.IsInSmeltingMode = false;
-            _craftingVM.IsInCraftingMode = false;
-            _craftingVM.IsInRefinementMode = false;
-            IsInArmorMode = true;
-
-            ViewModel?.OnItemRefreshed?.Invoke(isItemVisible: false);
-
-            string t = GameTexts.FindText("str_bannercraft_crafting_category_armor").ToString();
-            _craftingVM.CurrentCategoryText = t;
-            _craftingVM.MainActionText = t;
-
-            ArmorCrafting?.UpdateCraftingHero(CurrentCraftingHero);
-
-            UpdateAll();
-        }
-
-        [DataSourceMethod]
-        public void CloseWithWait()
-        {
-            _craftingVM.ExecuteCancel();
-        }
-
-        [DataSourceProperty]
-        public MBBindingList<CraftingAvailableHeroItemVM> AvailableCharactersForSmithing
-        {
-            get => _craftingVM.AvailableCharactersForSmithing;
-            set
-            {
-                if (value != _craftingVM.AvailableCharactersForSmithing)
-                {
-                    _craftingVM.AvailableCharactersForSmithing = value;
-                    ViewModel!.OnPropertyChangedWithValue(value, "AvailableCharactersForSmithing");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public CraftingAvailableHeroItemVM CurrentCraftingHero
-        {
-            get => _craftingVM.CurrentCraftingHero;
-            set
-            {
-                if (value != _craftingVM.CurrentCraftingHero)
-                {
-                    _craftingVM.CurrentCraftingHero = value;
-                    ViewModel!.OnPropertyChangedWithValue(value, "CurrentCraftingHero");
-                }
-            }
-        }
-
-        public void UpdateCraftingHero(CraftingAvailableHeroItemVM newHero)
-        {
-            _craftingVM.UpdateCraftingHero(newHero);
-
-            ArmorCrafting.UpdateCraftingHero(newHero);
-
-            UpdateCurrentMaterialCosts();
-
-            RefreshEnableMainAction();
-            UpdateCraftingSkills();
         }
     }
 }

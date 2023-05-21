@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Module xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/BUTR/Bannerlord.XmlSchemas/master/SubModule.xsd" >
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/BUTR/Bannerlord.XmlSchemas/master/SubModule.xsd">
   <Id value="$modulename$" />
   <Name value="$displayname$" />
   <Version value="v$version$" />
   <DefaultModule value="false" />
-  <ModuleCategory value="Singleplayer"/>
+  <ModuleCategory value="Singleplayer" />
   <ModuleType value="Community" />
   <DependedModules>
     <DependedModule Id="Bannerlord.Harmony" DependentVersion="v$harmonyversion$" />

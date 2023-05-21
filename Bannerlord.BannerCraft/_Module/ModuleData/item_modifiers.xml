@@ -83,7 +83,7 @@
 				  speed="2"
 				  missile_speed="6"
 				  price_factor="2.5" />
-	
+
 	<!-- Bows -->
 	<ItemModifier modifier_group="ItemModifierGroup.bow"
 				  id="legendary_bow"

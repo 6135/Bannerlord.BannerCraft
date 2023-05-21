@@ -11,6 +11,13 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private string _tierName;
 
+        public ArmorTierFilterTypeVM(ArmorPieceTierFlag filterType, Action<ArmorPieceTierFlag> onSelect, string tierName)
+        {
+            FilterType = filterType;
+            _onSelect = onSelect;
+            TierName = tierName;
+        }
+
         public ArmorPieceTierFlag FilterType { get; }
 
         [DataSourceProperty]
@@ -45,13 +52,6 @@ namespace Bannerlord.BannerCraft.ViewModels
                     OnPropertyChangedWithValue(value, "TierName");
                 }
             }
-        }
-
-        public ArmorTierFilterTypeVM(ArmorPieceTierFlag filterType, Action<ArmorPieceTierFlag> onSelect, string tierName)
-        {
-            FilterType = filterType;
-            _onSelect = onSelect;
-            TierName = tierName;
         }
 
         public void ExecuteSelectTier()

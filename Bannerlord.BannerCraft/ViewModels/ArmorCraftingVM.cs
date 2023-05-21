@@ -1,10 +1,10 @@
-﻿using Bannerlord.BannerCraft.Models;
-using Bannerlord.BannerCraft.UI.Extensions;
-using Bannerlord.UIExtenderEx.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Bannerlord.BannerCraft.Models;
+using Bannerlord.BannerCraft.UI.Extensions;
+using Bannerlord.UIExtenderEx.Attributes;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
@@ -20,7 +20,6 @@ namespace Bannerlord.BannerCraft.ViewModels
 {
     public class ArmorCraftingVM : ViewModel
     {
-
         public class TierComparer : IComparer<ArmorItemVM>
         {
             public int Compare(ArmorItemVM x, ArmorItemVM y)
@@ -521,29 +520,29 @@ namespace Bannerlord.BannerCraft.ViewModels
             Armors.Clear();
 
             if (baseSmithingModel is BannerCraftSmithingModel smithingModel)
-            foreach (var item in Game.Current.ObjectManager.GetObjectTypeList<ItemObject>())
-            {
-                ItemType itemType = GetItemType(item);
-                if (itemType == ItemType.Invalid
-                    || itemType != _selectedItemType
-                    || item.IsCraftedByPlayer)
+                foreach (var item in Game.Current.ObjectManager.GetObjectTypeList<ItemObject>())
                 {
-                    continue;
-                }
+                    ItemType itemType = GetItemType(item);
+                    if (itemType == ItemType.Invalid
+                        || itemType != _selectedItemType
+                        || item.IsCraftedByPlayer)
+                    {
+                        continue;
+                    }
 
-                if (((int)_currentTierFilter & 1 << (int)item.Tier + 1) == 0)
-                {
-                    continue;
-                }
+                    if (((int)_currentTierFilter & 1 << (int)item.Tier + 1) == 0)
+                    {
+                        continue;
+                    }
 
-                if (!string.IsNullOrEmpty(ItemSearchText)
-                    && item.Name.ToString().IndexOf(ItemSearchText, StringComparison.OrdinalIgnoreCase) < 0)
-                {
-                    continue;
-                }
+                    if (!string.IsNullOrEmpty(ItemSearchText)
+                        && item.Name.ToString().IndexOf(ItemSearchText, StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        continue;
+                    }
 
-                Armors.Add(new ArmorItemVM(this, item, smithingModel.CalculateArmorDifficulty(item), itemType));
-            }
+                    Armors.Add(new ArmorItemVM(this, item, smithingModel.CalculateArmorDifficulty(item), itemType));
+                }
 
             if (!AllowItemType(_selectedItemType))
             {
@@ -625,6 +624,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     int shieldSpeed;
                     short shieldHitPoints;
                     break;
+
                 case ItemType.HeadArmor:
                 case ItemType.ShoulderArmor:
                 case ItemType.BodyArmor:
@@ -642,6 +642,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     ret.Add(CurrentItem.Item.ArmorComponent.ArmArmor > 0 ? armor : 0);
 
                     break;
+
                 case ItemType.Barding:
                     armor = 0;
                     if (element.ItemModifier != null)
@@ -652,6 +653,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     ret.Add(armor);
 
                     break;
+
                 case ItemType.Shield:
                     shieldSpeed = 0;
                     shieldHitPoints = 0;
@@ -665,6 +667,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     ret.Add(shieldHitPoints);
 
                     break;
+
                 case ItemType.Bow:
                 case ItemType.Crossbow:
                     int speed = 0;
@@ -688,6 +691,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     }
 
                     break;
+
                 case ItemType.Arrows:
                 case ItemType.Bolts:
                     missileDamage = 0;
@@ -702,9 +706,11 @@ namespace Bannerlord.BannerCraft.ViewModels
                     ret.Add(stackCount);
 
                     break;
+
                 case ItemType.Banner:
 
                     break;
+
                 case ItemType.OneHandedWeapon:
                 case ItemType.TwoHandedWeapon:
                 case ItemType.Polearm:
@@ -804,6 +810,7 @@ namespace Bannerlord.BannerCraft.ViewModels
 
                     CraftingListPropertyItem itemProperty;
                     break;
+
                 case ItemType.HeadArmor:
                 case ItemType.ShoulderArmor:
                 case ItemType.BodyArmor:
@@ -852,6 +859,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     ItemProperties.Add(itemProperty);
 
                     break;
+
                 case ItemType.Barding:
                     TextObject horseDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.Barding.ToString().ToLower());
 
@@ -868,6 +876,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     ItemProperties.Add(itemProperty);
 
                     break;
+
                 case ItemType.Shield:
                     TextObject shieldSpeedDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "speed");
                     TextObject shieldHitPointsDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "shield_hitpoints");
@@ -891,6 +900,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     ItemProperties.Add(itemProperty);
 
                     break;
+
                 case ItemType.Bow:
                 case ItemType.Crossbow:
                     TextObject rangedWeaponSpeedDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "ranged_weapon_speed");
@@ -940,6 +950,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     }
 
                     break;
+
                 case ItemType.Arrows:
                 case ItemType.Bolts:
                     missileDamageDescriptionText = GameTexts.FindText("str_crafting_stat", "MissileDamage");
@@ -964,6 +975,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     ItemProperties.Add(itemProperty);
 
                     break;
+
                 case ItemType.Banner:
                     itemProperty = new CraftingListPropertyItem(weightDescriptionText, 2f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
                     {
@@ -981,6 +993,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     }
 
                     break;
+
                 case ItemType.OneHandedWeapon:
                 case ItemType.TwoHandedWeapon:
                 case ItemType.Polearm:
@@ -1061,7 +1074,6 @@ namespace Bannerlord.BannerCraft.ViewModels
                         };
                         ItemProperties.Add(itemProperty);
                     }
-
                     else if (weaponData.IsRangedWeapon)
                     {
                         if (weaponData.ThrustDamageType != DamageTypes.Invalid)

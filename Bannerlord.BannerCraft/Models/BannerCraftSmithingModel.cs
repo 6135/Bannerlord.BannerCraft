@@ -13,27 +13,44 @@ namespace Bannerlord.BannerCraft.Models
     public class BannerCraftSmithingModel : SmithingModel
     {
         private SmithingModel _model;
+
         public BannerCraftSmithingModel(SmithingModel model)
         {
             _model = model;
         }
 
         public override int GetCraftingPartDifficulty(CraftingPiece craftingPiece) => _model.GetCraftingPartDifficulty(craftingPiece);
+
         public override int CalculateWeaponDesignDifficulty(WeaponDesign weaponDesign) => _model.CalculateWeaponDesignDifficulty(weaponDesign);
+
         public override int GetModifierTierForSmithedWeapon(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetModifierTierForSmithedWeapon(weaponDesign, weaponsmith);
+
         public override Crafting.OverrideData GetModifierChanges(int modifierTier, Hero hero, WeaponComponentData weapon) => _model.GetModifierChanges(modifierTier, hero, weapon);
+
         public override IEnumerable<Crafting.RefiningFormula> GetRefiningFormulas(Hero weaponsmith) => _model.GetRefiningFormulas(weaponsmith);
+
         public override ItemObject GetCraftingMaterialItem(CraftingMaterials craftingMaterial) => _model.GetCraftingMaterialItem(craftingMaterial);
+
         public override int GetSkillXpForRefining(ref Crafting.RefiningFormula refineFormula) => _model.GetSkillXpForRefining(ref refineFormula);
+
         public override int GetSkillXpForSmelting(ItemObject item) => _model.GetSkillXpForSmelting(item);
+
         public override int GetSkillXpForSmithingInFreeBuildMode(ItemObject item) => _model.GetSkillXpForSmithingInFreeBuildMode(item);
+
         public override int GetSkillXpForSmithingInCraftingOrderMode(ItemObject item) => _model.GetSkillXpForSmithingInCraftingOrderMode(item);
+
         public override int[] GetSmithingCostsForWeaponDesign(WeaponDesign weaponDesign) => _model.GetSmithingCostsForWeaponDesign(weaponDesign);
+
         public override int GetEnergyCostForRefining(ref Crafting.RefiningFormula refineFormula, Hero hero) => _model.GetEnergyCostForRefining(ref refineFormula, hero);
+
         public override int GetEnergyCostForSmithing(ItemObject item, Hero hero) => _model.GetEnergyCostForSmithing(item, hero);
+
         public override int GetEnergyCostForSmelting(ItemObject item, Hero hero) => _model.GetEnergyCostForSmelting(item, hero);
+
         public override float ResearchPointsNeedForNewPart(int totalPartCount, int openedPartCount) => _model.ResearchPointsNeedForNewPart(totalPartCount, openedPartCount);
+
         public override int GetPartResearchGainForSmeltingItem(ItemObject item, Hero hero) => _model.GetEnergyCostForSmelting(item, hero);
+
         public override int GetPartResearchGainForSmithingItem(ItemObject item, Hero hero, bool isFreeBuildMode) => _model.GetPartResearchGainForSmithingItem(item, hero, isFreeBuildMode);
 
         public override int[] GetSmeltingOutputForItem(ItemObject item)
@@ -167,6 +184,7 @@ namespace Bannerlord.BannerCraft.Models
                         case ItemType.BodyArmor:
                             result *= 1.5f;
                             break;
+
                         case ItemType.HeadArmor:
                             result *= 1.2f;
                             break;
@@ -177,12 +195,15 @@ namespace Bannerlord.BannerCraft.Models
                         case ArmorMaterialTypes.Cloth:
                             result *= 1f;
                             break;
+
                         case ArmorMaterialTypes.Leather:
                             result *= 1.1f;
                             break;
+
                         case ArmorMaterialTypes.Chainmail:
                             result *= 1.25f;
                             break;
+
                         case ArmorMaterialTypes.Plate:
                             result *= 1.4f;
                             break;
@@ -191,24 +212,28 @@ namespace Bannerlord.BannerCraft.Models
 
                 case ItemType.Shield:
                     /*
-					 * result * item.Tierf / 6f is an arbitrary attempt to balance out the difficulty of 
+					 * result * item.Tierf / 6f is an arbitrary attempt to balance out the difficulty of
 					 * these so they're approximately on par with equivalent tier melee weapons
 					 */
                     result += item.WeaponComponent.PrimaryWeapon.MaxDataValue / 10f;
                     result += result * item.Tierf / 6f;
                     break;
+
                 case ItemType.Bow:
                 case ItemType.Crossbow:
                     result += result * item.Tierf / 6f;
                     break;
+
                 case ItemType.Arrows:
                 case ItemType.Bolts:
                     result += item.WeaponComponent.PrimaryWeapon.MaxDataValue * item.WeaponComponent.PrimaryWeapon.MissileDamage;
                     result += result * item.Tierf / 6f;
                     break;
+
                 case ItemType.Banner:
                     result += result * item.Tierf / 4f;
                     break;
+
                 case ItemType.OneHandedWeapon:
                 case ItemType.TwoHandedWeapon:
                 case ItemType.Polearm:
@@ -218,7 +243,6 @@ namespace Bannerlord.BannerCraft.Models
             }
 
             return MBMath.ClampInt((int)result, 10, 300);
-
         }
 
         public int[] GetCraftingInputForArmor(ItemObject item)
@@ -316,6 +340,7 @@ namespace Bannerlord.BannerCraft.Models
                             clothRatio = 1f - metalRatio;
 
                             break;
+
                         case ArmorMaterialTypes.Cloth:
                             metalRatio = item.Tierf switch
                             {
@@ -328,6 +353,7 @@ namespace Bannerlord.BannerCraft.Models
                             metalMaterial = (CraftingMaterials)((int)metalMaterial - 1);
 
                             break;
+
                         case ArmorMaterialTypes.Leather:
                             metalRatio = item.Tierf switch
                             {
@@ -364,6 +390,7 @@ namespace Bannerlord.BannerCraft.Models
                     result[clothIndex] = -numCloth;
 
                     break;
+
                 case ItemType.Shield:
                 case ItemType.Bow:
                 case ItemType.Crossbow:
@@ -412,6 +439,7 @@ namespace Bannerlord.BannerCraft.Models
                     result[woodIndex] = -numWood;
 
                     break;
+
                 case ItemType.Banner:
                     weightTotal *= 2f;
 
@@ -433,6 +461,7 @@ namespace Bannerlord.BannerCraft.Models
                     result[clothIndex] = -numCloth;
 
                     break;
+
                 case ItemType.OneHandedWeapon:
                 case ItemType.TwoHandedWeapon:
                 case ItemType.Polearm:
@@ -506,42 +535,11 @@ namespace Bannerlord.BannerCraft.Models
             return MBMath.ClampInt((int)result, 10, 300);
         }
 
-        private int GetModifierTierPenaltyForLowSkill(int difference, int randomInt)
-        {
-            if (difference >= 0)
-            {
-                /*
-				 * Sanity check
-				 */
-                return 0;
-            }
-
-            /*
-			 * Difference is a value between -300 and -1
-			 * RandomInt is a number between -25 and 75
-			 * Make randomInt between 0 and 100
-			 */
-            randomInt += Settings.Instance.SkillOverDifficultyBeforeNoPenalty;
-            /*
-			 * Which means this is now between -200 and 99
-			 */
-            int f = difference + randomInt;
-            /*
-			 * So our modifier should be anywhere from -1 to 1
-			 */
-            return f switch
-            {
-                < -100 => 0,
-                < 0 => 1,
-                _ => -1
-            };
-        }
-
         public int GetModifierTierForItem(ItemObject item, Hero hero)
         {
             /*
 			 * 25 is just the default value from MCM
-			 * 
+			 *
 			 * Items have 4 modifiers, 2 good, 2 bad
 			 * Negative modifier is neutral and gives the item as is
 			 * Modifiers 0 and 1 give the bad ones and are achievable from anywhere up to 25 skill over difficulty
@@ -592,6 +590,37 @@ namespace Bannerlord.BannerCraft.Models
             }
 
             return -1;
+        }
+
+        private int GetModifierTierPenaltyForLowSkill(int difference, int randomInt)
+        {
+            if (difference >= 0)
+            {
+                /*
+				 * Sanity check
+				 */
+                return 0;
+            }
+
+            /*
+			 * Difference is a value between -300 and -1
+			 * RandomInt is a number between -25 and 75
+			 * Make randomInt between 0 and 100
+			 */
+            randomInt += Settings.Instance.SkillOverDifficultyBeforeNoPenalty;
+            /*
+			 * Which means this is now between -200 and 99
+			 */
+            int f = difference + randomInt;
+            /*
+			 * So our modifier should be anywhere from -1 to 1
+			 */
+            return f switch
+            {
+                < -100 => 0,
+                < 0 => 1,
+                _ => -1
+            };
         }
     }
 }

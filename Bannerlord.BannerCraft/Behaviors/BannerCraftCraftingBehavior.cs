@@ -1,8 +1,8 @@
 ﻿using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Party;
-using TaleWorlds.Core;
 using TaleWorlds.CampaignSystem.Roster;
+using TaleWorlds.Core;
 
 namespace Bannerlord.BannerCraft.Behaviors
 {

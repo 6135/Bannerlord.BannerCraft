@@ -23,6 +23,28 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private MBBindingList<CraftingItemFlagVM> _itemFlagIcons;
 
+        public ArmorItemVM(ArmorCraftingVM armorCrafting, ItemObject item, int difficulty, ItemType type)
+        {
+            _armorCrafting = armorCrafting;
+            ImageIdentifier = new ImageIdentifierVM(item);
+            Item = item;
+            ItemType = type;
+
+            Tier = item.Tier;
+            TierText = Common.ToRoman((int)Tier + 1);
+
+            ItemFlagIcons = new MBBindingList<CraftingItemFlagVM>();
+
+            foreach (Tuple<string, TextObject> itemFlagDetail in CampaignUIHelper.GetItemFlagDetails(Item.ItemFlags))
+            {
+                ItemFlagIcons.Add(new CraftingItemFlagVM(itemFlagDetail.Item1, itemFlagDetail.Item2, isDisplayed: true));
+            }
+
+            Difficulty = difficulty;
+
+            EquipmentElement = new EquipmentElement(item);
+        }
+
         [DataSourceProperty]
         public ImageIdentifierVM ImageIdentifier
         {
@@ -128,28 +150,6 @@ namespace Bannerlord.BannerCraft.ViewModels
         public int Difficulty { get; }
 
         public EquipmentElement EquipmentElement { get; private set; }
-
-        public ArmorItemVM(ArmorCraftingVM armorCrafting, ItemObject item, int difficulty, ItemType type)
-        {
-            _armorCrafting = armorCrafting;
-            ImageIdentifier = new ImageIdentifierVM(item);
-            Item = item;
-            ItemType = type;
-
-            Tier = item.Tier;
-            TierText = Common.ToRoman((int)Tier + 1);
-
-            ItemFlagIcons = new MBBindingList<CraftingItemFlagVM>();
-
-            foreach (Tuple<string, TextObject> itemFlagDetail in CampaignUIHelper.GetItemFlagDetails(Item.ItemFlags))
-            {
-                ItemFlagIcons.Add(new CraftingItemFlagVM(itemFlagDetail.Item1, itemFlagDetail.Item2, isDisplayed: true));
-            }
-
-            Difficulty = difficulty;
-
-            EquipmentElement = new EquipmentElement(item);
-        }
 
         public void ExecuteSelect()
         {

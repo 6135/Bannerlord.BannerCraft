@@ -15,10 +15,10 @@
 		<Constant Name="SelectAllButton.Width" BrushLayer="Default" BrushName="ButtonRightDoubleArrowBrush1" BrushValueType="Width" />
 		<Constant Name="SelectAllButton.Height" BrushLayer="Default" BrushName="ButtonRightDoubleArrowBrush1" BrushValueType="Height" />
 
-		<Constant Name="Tier.Button.Width" Value="40"/>
-		<Constant Name="Tier.Label.Width" Value="45"/>
-		<Constant Name="AllTiers.Label.Width" Value="45"/>
-		<Constant Name="Tier.Margins" Value="30"/>
+		<Constant Name="Tier.Button.Width" Value="40" />
+		<Constant Name="Tier.Label.Width" Value="45" />
+		<Constant Name="AllTiers.Label.Width" Value="45" />
+		<Constant Name="Tier.Margins" Value="30" />
 	</Constants>
 	<Variables>
 	</Variables>
@@ -32,9 +32,9 @@
 					<Children>
 
 						<!-- Tier selection -->
-						<ListPanel Id="CraftingFilters" WidthSizePolicy="CoverChildren" HeightSizePolicy="Fixed" SuggestedHeight="45" LayoutImp.LayoutMethod="HorizontalLeftToRight" HorizontalAlignment="Center" MarginLeft="0" MarginTop="4" >
+						<ListPanel Id="CraftingFilters" WidthSizePolicy="CoverChildren" HeightSizePolicy="Fixed" SuggestedHeight="45" LayoutImp.LayoutMethod="HorizontalLeftToRight" HorizontalAlignment="Center" MarginLeft="0" MarginTop="4">
 							<Children>
-								
+
 								<NavigatableListPanel DataSource="{TierFilters}" WidthSizePolicy="Fixed" SuggestedWidth="580" PositionXOffset="-2" HeightSizePolicy="Fixed" SuggestedHeight="40" VerticalAlignment="Center" StackLayout.LayoutMethod="HorizontalSpaced" MinIndex="0">
 									<ItemTemplate>
 										<Widget WidthSizePolicy="CoverChildren" HeightSizePolicy="Fixed" SuggestedHeight="40">
@@ -45,7 +45,7 @@
 														<ImageWidget Id="Checkbox" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="Crafting.Checkbox.Full.Button" IsVisible="@IsSelected" />
 													</Children>
 												</ButtonWidget>
-												<TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="!Tier.Label.Width" MarginLeft="45" Brush="Crafting.Tier.Text" Text="@TierName" DoNotAcceptEvents="true"/>
+												<TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="!Tier.Label.Width" MarginLeft="45" Brush="Crafting.Tier.Text" Text="@TierName" DoNotAcceptEvents="true" />
 											</Children>
 										</Widget>
 									</ItemTemplate>
@@ -76,30 +76,28 @@
 										<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" Text="@ChooseArmorTypeText" Brush="Crafting.Mode.Selection.Text" />
 									</Children>
 								</ButtonWidget>
-								
+
 								<!-- Search -->
-								<BrushWidget DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="269" SuggestedHeight="41" VerticalAlignment="Center" HorizontalAlignment="Right" MarginRight="55" Brush="SPOptions.Dropdown.Center" >
+								<BrushWidget DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="269" SuggestedHeight="41" VerticalAlignment="Center" HorizontalAlignment="Right" MarginRight="55" Brush="SPOptions.Dropdown.Center">
 									<Children>
 										<EditableTextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="10" MarginRight="10" MarginTop="12" MarginBottom="12" Brush="Crafting.NameInput.Text" Text="@ItemSearchText" />
 									</Children>
 								</BrushWidget>
 							</Children>
 						</Widget>
-
-						
 					</Children>
 				</ListPanel>
 
 				<Widget Id="InnerPanel" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="588" SuggestedHeight="735" HorizontalAlignment="Center" VerticalAlignment="Center" PositionXOffset="16">
 					<Children>
-						
+
 						<!-- Keep MarginTop at 1 to avoid ugly graphical glitch with the Scroll Gradient -->
 						<ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="400" MarginTop="1" MarginBottom="15" MarginRight="14" StackLayout.LayoutMethod="HorizontalLeftToRight">
 							<Children>
 
 								<ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Left" VerticalAlignment="Top" MarginLeft="5" MarginTop="5" AutoHideScrollBars="true" ClipRect="ClipRect" InnerPanel="ClipRect\CraftableItemList" VerticalScrollbar="..\..\VerticalScrollbar">
 									<Children>
-										
+
 										<Widget Id="ClipRect" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" ClipContents="true">
 											<Children>
 
@@ -110,10 +108,10 @@
 
 																<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="122" SuggestedHeight="66" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="23" Sprite="Crafting\crafting_popup_portrait">
 																	<Children>
-																		
+
 																		<ImageIdentifierWidget DataSource="{ImageIdentifier}" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="112" SuggestedHeight="51" HorizontalAlignment="Center" VerticalAlignment="Top" MarginTop="3" AdditionalArgs="@AdditionalArgs" ImageId="@Id" ImageTypeCode="@ImageTypeCode" LoadingIconWidget="LoadingIconWidget">
 																			<Children>
-																				
+
 																				<Standard.CircleLoadingWidget HorizontalAlignment="Center" VerticalAlignment="Center" Id="LoadingIconWidget" />
 																			</Children>
 																		</ImageIdentifierWidget>
@@ -127,12 +125,10 @@
 
 																		<!-- Tier Text -->
 																		<TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" MarginTop="2" MarginLeft="8" Brush="Crafting.Card.Tier.Text" Text="@TierText" />
-																		
 																	</Children>
 																</Widget>
 
 																<RichTextWidget IsDisabled="true" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" SuggestedWidth="150" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="180" Brush="Smelting.Tuple.Text" Text="@ItemName" Brush.TextHorizontalAlignment="Left" />
-
 															</Children>
 														</ButtonWidget>
 													</ItemTemplate>
@@ -166,7 +162,7 @@
 								<!-- Attributes List -->
 								<ListPanel DataSource="{ItemFlagIconsList}" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="38" MarginLeft="10" MarginRight="10" StackLayout.LayoutMethod="HorizontalCentered">
 									<ItemTemplate>
-										<RichTextWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="35" SuggestedHeight="35" HorizontalAlignment="Center" Brush.FontSize="45" Text="@Icon" >
+										<RichTextWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="35" SuggestedHeight="35" HorizontalAlignment="Center" Brush.FontSize="45" Text="@Icon">
 											<Children>
 												<HintWidget DataSource="{Hint}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
 											</Children>
@@ -176,34 +172,33 @@
 
 								<!-- Secondary usage for weapons -->
 								<NavigationScopeTargeter ScopeID="UsageSelectorScope" ScopeParent="..\UsageSelectorGrid" ScopeMovements="Horizontal" AlternateScopeMovements="Vertical" AlternateMovementStepSize="3" />
-								<NavigatableGridWidget Id="UsageSelectorGrid" DataSource="{SecondaryUsageSelector\ItemList}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" ColumnCount="3" DefaultCellHeight="35" DefaultCellWidth="152" >
+								<NavigatableGridWidget Id="UsageSelectorGrid" DataSource="{SecondaryUsageSelector\ItemList}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" ColumnCount="3" DefaultCellHeight="35" DefaultCellWidth="152">
 									<ItemTemplate>
 
 										<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedHeight="35" SuggestedWidth="150" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Crafting.Tooltip.WeaponAlternativeUsageButton" IsSelected="@IsSelected" ButtonType="Radio" Command.Click="ExecuteSelect" DoNotUseCustomScaleAndChildren="true">
 											<Children>
-												
+
 												<TextWidget DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" MarginTop="3" MarginRight="3" MarginLeft="3" MarginBottom="3" Brush="InventoryDefaultFontBrush" Brush.FontSize="16" Brush.TextHorizontalAlignment="Center" Text="@StringItem" />
 											</Children>
 										</ButtonWidget>
 									</ItemTemplate>
 								</NavigatableGridWidget>
-								
+
 								<!-- Item stats -->
 								<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
 									<Children>
-										<ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" AutoHideScrollBars="true" ClipRect="ClipRect" InnerPanel="ClipRect\PrimaryPropertyList" VerticalScrollbar="..\VerticalScrollbar" >
+										<ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" AutoHideScrollBars="true" ClipRect="ClipRect" InnerPanel="ClipRect\PrimaryPropertyList" VerticalScrollbar="..\VerticalScrollbar">
 											<Children>
-												
-												<Widget Id="ClipRect" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" ClipContents="true" IsHidden="@InBannerMode" >
+
+												<Widget Id="ClipRect" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" ClipContents="true" IsHidden="@InBannerMode">
 													<Children>
-														
-														<CraftingPropertyList WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" Id="PrimaryPropertyList" VerticalAlignment="Top" DataSource="{ItemProperties}"  />
+
+														<CraftingPropertyList WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" Id="PrimaryPropertyList" VerticalAlignment="Top" DataSource="{ItemProperties}" />
 													</Children>
 												</Widget>
 
 												<!-- Banner description -->
 												<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" Text="@BannerDescriptionText" IsVisible="@InBannerMode" />
-												
 											</Children>
 										</ScrollablePanel>
 

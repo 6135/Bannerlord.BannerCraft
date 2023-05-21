@@ -17,6 +17,21 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private List<TextObject> _templatesList;
 
+        public ArmorClassSelectionPopupVM(List<TextObject> templatesList, Action<int> onSelect)
+        {
+            ArmorClasses = new MBBindingList<ArmorClassVM>();
+            _onSelect = onSelect;
+            _templatesList = templatesList;
+
+            foreach (TextObject templates in _templatesList)
+            {
+                ArmorClasses.Add(new ArmorClassVM(_templatesList.IndexOf(templates), templates, ExecuteSelectArmorClass));
+            }
+
+            RefreshList();
+            RefreshValues();
+        }
+
         [DataSourceProperty]
         public string PopupHeader
         {
@@ -68,25 +83,6 @@ namespace Bannerlord.BannerCraft.ViewModels
             }
         }
 
-        public ArmorClassSelectionPopupVM(List<TextObject> templatesList, Action<int> onSelect)
-        {
-            ArmorClasses = new MBBindingList<ArmorClassVM>();
-            _onSelect = onSelect;
-            _templatesList = templatesList;
-
-            foreach (TextObject templates in _templatesList)
-            {
-                ArmorClasses.Add(new ArmorClassVM(_templatesList.IndexOf(templates), templates, ExecuteSelectArmorClass));
-            }
-
-            RefreshList();
-            RefreshValues();
-        }
-
-        private void RefreshList()
-        {
-        }
-
         public override void RefreshValues()
         {
             base.RefreshValues();
@@ -114,6 +110,10 @@ namespace Bannerlord.BannerCraft.ViewModels
         {
             IsVisible = true;
             RefreshList();
+        }
+
+        private void RefreshList()
+        {
         }
     }
 }

@@ -16,6 +16,15 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private int _selectionIndex;
 
+        public ArmorClassVM(int selectionIndex, TextObject templateTextObject, Action<int> onSelect)
+        {
+            _onSelect = onSelect;
+            SelectionIndex = selectionIndex;
+            _templateTextObject = templateTextObject;
+
+            RefreshValues();
+        }
+
         [DataSourceProperty]
         public string TemplateName
         {
@@ -56,15 +65,6 @@ namespace Bannerlord.BannerCraft.ViewModels
                     OnPropertyChangedWithValue(value, "SelectionIndex");
                 }
             }
-        }
-
-        public ArmorClassVM(int selectionIndex, TextObject templateTextObject, Action<int> onSelect)
-        {
-            _onSelect = onSelect;
-            SelectionIndex = selectionIndex;
-            _templateTextObject = templateTextObject;
-
-            RefreshValues();
         }
 
         public override void RefreshValues()
