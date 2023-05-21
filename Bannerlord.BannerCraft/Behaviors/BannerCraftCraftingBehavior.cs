@@ -6,7 +6,7 @@ using TaleWorlds.CampaignSystem.Roster;
 
 namespace Bannerlord.BannerCraft.Behaviors
 {
-    public class CraftingBehaviorBC : CraftingCampaignBehavior, ICraftingCampaignBehavior, ICampaignBehavior
+    public class BannerCraftCraftingBehavior : CraftingCampaignBehavior, ICraftingCampaignBehavior, ICampaignBehavior
     {
         public new void DoSmelting(Hero hero, EquipmentElement equipmentElement)
         {
