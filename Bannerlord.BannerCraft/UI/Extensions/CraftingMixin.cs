@@ -1,5 +1,5 @@
 using Bannerlord.BannerCraft.Extensions;
-using Bannerlord.BannerCraft.Models.Vanilla;
+using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.ViewModels;
 using Bannerlord.UIExtenderEx.Attributes;
 using Bannerlord.UIExtenderEx.ViewModels;

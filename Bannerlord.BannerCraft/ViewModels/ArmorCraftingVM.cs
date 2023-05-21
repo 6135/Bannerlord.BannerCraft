@@ -1,4 +1,4 @@
-﻿using Bannerlord.BannerCraft.Models.Vanilla;
+﻿using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.UI.Extensions;
 using Bannerlord.UIExtenderEx.Attributes;
 using System;

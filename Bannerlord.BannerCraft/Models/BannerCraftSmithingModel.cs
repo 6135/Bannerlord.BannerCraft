@@ -8,7 +8,7 @@ using TaleWorlds.Core;
 using TaleWorlds.Library;
 using static TaleWorlds.Core.ArmorComponent;
 
-namespace Bannerlord.BannerCraft.Models.Vanilla
+namespace Bannerlord.BannerCraft.Models
 {
     public class BannerCraftSmithingModel : SmithingModel
     {

@@ -1,4 +1,4 @@
-﻿using Bannerlord.BannerCraft.Models.Vanilla;
+﻿using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.Patches;
 using Bannerlord.UIExtenderEx;
 using HarmonyLib;
