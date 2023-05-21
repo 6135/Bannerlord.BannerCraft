@@ -49,28 +49,14 @@ namespace Bannerlord.BannerCraft.ViewModels
         public ImageIdentifierVM ImageIdentifier
         {
             get => _imageIdentifier;
-            set
-            {
-                if (value != _imageIdentifier)
-                {
-                    _imageIdentifier = value;
-                    OnPropertyChangedWithValue(value, "ImageIdentifier");
-                }
-            }
+            set => SetField(ref _imageIdentifier, value, nameof(ImageIdentifier));
         }
 
         [DataSourceProperty]
         public ItemObject Item
         {
             get => _item;
-            set
-            {
-                if (value != _item)
-                {
-                    _item = value;
-                    OnPropertyChangedWithValue(value, "Item");
-                }
-            }
+            set => SetField(ref _item, value, nameof(Item));
         }
 
         [DataSourceProperty]
@@ -94,14 +80,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         public bool IsSelected
         {
             get => _isSelected;
-            set
-            {
-                if (value != _isSelected)
-                {
-                    _isSelected = value;
-                    OnPropertyChangedWithValue(value, "IsSelected");
-                }
-            }
+            set => SetField(ref _isSelected, value, nameof(IsSelected));
         }
 
         [DataSourceProperty]
@@ -122,28 +101,14 @@ namespace Bannerlord.BannerCraft.ViewModels
         public string TierText
         {
             get => _tierText;
-            set
-            {
-                if (value != _tierText)
-                {
-                    _tierText = value;
-                    OnPropertyChangedWithValue(value, "TierText");
-                }
-            }
+            set => SetField(ref _tierText, value, nameof(TierText));
         }
 
         [DataSourceProperty]
         public MBBindingList<CraftingItemFlagVM> ItemFlagIcons
         {
             get => _itemFlagIcons;
-            set
-            {
-                if (value != _itemFlagIcons)
-                {
-                    _itemFlagIcons = value;
-                    OnPropertyChangedWithValue(value, "ItemFlagIcons");
-                }
-            }
+            set => SetField(ref _itemFlagIcons, value, nameof(ItemFlagIcons));
         }
 
         [DataSourceProperty]

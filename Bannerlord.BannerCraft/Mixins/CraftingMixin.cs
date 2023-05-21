@@ -76,56 +76,28 @@ namespace Bannerlord.BannerCraft.Mixins
         public bool IsInArmorMode
         {
             get => _isInArmorMode;
-            set
-            {
-                if (value != _isInArmorMode)
-                {
-                    _isInArmorMode = value;
-                    ViewModel!.OnPropertyChangedWithValue(value, "IsInArmorMode");
-                }
-            }
+            set => SetField(ref _isInArmorMode, value, nameof(IsInArmorMode));
         }
 
         [DataSourceProperty]
         public string ArmorText
         {
             get => _armorText;
-            set
-            {
-                if (value != _armorText)
-                {
-                    _armorText = value;
-                    ViewModel!.OnPropertyChangedWithValue(value, "ArmorText");
-                }
-            }
+            set => SetField(ref _armorText, value, nameof(ArmorText));
         }
 
         [DataSourceProperty]
         public ArmorCraftingVM ArmorCrafting
         {
             get => _armorCrafting;
-            set
-            {
-                if (value != _armorCrafting)
-                {
-                    _armorCrafting = value;
-                    ViewModel!.OnPropertyChangedWithValue(value, "ArmorCraftingBC");
-                }
-            }
+            set => SetField(ref _armorCrafting, value, nameof(ArmorCrafting));
         }
 
         [DataSourceProperty]
         public MBBindingList<ExtraMaterialItemVM> ExtraMaterials
         {
             get => _craftingResourceItems;
-            set
-            {
-                if (value != _craftingResourceItems)
-                {
-                    _craftingResourceItems = value;
-                    ViewModel!.OnPropertyChangedWithValue(value, "ExtraMaterials");
-                }
-            }
+            set => SetField(ref _craftingResourceItems, value, nameof(ExtraMaterials));
         }
 
         [DataSourceProperty]

@@ -39,98 +39,49 @@ namespace Bannerlord.BannerCraft.ViewModels
         public string ResourceName
         {
             get => _resourceName;
-            set
-            {
-                if (value != _resourceName)
-                {
-                    _resourceName = value;
-                    OnPropertyChangedWithValue(value, "ResourceName");
-                }
-            }
+            set => SetField(ref _resourceName, value, nameof(ResourceName));
         }
 
         [DataSourceProperty]
         public HintViewModel ResourceHint
         {
             get => _resourceHint;
-            set
-            {
-                if (value != _resourceHint)
-                {
-                    _resourceHint = value;
-                    OnPropertyChangedWithValue(value, "ResourceHint");
-                }
-            }
+            set => SetField(ref _resourceHint, value, nameof(ResourceHint));
         }
 
         [DataSourceProperty]
         public string ResourceMaterialTypeAsStr
         {
             get => _resourceMaterialTypeAsStr;
-            set
-            {
-                if (value != _resourceMaterialTypeAsStr)
-                {
-                    _resourceMaterialTypeAsStr = value;
-                    OnPropertyChangedWithValue(value, "ResourceMaterialTypeAsStr");
-                }
-            }
+            set => SetField(ref _resourceMaterialTypeAsStr, value, nameof(ResourceMaterialTypeAsStr));
         }
 
         [DataSourceProperty]
         public int ResourceAmount
         {
             get => _resourceUsageAmount;
-            set
-            {
-                if (value != _resourceUsageAmount)
-                {
-                    _resourceUsageAmount = value;
-                    OnPropertyChangedWithValue(value, "ResourceAmount");
-                }
-            }
+            set => SetField(ref _resourceUsageAmount, value, nameof(ResourceAmount));
         }
 
         [DataSourceProperty]
         public int ResourceChangeAmount
         {
             get => _resourceChangeAmount;
-            set
-            {
-                if (value != _resourceChangeAmount)
-                {
-                    _resourceChangeAmount = value;
-                    OnPropertyChangedWithValue(value, "ResourceChangeAmount");
-                }
-            }
+            set => SetField(ref _resourceChangeAmount, value, nameof(ResourceChangeAmount));
         }
 
         [DataSourceProperty]
         public string ResourceItemStringId
         {
             get => _resourceItemStringId;
-            set
-            {
-                if (value != _resourceItemStringId)
-                {
-                    _resourceItemStringId = value;
-                    OnPropertyChangedWithValue(value, "ResourceItemStringId");
-                }
-            }
+            set => SetField(ref _resourceItemStringId, value, nameof(ResourceItemStringId));
         }
 
         [DataSourceProperty]
         public ImageIdentifierVM ImageIdentifier
         {
             get => _imageIdentifier;
-            set
-            {
-                if (value != _imageIdentifier)
-                {
-                    _imageIdentifier = value;
-                    OnPropertyChangedWithValue(value, "ImageIdentifier");
-                }
-            }
+            set => SetField(ref _imageIdentifier, value, nameof(ImageIdentifier));
         }
 
         [DataSourceProperty] public ImageIdentifierVM Visual { get => ImageIdentifier; }

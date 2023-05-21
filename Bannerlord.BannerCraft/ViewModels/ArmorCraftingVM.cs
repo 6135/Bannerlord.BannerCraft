@@ -82,70 +82,112 @@ namespace Bannerlord.BannerCraft.ViewModels
         public ArmorClassSelectionPopupVM ArmorClassSelectionPopup
         {
             get => _armorClassSelectionPopup;
-            set
-            {
-                if (value != _armorClassSelectionPopup)
-                {
-                    _armorClassSelectionPopup = value;
-                    OnPropertyChangedWithValue(value, "ArmorClassSelectionPopup");
-                }
-            }
+            set => SetField(ref _armorClassSelectionPopup, value, nameof(ArmorClassSelectionPopup));
         }
 
         [DataSourceProperty]
         public string ChooseArmorTypeText
         {
             get => _chooseArmorTypeText;
-            set
-            {
-                if (value != _chooseArmorTypeText)
-                {
-                    _chooseArmorTypeText = value;
-                    OnPropertyChangedWithValue(value, "ChooseArmorTypeText");
-                }
-            }
+            set => SetField(ref _chooseArmorTypeText, value, nameof(ChooseArmorTypeText));
         }
 
         [DataSourceProperty]
         public string CurrentCraftedArmorTypeText
         {
             get => _currentCraftedArmorTypeText;
-            set
-            {
-                if (value != _currentCraftedArmorTypeText)
-                {
-                    _currentCraftedArmorTypeText = value;
-                    OnPropertyChangedWithValue(value, "CurrentCraftedArmorTypeText");
-                }
-            }
+            set => SetField(ref _currentCraftedArmorTypeText, value, nameof(CurrentCraftedArmorTypeText));
         }
 
         [DataSourceProperty]
         public MBBindingList<ArmorTierFilterTypeVM> TierFilters
         {
             get => _tierFilters;
-            set
-            {
-                if (value != _tierFilters)
-                {
-                    _tierFilters = value;
-                    OnPropertyChangedWithValue(value, "TierFilters");
-                }
-            }
+            set => SetField(ref _tierFilters, value, nameof(TierFilters));
         }
 
         [DataSourceProperty]
         public MBBindingList<ArmorItemVM> Armors
         {
             get => _armors;
-            set
-            {
-                if (value != _armors)
-                {
-                    _armors = value;
-                    OnPropertyChangedWithValue(value, "Armors");
-                }
-            }
+            set => SetField(ref _armors, value, nameof(Armors));
+        }
+
+        [DataSourceProperty]
+        public int SelectedPieceTypeIndex
+        {
+            get => _selectedPieceTypeIndex;
+            set => SetField(ref _selectedPieceTypeIndex, value, nameof(SelectedPieceTypeIndex));
+        }
+
+        [DataSourceProperty]
+        public ItemCollectionElementViewModel ItemVisualModel
+        {
+            get => _itemVisualModel;
+            set => SetField(ref _itemVisualModel, value, nameof(ItemVisualModel));
+        }
+
+        [DataSourceProperty]
+        public MBBindingList<CraftingListPropertyItem> ItemProperties
+        {
+            get => _itemProperties;
+            set => SetField(ref _itemProperties, value, nameof(ItemProperties));
+        }
+
+        [DataSourceProperty]
+        public MBBindingList<ItemFlagVM> ItemFlagIconsList
+        {
+            get => _itemFlagIconsList;
+            set => SetField(ref _itemFlagIconsList, value, nameof(ItemFlagIconsList));
+        }
+
+        [DataSourceProperty]
+        public string DifficultyText
+        {
+            get => _difficultyText;
+            set => SetField(ref _difficultyText, value, nameof(DifficultyText));
+        }
+
+        [DataSourceProperty]
+        public string CurrentDifficultyText
+        {
+            get => _currentDifficultyText;
+            set => SetField(ref _currentDifficultyText, value, nameof(CurrentDifficultyText));
+        }
+
+        [DataSourceProperty]
+        public string CurrentCraftingSkillValueText
+        {
+            get => _currentCraftingSkillValueText;
+            set => SetField(ref _currentCraftingSkillValueText, value, nameof(CurrentCraftingSkillValueText));
+        }
+
+        [DataSourceProperty]
+        public int CurrentHeroCraftingSkill
+        {
+            get => _currentHeroCraftingSkill;
+            set => SetField(ref _currentHeroCraftingSkill, value, nameof(CurrentHeroCraftingSkill));
+        }
+
+        [DataSourceProperty]
+        public int MaxDifficulty
+        {
+            get => _maxDifficulty;
+            set => SetField(ref _maxDifficulty, value, nameof(MaxDifficulty));
+        }
+
+        [DataSourceProperty]
+        public int CurrentDifficulty
+        {
+            get => _currentDifficulty;
+            set => SetField(ref _currentDifficulty, value, nameof(CurrentDifficulty));
+        }
+
+        [DataSourceProperty]
+        public bool IsCurrentHeroAtMaxCraftingSkill
+        {
+            get => _isCurrentHeroAtMaxCraftingSkill;
+            set => SetField(ref _isCurrentHeroAtMaxCraftingSkill, value, nameof(IsCurrentHeroAtMaxCraftingSkill));
         }
 
         [DataSourceProperty]
@@ -160,160 +202,6 @@ namespace Bannerlord.BannerCraft.ViewModels
                     OnPropertyChangedWithValue(value, "CurrentItem");
                     _mixin.OnRefresh();
                     RefreshSecondaryUsages();
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public int SelectedPieceTypeIndex
-        {
-            get => _selectedPieceTypeIndex;
-            set
-            {
-                if (value != _selectedPieceTypeIndex)
-                {
-                    _selectedPieceTypeIndex = value;
-                    OnPropertyChangedWithValue(value, "SelectedPieceTypeIndex");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public ItemCollectionElementViewModel ItemVisualModel
-        {
-            get => _itemVisualModel;
-            set
-            {
-                if (value != _itemVisualModel)
-                {
-                    _itemVisualModel = value;
-                    OnPropertyChangedWithValue(value, "ItemVisualModel");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public MBBindingList<CraftingListPropertyItem> ItemProperties
-        {
-            get => _itemProperties;
-            set
-            {
-                if (value != _itemProperties)
-                {
-                    _itemProperties = value;
-                    OnPropertyChangedWithValue(value, "ItemProperties");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public MBBindingList<ItemFlagVM> ItemFlagIconsList
-        {
-            get => _itemFlagIconsList;
-            set
-            {
-                if (value != _itemFlagIconsList)
-                {
-                    _itemFlagIconsList = value;
-                    OnPropertyChangedWithValue(value, "ItemFlagIconsList");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public string DifficultyText
-        {
-            get => _difficultyText;
-            set
-            {
-                if (value != _difficultyText)
-                {
-                    _difficultyText = value;
-                    OnPropertyChangedWithValue(value, "DifficultyText");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public string CurrentDifficultyText
-        {
-            get => _currentDifficultyText;
-            set
-            {
-                if (value != _currentDifficultyText)
-                {
-                    _currentDifficultyText = value;
-                    OnPropertyChangedWithValue(value, "CurrentDifficultyText");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public string CurrentCraftingSkillValueText
-        {
-            get => _currentCraftingSkillValueText;
-            set
-            {
-                if (value != _currentCraftingSkillValueText)
-                {
-                    _currentCraftingSkillValueText = value;
-                    OnPropertyChangedWithValue(value, "CurrentCraftingSkillValueText");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public int CurrentHeroCraftingSkill
-        {
-            get => _currentHeroCraftingSkill;
-            set
-            {
-                if (value != _currentHeroCraftingSkill)
-                {
-                    _currentHeroCraftingSkill = value;
-                    OnPropertyChangedWithValue(value, "CurrentHeroCraftingSkill");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public int MaxDifficulty
-        {
-            get => _maxDifficulty;
-            set
-            {
-                if (value != _maxDifficulty)
-                {
-                    _maxDifficulty = value;
-                    OnPropertyChangedWithValue(value, "MaxDifficulty");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public int CurrentDifficulty
-        {
-            get => _currentDifficulty;
-            set
-            {
-                if (value != _currentDifficulty)
-                {
-                    _currentDifficulty = value;
-                    OnPropertyChangedWithValue(value, "CurrentDifficulty");
-                }
-            }
-        }
-
-        [DataSourceProperty]
-        public bool IsCurrentHeroAtMaxCraftingSkill
-        {
-            get => _isCurrentHeroAtMaxCraftingSkill;
-            set
-            {
-                if (value != _isCurrentHeroAtMaxCraftingSkill)
-                {
-                    _isCurrentHeroAtMaxCraftingSkill = value;
-                    OnPropertyChangedWithValue(value, "IsCurrentHeroAtMaxCraftingSkill");
                 }
             }
         }
@@ -459,14 +347,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         public string BannerDescriptionText
         {
             get => _bannerDescriptionText;
-            set
-            {
-                if (value != _bannerDescriptionText)
-                {
-                    _bannerDescriptionText = value;
-                    OnPropertyChangedWithValue(value, "BannerDescriptionText");
-                }
-            }
+            set => SetField(ref _bannerDescriptionText, value, nameof(BannerDescriptionText));
         }
 
         private void RefreshArmorDesignMode(int classIndex)
@@ -1259,14 +1140,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         public ArmorCraftResultPopupVM ArmorCraftResultPopup
         {
             get => _armorCraftResultPopup;
-            set
-            {
-                if (value != _armorCraftResultPopup)
-                {
-                    _armorCraftResultPopup = value;
-                    OnPropertyChangedWithValue(value, "ArmorCraftResultPopup");
-                }
-            }
+            set => SetField(ref _armorCraftResultPopup, value, nameof(ArmorCraftResultPopup));
         }
 
         [DataSourceProperty]
@@ -1288,14 +1162,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         public MBBindingList<WeaponDesignResultPropertyItemVM> DesignResultPropertyList
         {
             get => _designResultPropertyList;
-            set
-            {
-                if (value != _designResultPropertyList)
-                {
-                    _designResultPropertyList = value;
-                    OnPropertyChangedWithValue(value, "DesignResultPropertyList");
-                }
-            }
+            set => SetField(ref _designResultPropertyList, value, nameof(DesignResultPropertyList));
         }
 
         private void UpdateResultPropertyList()

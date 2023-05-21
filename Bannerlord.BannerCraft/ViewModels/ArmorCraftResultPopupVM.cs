@@ -51,84 +51,42 @@ namespace Bannerlord.BannerCraft.ViewModels
         public ItemCollectionElementViewModel ItemVisualModel
         {
             get => _itemVisualModel;
-            set
-            {
-                if (value != _itemVisualModel)
-                {
-                    _itemVisualModel = value;
-                    OnPropertyChangedWithValue(value, "ItemVisualModel");
-                }
-            }
+            set => SetField(ref _itemVisualModel, value, nameof(ItemVisualModel));
         }
 
         [DataSourceProperty]
         public MBBindingList<ItemFlagVM> ItemFlagIconsList
         {
             get => _itemFlagIconsList;
-            set
-            {
-                if (value != _itemFlagIconsList)
-                {
-                    _itemFlagIconsList = value;
-                    OnPropertyChangedWithValue(value, "WeaponFlagIconsList");
-                }
-            }
+            set => SetField(ref _itemFlagIconsList, value, nameof(ItemFlagIconsList));
         }
 
         [DataSourceProperty]
         public string ArmorCraftedText
         {
             get => _armorCraftedText;
-            set
-            {
-                if (value != _armorCraftedText)
-                {
-                    _armorCraftedText = value;
-                    OnPropertyChangedWithValue(value, "ArmorCraftedText");
-                }
-            }
+            set => SetField(ref _armorCraftedText, value, nameof(ArmorCraftedText));
         }
 
         [DataSourceProperty]
         public string DoneLbl
         {
             get => _doneLbl;
-            set
-            {
-                if (value != _doneLbl)
-                {
-                    _doneLbl = value;
-                    OnPropertyChangedWithValue(value, "DoneLbl");
-                }
-            }
+            set => SetField(ref _doneLbl, value, nameof(DoneLbl));
         }
 
         [DataSourceProperty]
         public bool CanConfirm
         {
             get => _canConfirm;
-            set
-            {
-                if (value != _canConfirm)
-                {
-                    _canConfirm = value;
-                    OnPropertyChangedWithValue(value, "CanConfirm");
-                }
-            }
+            set => SetField(ref _canConfirm, value, nameof(CanConfirm));
         }
 
         [DataSourceProperty]
         public HintViewModel ConfirmDisabledReasonHint
         {
             get => _confirmDisabledReasonHint;
-            set
-            {
-                if (value != _confirmDisabledReasonHint)
-                {
-                    _confirmDisabledReasonHint = value;
-                    OnPropertyChangedWithValue(value, "ConfirmDisabledReasonHint");
-                }
-            }
+            set => SetField(ref _confirmDisabledReasonHint, value, nameof(ConfirmDisabledReasonHint));
         }
 
         [DataSourceProperty]
@@ -150,14 +108,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         public MBBindingList<WeaponDesignResultPropertyItemVM> DesignResultPropertyList
         {
             get => _designResultPropertyList;
-            set
-            {
-                if (value != _designResultPropertyList)
-                {
-                    _designResultPropertyList = value;
-                    OnPropertyChangedWithValue(value, "DesignResultPropertyList");
-                }
-            }
+            set => SetField(ref _designResultPropertyList, value, nameof(DesignResultPropertyList));
         }
 
         public override void RefreshValues()

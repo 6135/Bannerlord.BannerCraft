@@ -29,42 +29,21 @@ namespace Bannerlord.BannerCraft.ViewModels
         public string TemplateName
         {
             get => _templateName;
-            set
-            {
-                if (value != _templateName)
-                {
-                    _templateName = value;
-                    OnPropertyChangedWithValue(value, "TemplateName");
-                }
-            }
+            set => SetField(ref _templateName, value, nameof(TemplateName));
         }
 
         [DataSourceProperty]
         public bool IsSelected
         {
             get => _isSelected;
-            set
-            {
-                if (value != _isSelected)
-                {
-                    _isSelected = value;
-                    OnPropertyChangedWithValue(value, "IsSelected");
-                }
-            }
+            set => SetField(ref _isSelected, value, nameof(IsSelected));
         }
 
         [DataSourceProperty]
         public int SelectionIndex
         {
             get => _selectionIndex;
-            set
-            {
-                if (value != _selectionIndex)
-                {
-                    _selectionIndex = value;
-                    OnPropertyChangedWithValue(value, "SelectionIndex");
-                }
-            }
+            set => SetField(ref _selectionIndex, value, nameof(SelectionIndex));
         }
 
         public override void RefreshValues()
