@@ -58,8 +58,6 @@ namespace Bannerlord.BannerCraft.ViewModels
             }
         }
 
-        public ArmorTemplate Template { get; }
-
         public ArmorClassVM(int selectionIndex, TextObject templateTextObject, Action<int> onSelect)
         {
             _onSelect = onSelect;
