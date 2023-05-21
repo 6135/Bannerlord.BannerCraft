@@ -1,14 +1,10 @@
-﻿using System.Linq;
-using TaleWorlds.CampaignSystem;
-using TaleWorlds.Core;
+﻿using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.Information;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 
 namespace Bannerlord.BannerCraft.ViewModels
 {
-    using Config = BannerCraftConfig;
-
     public class ExtraMaterialItemVM : ViewModel
     {
         private string _resourceName;
@@ -125,10 +121,10 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         [DataSourceProperty] public ImageIdentifierVM Visual { get => ImageIdentifier; }
 
-        public ExtraMaterialItemVM(ExtraCraftingMaterials material, int amount, int changeAmount = 0)
+        public ExtraMaterialItemVM(ExtraCraftingMaterials material, ItemObject resourceItem, int amount, int changeAmount = 0)
         {
             ResourceMaterial = material;
-            ResourceItem = Config.Instance.SmithingModel.GetCraftingMaterialItem(material);
+            ResourceItem = resourceItem;
             ResourceName = ResourceItem?.Name?.ToString() ?? "none";
             ResourceHint = new HintViewModel(new TextObject("{=!}" + ResourceName));
             ResourceAmount = amount;
@@ -137,19 +133,6 @@ namespace Bannerlord.BannerCraft.ViewModels
             ResourceChangeAmount = changeAmount;
 
             ImageIdentifier = new ImageIdentifierVM(ResourceItem);
-        }
-
-        public static ExtraCraftingMaterials FromItem(ItemObject item) => item.Name.ToString().ToLower() switch
-        {
-            "linen" => ExtraCraftingMaterials.Linen,
-            "fur" => ExtraCraftingMaterials.Fur,
-            "leather" => ExtraCraftingMaterials.Leather,
-            "velvet" => ExtraCraftingMaterials.Velvet,
-            _ => ExtraCraftingMaterials.NumExtraCraftingMats
-        };
-
-        public ExtraMaterialItemVM(ItemObject material) : this(FromItem(material), 0)
-        {
         }
     }
 }

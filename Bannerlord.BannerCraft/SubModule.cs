@@ -2,9 +2,7 @@
 using Bannerlord.BannerCraft.Patches;
 using Bannerlord.UIExtenderEx;
 using HarmonyLib;
-using MCM.Abstractions.Attributes;
-using MCM.Abstractions.Attributes.v2;
-using MCM.Abstractions.Base.Global;
+using System;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.CampaignSystem;
@@ -27,17 +25,19 @@ namespace Bannerlord.BannerCraft
         {
             base.OnGameStart(game, gameStarter);
 
-            if (gameStarter is not CampaignGameStarter campaignStarter)
+            if (gameStarter is not CampaignGameStarter)
             {
                 return;
             }
 
-            if (BannerCraftConfig.Instance.SmithingModel == null)
-            {
-                BannerCraftConfig.Instance.SmithingModel = new SmithingModelBC((SmithingModel)campaignStarter.Models.ToList().FindLast(model => model is SmithingModel));
-            }
+            var smithingModel = GetGameModel<SmithingModel>(gameStarter);
 
-            campaignStarter.AddModel(BannerCraftConfig.Instance.SmithingModel);
+            if (smithingModel is null)
+            {
+                throw new InvalidOperationException("Default SmithingModel was not found.");
+            }
+            
+            gameStarter.AddModel(new SmithingModelBC(smithingModel));
         }
 
         protected override void OnSubModuleLoad()
@@ -54,6 +54,18 @@ namespace Bannerlord.BannerCraft
             MethodInfo SmeltingVMOriginal = typeof(SmeltingVM).GetMethod(nameof(SmeltingVM.RefreshList));
             MethodInfo SmeltingVMPostfix = typeof(SmeltingVMPatch).GetMethod(nameof(SmeltingVMPatch.RefreshListPostfix));
             _harmony.Patch(SmeltingVMOriginal, postfix: new HarmonyMethod(SmeltingVMPostfix));
+        }
+
+        private static T? GetGameModel<T>(IGameStarter gameStarterObject) where T : GameModel
+        {
+            var models = gameStarterObject.Models.ToArray();
+
+            for (int index = models.Length - 1; index >= 0; --index)
+            {
+                if (models[index] is T gameModel1)
+                    return gameModel1;
+            }
+            return default;
         }
     }
 }

@@ -1,9 +1,11 @@
-﻿using Bannerlord.BannerCraft.UI.Extensions;
+﻿using Bannerlord.BannerCraft.Models.Vanilla;
+using Bannerlord.BannerCraft.UI.Extensions;
 using Bannerlord.UIExtenderEx.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting;
@@ -514,8 +516,11 @@ namespace Bannerlord.BannerCraft.ViewModels
         {
             base.RefreshValues();
 
+            var baseSmithingModel = Campaign.Current.Models.SmithingModel;
+
             Armors.Clear();
 
+            if (baseSmithingModel is SmithingModelBC smithingModel)
             foreach (var item in Game.Current.ObjectManager.GetObjectTypeList<ItemObject>())
             {
                 ItemType itemType = GetItemType(item);
@@ -537,7 +542,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     continue;
                 }
 
-                Armors.Add(new ArmorItemVM(this, item, itemType));
+                Armors.Add(new ArmorItemVM(this, item, smithingModel.CalculateArmorDifficulty(item), itemType));
             }
 
             if (!AllowItemType(_selectedItemType))

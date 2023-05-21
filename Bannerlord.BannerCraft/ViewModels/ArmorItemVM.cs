@@ -7,8 +7,6 @@ using TaleWorlds.Localization;
 
 namespace Bannerlord.BannerCraft.ViewModels
 {
-    using Config = BannerCraftConfig;
-
     public class ArmorItemVM : ViewModel
     {
         private readonly ArmorCraftingVM _armorCrafting;
@@ -131,7 +129,7 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         public EquipmentElement EquipmentElement { get; private set; }
 
-        public ArmorItemVM(ArmorCraftingVM armorCrafting, ItemObject item, ItemType type)
+        public ArmorItemVM(ArmorCraftingVM armorCrafting, ItemObject item, int difficulty, ItemType type)
         {
             _armorCrafting = armorCrafting;
             ImageIdentifier = new ImageIdentifierVM(item);
@@ -148,7 +146,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                 ItemFlagIcons.Add(new CraftingItemFlagVM(itemFlagDetail.Item1, itemFlagDetail.Item2, isDisplayed: true));
             }
 
-            Difficulty = Config.Instance.SmithingModel.CalculateArmorDifficulty(Item);
+            Difficulty = difficulty;
 
             EquipmentElement = new EquipmentElement(item);
         }

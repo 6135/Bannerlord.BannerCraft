@@ -24,7 +24,6 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
         public override Crafting.OverrideData GetModifierChanges(int modifierTier, Hero hero, WeaponComponentData weapon) => _model.GetModifierChanges(modifierTier, hero, weapon);
         public override IEnumerable<Crafting.RefiningFormula> GetRefiningFormulas(Hero weaponsmith) => _model.GetRefiningFormulas(weaponsmith);
         public override ItemObject GetCraftingMaterialItem(CraftingMaterials craftingMaterial) => _model.GetCraftingMaterialItem(craftingMaterial);
-        // public override int[] GetSmeltingOutputForItem(ItemObject item) => _model.GetSmeltingOutputForItem(item);
         public override int GetSkillXpForRefining(ref Crafting.RefiningFormula refineFormula) => _model.GetSkillXpForRefining(ref refineFormula);
         public override int GetSkillXpForSmelting(ItemObject item) => _model.GetSkillXpForSmelting(item);
         public override int GetSkillXpForSmithingInFreeBuildMode(ItemObject item) => _model.GetSkillXpForSmithingInFreeBuildMode(item);

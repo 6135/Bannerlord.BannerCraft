@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Bannerlord.BannerCraft.ViewModels;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.Smelting;
 using TaleWorlds.Core;
@@ -29,7 +30,7 @@ namespace Bannerlord.BannerCraft.Patches
             {
                 ItemRosterElement elementCopyAtIndex = playerItemRoster.GetElementCopyAtIndex(i);
                 if (!ArmorCraftingVM.ItemTypeIsWeapon(ArmorCraftingVM.GetItemType(elementCopyAtIndex.EquipmentElement.Item))
-                    && BannerCraftConfig.Instance.SmithingModel.GetSmeltingOutputForItem(elementCopyAtIndex.EquipmentElement.Item).Any((x) => x > 0))
+                    && Campaign.Current.Models.SmithingModel.GetSmeltingOutputForItem(elementCopyAtIndex.EquipmentElement.Item).Any((x) => x > 0))
                 {
                     bool isLocked = isItemLocked(elementCopyAtIndex.EquipmentElement);
                     SmeltingItemVM item = new SmeltingItemVM(elementCopyAtIndex.EquipmentElement, onItemSelection, processLockItem, isLocked, elementCopyAtIndex.Amount);
