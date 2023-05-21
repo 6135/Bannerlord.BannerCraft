@@ -18,7 +18,7 @@ using TaleWorlds.Core.ViewModelCollection.Information;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 
-namespace Bannerlord.BannerCraft.UI.Extensions
+namespace Bannerlord.BannerCraft.Mixins
 {
     [ViewModelMixin("UpdateAll")]
     public class CraftingMixin : BaseViewModelMixin<CraftingVM>

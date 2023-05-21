@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Bannerlord.BannerCraft.Mixins;
 using Bannerlord.BannerCraft.Models;
-using Bannerlord.BannerCraft.UI.Extensions;
 using Bannerlord.UIExtenderEx.Attributes;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
