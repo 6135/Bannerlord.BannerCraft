@@ -2,7 +2,6 @@ using System;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.WeaponDesign;
 using TaleWorlds.Core;
-using TaleWorlds.Core.ViewModelCollection.Information;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 
@@ -16,7 +15,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         private ImageIdentifierVM _imageIdentifier;
         private ItemObject _item;
 
-        private ArmorCraftingVM.ItemType _itemType;
+        private ItemType _itemType;
 
         private bool _isSelected;
 
@@ -58,7 +57,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         public string ItemName => Item.Name.ToString();
 
         [DataSourceProperty]
-        public ArmorCraftingVM.ItemType ItemType
+        public ItemType ItemType
         {
             get => _itemType;
             private set
@@ -132,7 +131,7 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         public EquipmentElement EquipmentElement { get; private set; }
 
-        public ArmorItemVM(ArmorCraftingVM armorCrafting, ItemObject item, ArmorCraftingVM.ItemType type)
+        public ArmorItemVM(ArmorCraftingVM armorCrafting, ItemObject item, ItemType type)
         {
             _armorCrafting = armorCrafting;
             ImageIdentifier = new ImageIdentifierVM(item);

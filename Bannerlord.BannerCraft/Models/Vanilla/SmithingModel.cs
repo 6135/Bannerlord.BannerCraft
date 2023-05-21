@@ -46,7 +46,7 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
                 return result;
             }
 
-            if (MCMUISettings.Instance.DefaultSmeltingModel)
+            if (Settings.Instance.DefaultSmeltingModel)
             {
                 return result;
             }
@@ -133,15 +133,15 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
         {
             float chance = 0.01f * (difficulty - hero.GetSkillValue(DefaultSkills.Crafting));
 
-            return MBMath.ClampFloat(chance, 0f, MCMUISettings.Instance.MaximumBotchChance);
+            return MBMath.ClampFloat(chance, 0f, Settings.Instance.MaximumBotchChance);
         }
 
         public int CalculateArmorDifficulty(ItemObject item)
         {
             float result = item.Tierf * 20f;
 
-            ArmorCraftingVM.ItemType itemType = ArmorCraftingVM.GetItemType(item);
-            if (itemType == ArmorCraftingVM.ItemType.Invalid)
+            ItemType itemType = ArmorCraftingVM.GetItemType(item);
+            if (itemType == ItemType.Invalid)
             {
                 /*
 				 * Vanilla crafting item, should not get here, but let's be nice
@@ -155,20 +155,20 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
 
             switch (itemType)
             {
-                case ArmorCraftingVM.ItemType.Barding:
+                case ItemType.Barding:
 
-                case ArmorCraftingVM.ItemType.HeadArmor:
-                case ArmorCraftingVM.ItemType.ShoulderArmor:
-                case ArmorCraftingVM.ItemType.BodyArmor:
-                case ArmorCraftingVM.ItemType.ArmArmor:
-                case ArmorCraftingVM.ItemType.LegArmor:
+                case ItemType.HeadArmor:
+                case ItemType.ShoulderArmor:
+                case ItemType.BodyArmor:
+                case ItemType.ArmArmor:
+                case ItemType.LegArmor:
                     switch (itemType)
                     {
-                        case ArmorCraftingVM.ItemType.Barding:
-                        case ArmorCraftingVM.ItemType.BodyArmor:
+                        case ItemType.Barding:
+                        case ItemType.BodyArmor:
                             result *= 1.5f;
                             break;
-                        case ArmorCraftingVM.ItemType.HeadArmor:
+                        case ItemType.HeadArmor:
                             result *= 1.2f;
                             break;
                     }
@@ -190,7 +190,7 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
                     }
                     break;
 
-                case ArmorCraftingVM.ItemType.Shield:
+                case ItemType.Shield:
                     /*
 					 * result * item.Tierf / 6f is an arbitrary attempt to balance out the difficulty of 
 					 * these so they're approximately on par with equivalent tier melee weapons
@@ -198,22 +198,22 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
                     result += item.WeaponComponent.PrimaryWeapon.MaxDataValue / 10f;
                     result += result * item.Tierf / 6f;
                     break;
-                case ArmorCraftingVM.ItemType.Bow:
-                case ArmorCraftingVM.ItemType.Crossbow:
+                case ItemType.Bow:
+                case ItemType.Crossbow:
                     result += result * item.Tierf / 6f;
                     break;
-                case ArmorCraftingVM.ItemType.Arrows:
-                case ArmorCraftingVM.ItemType.Bolts:
+                case ItemType.Arrows:
+                case ItemType.Bolts:
                     result += item.WeaponComponent.PrimaryWeapon.MaxDataValue * item.WeaponComponent.PrimaryWeapon.MissileDamage;
                     result += result * item.Tierf / 6f;
                     break;
-                case ArmorCraftingVM.ItemType.Banner:
+                case ItemType.Banner:
                     result += result * item.Tierf / 4f;
                     break;
-                case ArmorCraftingVM.ItemType.OneHandedWeapon:
-                case ArmorCraftingVM.ItemType.TwoHandedWeapon:
-                case ArmorCraftingVM.ItemType.Polearm:
-                case ArmorCraftingVM.ItemType.Thrown:
+                case ItemType.OneHandedWeapon:
+                case ItemType.TwoHandedWeapon:
+                case ItemType.Polearm:
+                case ItemType.Thrown:
                     result += result * item.Tierf / 3f;
                     break;
             }
@@ -238,8 +238,8 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
                 return result;
             }
 
-            ArmorCraftingVM.ItemType itemType = ArmorCraftingVM.GetItemType(item);
-            if (itemType == ArmorCraftingVM.ItemType.Invalid)
+            ItemType itemType = ArmorCraftingVM.GetItemType(item);
+            if (itemType == ItemType.Invalid)
             {
                 /*
                  * Vanilla crafting item, should not get here
@@ -299,13 +299,13 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
 
             switch (itemType)
             {
-                case ArmorCraftingVM.ItemType.Barding:
+                case ItemType.Barding:
 
-                case ArmorCraftingVM.ItemType.HeadArmor:
-                case ArmorCraftingVM.ItemType.ShoulderArmor:
-                case ArmorCraftingVM.ItemType.BodyArmor:
-                case ArmorCraftingVM.ItemType.ArmArmor:
-                case ArmorCraftingVM.ItemType.LegArmor:
+                case ItemType.HeadArmor:
+                case ItemType.ShoulderArmor:
+                case ItemType.BodyArmor:
+                case ItemType.ArmArmor:
+                case ItemType.LegArmor:
                     float metalRatio = 0f;
                     float clothRatio = 0f;
                     float leatherRatio = 0f;
@@ -365,11 +365,11 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
                     result[clothIndex] = -numCloth;
 
                     break;
-                case ArmorCraftingVM.ItemType.Shield:
-                case ArmorCraftingVM.ItemType.Bow:
-                case ArmorCraftingVM.ItemType.Crossbow:
-                case ArmorCraftingVM.ItemType.Arrows:
-                case ArmorCraftingVM.ItemType.Bolts:
+                case ItemType.Shield:
+                case ItemType.Bow:
+                case ItemType.Crossbow:
+                case ItemType.Arrows:
+                case ItemType.Bolts:
                     metalRatio = item.WeaponComponent.PrimaryWeapon.PhysicsMaterial switch
                     {
                         "shield_metal" => 0.8f,
@@ -378,19 +378,19 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
 
                     metalRatio = itemType switch
                     {
-                        ArmorCraftingVM.ItemType.Bow => 0.8f,
-                        ArmorCraftingVM.ItemType.Crossbow => 1f,
-                        ArmorCraftingVM.ItemType.Arrows => 0.4f,
-                        ArmorCraftingVM.ItemType.Bolts => 0.4f,
+                        ItemType.Bow => 0.8f,
+                        ItemType.Crossbow => 1f,
+                        ItemType.Arrows => 0.4f,
+                        ItemType.Bolts => 0.4f,
                         _ => metalRatio
                     };
 
                     weightTotal = itemType switch
                     {
-                        ArmorCraftingVM.ItemType.Bow => weightTotal * 4f,
-                        ArmorCraftingVM.ItemType.Crossbow => weightTotal * 4f,
-                        ArmorCraftingVM.ItemType.Arrows => weightTotal * item.PrimaryWeapon.MaxDataValue * 4f,
-                        ArmorCraftingVM.ItemType.Bolts => weightTotal * item.PrimaryWeapon.MaxDataValue * 4f,
+                        ItemType.Bow => weightTotal * 4f,
+                        ItemType.Crossbow => weightTotal * 4f,
+                        ItemType.Arrows => weightTotal * item.PrimaryWeapon.MaxDataValue * 4f,
+                        ItemType.Bolts => weightTotal * item.PrimaryWeapon.MaxDataValue * 4f,
                         _ => weightTotal
                     };
 
@@ -413,7 +413,7 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
                     result[woodIndex] = -numWood;
 
                     break;
-                case ArmorCraftingVM.ItemType.Banner:
+                case ItemType.Banner:
                     weightTotal *= 2f;
 
                     clothMaterial = ExtraCraftingMaterials.Velvet;
@@ -434,10 +434,10 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
                     result[clothIndex] = -numCloth;
 
                     break;
-                case ArmorCraftingVM.ItemType.OneHandedWeapon:
-                case ArmorCraftingVM.ItemType.TwoHandedWeapon:
-                case ArmorCraftingVM.ItemType.Polearm:
-                case ArmorCraftingVM.ItemType.Thrown:
+                case ItemType.OneHandedWeapon:
+                case ItemType.TwoHandedWeapon:
+                case ItemType.Polearm:
+                case ItemType.Thrown:
                     /*
 					 * Let's not do anything fancy
 					 */
@@ -467,25 +467,25 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
             result += item.Weight * 5f;
             result += item.Tierf * 5f;
 
-            ArmorCraftingVM.ItemType itemType = ArmorCraftingVM.GetItemType(item);
+            ItemType itemType = ArmorCraftingVM.GetItemType(item);
 
             result += itemType switch
             {
-                ArmorCraftingVM.ItemType.Barding => 70f,
+                ItemType.Barding => 70f,
 
-                ArmorCraftingVM.ItemType.HeadArmor => 30f,
-                ArmorCraftingVM.ItemType.ShoulderArmor => 40f,
-                ArmorCraftingVM.ItemType.BodyArmor => 50f,
-                ArmorCraftingVM.ItemType.ArmArmor => 10f,
-                ArmorCraftingVM.ItemType.LegArmor => 10f,
+                ItemType.HeadArmor => 30f,
+                ItemType.ShoulderArmor => 40f,
+                ItemType.BodyArmor => 50f,
+                ItemType.ArmArmor => 10f,
+                ItemType.LegArmor => 10f,
 
-                ArmorCraftingVM.ItemType.Shield => 20f,
+                ItemType.Shield => 20f,
 
-                ArmorCraftingVM.ItemType.Bow => 40f,
-                ArmorCraftingVM.ItemType.Crossbow => 40f,
+                ItemType.Bow => 40f,
+                ItemType.Crossbow => 40f,
 
-                ArmorCraftingVM.ItemType.Arrows => 1f * item.WeaponComponent.PrimaryWeapon.MaxDataValue,
-                ArmorCraftingVM.ItemType.Bolts => 1f * item.WeaponComponent.PrimaryWeapon.MaxDataValue,
+                ItemType.Arrows => 1f * item.WeaponComponent.PrimaryWeapon.MaxDataValue,
+                ItemType.Bolts => 1f * item.WeaponComponent.PrimaryWeapon.MaxDataValue,
                 _ => 0f
             };
 
@@ -522,7 +522,7 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
 			 * RandomInt is a number between -25 and 75
 			 * Make randomInt between 0 and 100
 			 */
-            randomInt += MCMUISettings.Instance.SkillOverDifficultyBeforeNoPenalty;
+            randomInt += Settings.Instance.SkillOverDifficultyBeforeNoPenalty;
             /*
 			 * Which means this is now between -200 and 99
 			 */
@@ -551,7 +551,7 @@ namespace Bannerlord.BannerCraft.Models.Vanilla
             int skillValue = hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
             int itemDifficulty = CalculateArmorDifficulty(item);
 
-            int skillFloor = MCMUISettings.Instance.SkillOverDifficultyBeforeNoPenalty;
+            int skillFloor = Settings.Instance.SkillOverDifficultyBeforeNoPenalty;
 
             /*
 			 * randomInt becomes between -50 and 50 with default settings

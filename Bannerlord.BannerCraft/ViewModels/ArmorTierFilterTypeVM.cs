@@ -5,13 +5,13 @@ namespace Bannerlord.BannerCraft.ViewModels
 {
     public class ArmorTierFilterTypeVM : ViewModel
     {
-        private readonly Action<ArmorCraftingVM.ArmorPieceTierFilter> _onSelect;
+        private readonly Action<ArmorPieceTierFlag> _onSelect;
 
         private bool _isSelected;
 
         private string _tierName;
 
-        public ArmorCraftingVM.ArmorPieceTierFilter FilterType { get; }
+        public ArmorPieceTierFlag FilterType { get; }
 
         [DataSourceProperty]
         public bool IsSelected
@@ -47,7 +47,7 @@ namespace Bannerlord.BannerCraft.ViewModels
             }
         }
 
-        public ArmorTierFilterTypeVM(ArmorCraftingVM.ArmorPieceTierFilter filterType, Action<ArmorCraftingVM.ArmorPieceTierFilter> onSelect, string tierName)
+        public ArmorTierFilterTypeVM(ArmorPieceTierFlag filterType, Action<ArmorPieceTierFlag> onSelect, string tierName)
         {
             FilterType = filterType;
             _onSelect = onSelect;

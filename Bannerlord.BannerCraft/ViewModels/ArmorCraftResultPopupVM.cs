@@ -164,20 +164,20 @@ namespace Bannerlord.BannerCraft.ViewModels
         {
             base.RefreshValues();
 
-            ArmorCraftingVM.ItemType itemType = ArmorCraftingVM.GetItemType(_craftedItem);
+            ItemType itemType = ArmorCraftingVM.GetItemType(_craftedItem);
             ArmorCraftedText = itemType switch
             {
-                ArmorCraftingVM.ItemType.Barding => "Horse Armor Crafted!",
-                ArmorCraftingVM.ItemType.HeadArmor => "Head Armor Crafted!",
-                ArmorCraftingVM.ItemType.ShoulderArmor => "Shoulder Armor Crafted!",
-                ArmorCraftingVM.ItemType.BodyArmor => "Body Armor Crafted!",
-                ArmorCraftingVM.ItemType.ArmArmor => "Arm Armor Crafted!",
-                ArmorCraftingVM.ItemType.LegArmor => "Leg Armor Crafted!",
-                ArmorCraftingVM.ItemType.Shield => "Shield Crafted!",
-                ArmorCraftingVM.ItemType.Bow => "Bow Crafted!",
-                ArmorCraftingVM.ItemType.Crossbow => "Crossbow Crafted!",
-                ArmorCraftingVM.ItemType.Arrows => "Arrows Crafted!",
-                ArmorCraftingVM.ItemType.Bolts => "Bolts Crafted!",
+                ItemType.Barding => "Horse Armor Crafted!",
+                ItemType.HeadArmor => "Head Armor Crafted!",
+                ItemType.ShoulderArmor => "Shoulder Armor Crafted!",
+                ItemType.BodyArmor => "Body Armor Crafted!",
+                ItemType.ArmArmor => "Arm Armor Crafted!",
+                ItemType.LegArmor => "Leg Armor Crafted!",
+                ItemType.Shield => "Shield Crafted!",
+                ItemType.Bow => "Bow Crafted!",
+                ItemType.Crossbow => "Crossbow Crafted!",
+                ItemType.Arrows => "Arrows Crafted!",
+                ItemType.Bolts => "Bolts Crafted!",
                 _ => "Something Crafted!"
             };
 

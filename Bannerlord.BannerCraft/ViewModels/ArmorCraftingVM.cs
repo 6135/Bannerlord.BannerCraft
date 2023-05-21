@@ -18,47 +18,6 @@ namespace Bannerlord.BannerCraft.ViewModels
 {
     public class ArmorCraftingVM : ViewModel
     {
-        [Flags]
-        public enum ArmorPieceTierFilter
-        {
-            None = 0x0,
-            Tier0 = 0x1,
-            Tier1 = 0x2,
-            Tier2 = 0x4,
-            Tier3 = 0x8,
-            Tier4 = 0x10,
-            Tier5 = 0x20,
-            Tier6 = 0x40,
-            All = 0x7F
-        }
-
-        public enum ItemType
-        {
-            HeadArmor,
-            ShoulderArmor,
-            BodyArmor,
-            ArmArmor,
-            LegArmor,
-
-            Barding,
-
-            Shield,
-
-            Bow,
-            Crossbow,
-
-            Arrows,
-            Bolts,
-
-            Banner,
-
-            OneHandedWeapon,
-            TwoHandedWeapon,
-            Polearm,
-            Thrown,
-
-            Invalid
-        }
 
         public class TierComparer : IComparer<ArmorItemVM>
         {
@@ -91,7 +50,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         private MBBindingList<ArmorItemVM> _armors;
         private ArmorItemVM _currentItem;
         private int _selectedPieceTypeIndex;
-        private ArmorPieceTierFilter _currentTierFilter;
+        private ArmorPieceTierFlag _currentTierFilter;
 
         private ItemCollectionElementViewModel _itemVisualModel;
         private MBBindingList<CraftingListPropertyItem> _itemProperties;
@@ -388,7 +347,7 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         public static bool AllowItemType(ItemType itemType)
         {
-            if (!MCMUISettings.Instance.AllowCraftingNormalWeapons)
+            if (!Settings.Instance.AllowCraftingNormalWeapons)
             {
                 if (ItemTypeIsWeapon(itemType))
                 {
@@ -432,14 +391,14 @@ namespace Bannerlord.BannerCraft.ViewModels
 
             TierFilters = new MBBindingList<ArmorTierFilterTypeVM>
             {
-                new ArmorTierFilterTypeVM(ArmorPieceTierFilter.All, OnSelectPieceTierFilter, GameTexts.FindText("str_crafting_tier_filter_all").ToString()),
-                new ArmorTierFilterTypeVM(ArmorPieceTierFilter.Tier0, OnSelectPieceTierFilter, 0.ToString()),
-                new ArmorTierFilterTypeVM(ArmorPieceTierFilter.Tier1, OnSelectPieceTierFilter, GameTexts.FindText("str_tier_one").ToString()),
-                new ArmorTierFilterTypeVM(ArmorPieceTierFilter.Tier2, OnSelectPieceTierFilter, GameTexts.FindText("str_tier_two").ToString()),
-                new ArmorTierFilterTypeVM(ArmorPieceTierFilter.Tier3, OnSelectPieceTierFilter, GameTexts.FindText("str_tier_three").ToString()),
-                new ArmorTierFilterTypeVM(ArmorPieceTierFilter.Tier4, OnSelectPieceTierFilter, GameTexts.FindText("str_tier_four").ToString()),
-                new ArmorTierFilterTypeVM(ArmorPieceTierFilter.Tier5, OnSelectPieceTierFilter, GameTexts.FindText("str_tier_five").ToString()),
-                new ArmorTierFilterTypeVM(ArmorPieceTierFilter.Tier6, OnSelectPieceTierFilter, Common.ToRoman(6))
+                new ArmorTierFilterTypeVM(ArmorPieceTierFlag.All, OnSelectPieceTierFilter, GameTexts.FindText("str_crafting_tier_filter_all").ToString()),
+                new ArmorTierFilterTypeVM(ArmorPieceTierFlag.Tier0, OnSelectPieceTierFilter, 0.ToString()),
+                new ArmorTierFilterTypeVM(ArmorPieceTierFlag.Tier1, OnSelectPieceTierFilter, GameTexts.FindText("str_tier_one").ToString()),
+                new ArmorTierFilterTypeVM(ArmorPieceTierFlag.Tier2, OnSelectPieceTierFilter, GameTexts.FindText("str_tier_two").ToString()),
+                new ArmorTierFilterTypeVM(ArmorPieceTierFlag.Tier3, OnSelectPieceTierFilter, GameTexts.FindText("str_tier_three").ToString()),
+                new ArmorTierFilterTypeVM(ArmorPieceTierFlag.Tier4, OnSelectPieceTierFilter, GameTexts.FindText("str_tier_four").ToString()),
+                new ArmorTierFilterTypeVM(ArmorPieceTierFlag.Tier5, OnSelectPieceTierFilter, GameTexts.FindText("str_tier_five").ToString()),
+                new ArmorTierFilterTypeVM(ArmorPieceTierFlag.Tier6, OnSelectPieceTierFilter, Common.ToRoman(6))
             };
 
             Armors = new MBBindingList<ArmorItemVM>();
@@ -460,7 +419,7 @@ namespace Bannerlord.BannerCraft.ViewModels
 
             BannerDescriptionText = "";
 
-            UpdateTierFilterFlags(ArmorPieceTierFilter.All);
+            UpdateTierFilterFlags(ArmorPieceTierFlag.All);
 
             RefreshArmorDesignMode(0);
         }
@@ -1162,7 +1121,7 @@ namespace Bannerlord.BannerCraft.ViewModels
             RefreshDifficulty();
         }
 
-        private void UpdateTierFilterFlags(ArmorPieceTierFilter filter)
+        private void UpdateTierFilterFlags(ArmorPieceTierFlag filter)
         {
             foreach (ArmorTierFilterTypeVM tierFilter in TierFilters)
             {
@@ -1172,7 +1131,7 @@ namespace Bannerlord.BannerCraft.ViewModels
             _currentTierFilter = filter;
         }
 
-        private void OnSelectPieceTierFilter(ArmorPieceTierFilter filter)
+        private void OnSelectPieceTierFilter(ArmorPieceTierFlag filter)
         {
             if (_currentTierFilter != filter)
             {
@@ -1208,7 +1167,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                 case ItemObject.ItemTypeEnum.TwoHandedWeapon:
                 case ItemObject.ItemTypeEnum.Polearm:
                 case ItemObject.ItemTypeEnum.Thrown:
-                    if (MCMUISettings.Instance.AllowCraftingNormalWeapons)
+                    if (Settings.Instance.AllowCraftingNormalWeapons)
                     {
                         switch (item.ItemType)
                         {
