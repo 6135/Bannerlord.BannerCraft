@@ -137,7 +137,7 @@ namespace Bannerlord.BannerCraft.UI.Extensions
             {
                 if (IsInArmorMode)
                 {
-                    if (ArmorCrafting.CurrentItem != null && smithingModel is SmithingModelBC bcSmithingModel)
+                    if (ArmorCrafting.CurrentItem != null && smithingModel is BannerCraftSmithingModel bcSmithingModel)
                     {
                         return bcSmithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
                     }
@@ -159,7 +159,7 @@ namespace Bannerlord.BannerCraft.UI.Extensions
             {
                 if (IsInArmorMode)
                 {
-                    if (ArmorCrafting.CurrentItem != null && baseSmithingModel is SmithingModelBC smithingModel)
+                    if (ArmorCrafting.CurrentItem != null && baseSmithingModel is BannerCraftSmithingModel smithingModel)
                     {
                         return _craftingBehavior.GetHeroCraftingStamina(CurrentCraftingHero.Hero) >= smithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, CurrentCraftingHero.Hero);
                     }
@@ -204,7 +204,7 @@ namespace Bannerlord.BannerCraft.UI.Extensions
             }
 
             var baseSmithingModel = Campaign.Current.Models.SmithingModel;
-            if (baseSmithingModel is SmithingModelBC smithingModel)
+            if (baseSmithingModel is BannerCraftSmithingModel smithingModel)
             {
                 int[] craftingCostsForArmorCrafting = smithingModel.GetCraftingInputForArmor(ArmorCrafting.CurrentItem.Item);
 
@@ -242,7 +242,7 @@ namespace Bannerlord.BannerCraft.UI.Extensions
         {
             var baseSmithingModel = Campaign.Current.Models.SmithingModel;
 
-            if (baseSmithingModel is SmithingModelBC smithingModel)
+            if (baseSmithingModel is BannerCraftSmithingModel smithingModel)
             {
                 if (ExtraMaterials == null)
                 {
@@ -373,7 +373,7 @@ namespace Bannerlord.BannerCraft.UI.Extensions
         {
             ItemRoster itemRoster = MobileParty.MainParty.ItemRoster;
             var baseSmithingModel = Campaign.Current.Models.SmithingModel;
-            if (baseSmithingModel is SmithingModelBC smithingModel)
+            if (baseSmithingModel is BannerCraftSmithingModel smithingModel)
             {
                 int[] smithingCostsForArmorCrafting = smithingModel.GetCraftingInputForArmor(ArmorCrafting.CurrentItem.Item);
                 for (int i = 0; i < (int)CraftingMaterials.NumCraftingMats; i++)
@@ -411,7 +411,7 @@ namespace Bannerlord.BannerCraft.UI.Extensions
             }
 
             var baseSmithingModel = Campaign.Current.Models.SmithingModel;
-            var smithingModel = baseSmithingModel as SmithingModelBC;
+            var smithingModel = baseSmithingModel as BannerCraftSmithingModel;
 
             if (smithingModel is null)
             {

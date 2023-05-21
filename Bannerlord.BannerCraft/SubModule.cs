@@ -37,7 +37,7 @@ namespace Bannerlord.BannerCraft
                 throw new InvalidOperationException("Default SmithingModel was not found.");
             }
             
-            gameStarter.AddModel(new SmithingModelBC(smithingModel));
+            gameStarter.AddModel(new BannerCraftSmithingModel(smithingModel));
         }
 
         protected override void OnSubModuleLoad()

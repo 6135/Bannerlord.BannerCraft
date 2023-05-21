@@ -10,10 +10,10 @@ using static TaleWorlds.Core.ArmorComponent;
 
 namespace Bannerlord.BannerCraft.Models.Vanilla
 {
-    public class SmithingModelBC : SmithingModel
+    public class BannerCraftSmithingModel : SmithingModel
     {
         private SmithingModel _model;
-        public SmithingModelBC(SmithingModel model)
+        public BannerCraftSmithingModel(SmithingModel model)
         {
             _model = model;
         }

@@ -520,7 +520,7 @@ namespace Bannerlord.BannerCraft.ViewModels
 
             Armors.Clear();
 
-            if (baseSmithingModel is SmithingModelBC smithingModel)
+            if (baseSmithingModel is BannerCraftSmithingModel smithingModel)
             foreach (var item in Game.Current.ObjectManager.GetObjectTypeList<ItemObject>())
             {
                 ItemType itemType = GetItemType(item);
