@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Bannerlord.BannerCraft.Extensions;
 using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.ViewModels;
 using Bannerlord.UIExtenderEx.Attributes;
@@ -258,7 +257,8 @@ namespace Bannerlord.BannerCraft.Mixins
                         {
                             modifierGroup = ArmorCrafting.CurrentItem.Item.WeaponComponent.ItemModifierGroup;
                         }
-                        ItemModifier modifier = modifierGroup?.GetRandomModifierWithTarget(modifierTier) ?? null;
+
+                        ItemModifier modifier = GetRandomModifierWithTarget(modifierGroup, modifierTier);
 
                         if (modifier != null)
                         {
@@ -314,6 +314,13 @@ namespace Bannerlord.BannerCraft.Mixins
 
             RefreshEnableMainAction();
             UpdateCraftingSkills();
+        }
+
+        private ItemModifier GetRandomModifierWithTarget(ItemModifierGroup modifierGroup, int modifierTier)
+        {
+            var results = modifierGroup.ItemModifiers.OrderByDescending(mod => mod.PriceMultiplier);
+
+            return results.ElementAt(Math.Min(results.Count() - 1, modifierTier));
         }
 
         private int GetRequiredEnergy()
