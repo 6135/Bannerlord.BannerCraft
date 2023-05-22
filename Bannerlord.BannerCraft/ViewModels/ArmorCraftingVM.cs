@@ -1011,9 +1011,9 @@ namespace Bannerlord.BannerCraft.ViewModels
             }
         }
 
-        public void UpdateCraftingHero(CraftingAvailableHeroItemVM currentHero)
+        public void UpdateCraftingHero(Hero currentHero)
         {
-            CurrentHeroCraftingSkill = currentHero.Hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
+            CurrentHeroCraftingSkill = currentHero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
 
             IsCurrentHeroAtMaxCraftingSkill = CurrentHeroCraftingSkill >= 300;
 
