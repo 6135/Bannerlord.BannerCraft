@@ -34,7 +34,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         }
 
         private readonly CraftingMixin _mixin;
-
+        private readonly CraftingVM _craftingVm;
         private readonly Crafting _crafting;
 
         private readonly TierComparer _tierComparer;
@@ -246,9 +246,10 @@ namespace Bannerlord.BannerCraft.ViewModels
             return true;
         }
 
-        public ArmorCraftingVM(CraftingMixin mixin, Crafting crafting)
+        public ArmorCraftingVM(CraftingMixin mixin, CraftingVM craftingVm, Crafting crafting)
         {
             _mixin = mixin;
+            _craftingVm = craftingVm;
             _crafting = crafting;
 
             _tierComparer = new TierComparer();
@@ -451,7 +452,7 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private void RefreshCurrentHeroSkillLevel()
         {
-            CurrentHeroCraftingSkill = _mixin.CurrentCraftingHero.Hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
+            CurrentHeroCraftingSkill = _craftingVm.CurrentCraftingHero.Hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
             IsCurrentHeroAtMaxCraftingSkill = CurrentHeroCraftingSkill >= 300;
             _currentCraftingSkillValueTextObj.SetTextVariable("SKILL_VALUE", CurrentHeroCraftingSkill);
             CurrentCraftingSkillValueText = _currentCraftingSkillValueTextObj.ToString();
