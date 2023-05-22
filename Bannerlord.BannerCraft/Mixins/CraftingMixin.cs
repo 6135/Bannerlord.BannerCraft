@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.ViewModels;
 using Bannerlord.UIExtenderEx.Attributes;
 using Bannerlord.UIExtenderEx.ViewModels;
 using HarmonyLib;
-using Helpers;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Party;
@@ -24,8 +22,7 @@ namespace Bannerlord.BannerCraft.Mixins
     public class CraftingMixin : BaseViewModelMixin<CraftingVM>
     {
         private readonly Crafting _crafting;
-        private readonly CraftingVM _craftingVM;
-        private ArmorCraftingVM _armorCrafting;
+        private ArmorCraftingVM _armorCraftingVm;
 
         private readonly ICraftingCampaignBehavior _craftingBehavior;
 
@@ -36,25 +33,10 @@ namespace Bannerlord.BannerCraft.Mixins
 
         public CraftingMixin(CraftingVM vm) : base(vm)
         {
-            _craftingVM = vm;
-
             _crafting = Traverse.Create(vm).Field("_crafting").GetValue<Crafting>();
             _craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
             _armorText = GameTexts.FindText("str_bannercraft_crafting_category_armor").ToString();
-            _armorCrafting = new ArmorCraftingVM(this, vm, _crafting);
-
-            var availableCharacters = _craftingVM.AvailableCharactersForSmithing;
-            if (Campaign.Current.GameMode == CampaignGameMode.Campaign)
-            {
-                availableCharacters.Clear();
-                foreach (Hero item in CraftingHelper.GetAvailableHeroesForCrafting())
-                {
-                    availableCharacters.Add(new CraftingAvailableHeroItemVM(item, UpdateCraftingHero));
-                }
-            }
-
-            _craftingVM.CurrentCraftingHero = availableCharacters.FirstOrDefault();
-            _craftingVM.ExecuteSwitchToCrafting();
+            _armorCraftingVm = new ArmorCraftingVM(this, vm, _crafting);
 
             UpdateAll();
         }
@@ -76,8 +58,8 @@ namespace Bannerlord.BannerCraft.Mixins
         [DataSourceProperty]
         public ArmorCraftingVM ArmorCrafting
         {
-            get => _armorCrafting;
-            set => SetField(ref _armorCrafting, value, nameof(ArmorCrafting));
+            get => _armorCraftingVm;
+            set => SetField(ref _armorCraftingVm, value, nameof(ArmorCrafting));
         }
 
         [DataSourceProperty]
@@ -87,27 +69,12 @@ namespace Bannerlord.BannerCraft.Mixins
             set => SetField(ref _craftingResourceItems, value, nameof(ExtraMaterials));
         }
 
-        public override void OnRefresh()
-        {
-            base.OnRefresh();
-
-            if (_craftingVM.IsInCraftingMode || _craftingVM.IsInRefinementMode || _craftingVM.IsInSmeltingMode)
-            {
-                IsInArmorMode = false;
-                return;
-            }
-
-            ArmorCrafting?.UpdateCraftingHero(_craftingVM.CurrentCraftingHero);
-
-            UpdateAll();
-        }
-
         [DataSourceMethod]
         public void ExecuteMainActionBannerCraft()
         {
-            if (_craftingVM.IsInRefinementMode || _craftingVM.IsInSmeltingMode)
+            if (ViewModel.IsInRefinementMode || ViewModel.IsInSmeltingMode)
             {
-                _craftingVM.ExecuteMainAction();
+                ViewModel.ExecuteMainAction();
                 return;
             }
 
@@ -130,13 +97,13 @@ namespace Bannerlord.BannerCraft.Mixins
             if (!IsInArmorMode)
             {
                 float botchChance;
-                if (_craftingVM.WeaponDesign.IsInOrderMode)
+                if (ViewModel.WeaponDesign.IsInOrderMode)
                 {
-                    botchChance = smithingModel.CalculateBotchingChance(_craftingVM.CurrentCraftingHero.Hero, _craftingVM.WeaponDesign.CurrentOrderDifficulty);
+                    botchChance = smithingModel.CalculateBotchingChance(ViewModel.CurrentCraftingHero.Hero, ViewModel.WeaponDesign.CurrentOrderDifficulty);
                 }
                 else
                 {
-                    botchChance = smithingModel.CalculateBotchingChance(_craftingVM.CurrentCraftingHero.Hero, _craftingVM.WeaponDesign.CurrentDifficulty);
+                    botchChance = smithingModel.CalculateBotchingChance(ViewModel.CurrentCraftingHero.Hero, ViewModel.WeaponDesign.CurrentDifficulty);
                 }
 
                 if (MBRandom.RandomFloat < botchChance)
@@ -147,25 +114,25 @@ namespace Bannerlord.BannerCraft.Mixins
 					 * Crafting is botched, materials spent, item not crafted
 					 */
                     MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
-                            .SetTextVariable("HERO", _craftingVM.CurrentCraftingHero.Hero.Name)
+                            .SetTextVariable("HERO", ViewModel.CurrentCraftingHero.Hero.Name)
                             .SetTextVariable("ITEM", _crafting.CraftedWeaponName),
                         0, null, "event:/ui/notification/relation");
 
-                    int energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), _craftingVM.CurrentCraftingHero.Hero) / 2;
-                    craftingBehavior.SetHeroCraftingStamina(_craftingVM.CurrentCraftingHero.Hero, craftingBehavior.GetHeroCraftingStamina(_craftingVM.CurrentCraftingHero.Hero) - energyCostForSmithing);
+                    int energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), ViewModel.CurrentCraftingHero.Hero) / 2;
+                    craftingBehavior.SetHeroCraftingStamina(ViewModel.CurrentCraftingHero.Hero, craftingBehavior.GetHeroCraftingStamina(ViewModel.CurrentCraftingHero.Hero) - energyCostForSmithing);
                 }
                 else
                 {
-                    _craftingVM.ExecuteMainAction();
+                    ViewModel.ExecuteMainAction();
                 }
             }
             else
             {
-                float botchChance = smithingModel.CalculateBotchingChance(_craftingVM.CurrentCraftingHero.Hero, ArmorCrafting.CurrentItem.Difficulty);
+                float botchChance = smithingModel.CalculateBotchingChance(ViewModel.CurrentCraftingHero.Hero, ArmorCrafting.CurrentItem.Difficulty);
 
                 SpendMaterials();
 
-                int energyCostForCrafting = smithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, _craftingVM.CurrentCraftingHero.Hero);
+                int energyCostForCrafting = smithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, ViewModel.CurrentCraftingHero.Hero);
 
                 craftingXp = smithingModel.GetSkillXpForSmithingInFreeBuildMode(ArmorCrafting.CurrentItem.Item);
 
@@ -175,7 +142,7 @@ namespace Bannerlord.BannerCraft.Mixins
 					 * Crafting is botched, materials spent, item not crafted
 					 */
                     MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
-                            .SetTextVariable("HERO", _craftingVM.CurrentCraftingHero.Hero.Name)
+                            .SetTextVariable("HERO", ViewModel.CurrentCraftingHero.Hero.Name)
                             .SetTextVariable("ITEM", ArmorCrafting.CurrentItem.Item.Name),
                         0, null, "event:/ui/notification/relation");
 
@@ -185,7 +152,7 @@ namespace Bannerlord.BannerCraft.Mixins
                 {
                     EquipmentElement element = new EquipmentElement(ArmorCrafting.CurrentItem.Item);
 
-                    int modifierTier = smithingModel.GetModifierTierForItem(ArmorCrafting.CurrentItem.Item, _craftingVM.CurrentCraftingHero.Hero);
+                    int modifierTier = smithingModel.GetModifierTierForItem(ArmorCrafting.CurrentItem.Item, ViewModel.CurrentCraftingHero.Hero);
                     if (modifierTier >= 0)
                     {
                         /*
@@ -230,10 +197,10 @@ namespace Bannerlord.BannerCraft.Mixins
                     MobileParty.MainParty.ItemRoster.AddToCounts(element, 1);
                 }
 
-                craftingBehavior.SetHeroCraftingStamina(_craftingVM.CurrentCraftingHero.Hero, craftingBehavior.GetHeroCraftingStamina(_craftingVM.CurrentCraftingHero.Hero) - energyCostForCrafting);
-                _craftingVM.CurrentCraftingHero.Hero.AddSkillXp(DefaultSkills.Crafting, craftingXp);
+                craftingBehavior.SetHeroCraftingStamina(ViewModel.CurrentCraftingHero.Hero, craftingBehavior.GetHeroCraftingStamina(ViewModel.CurrentCraftingHero.Hero) - energyCostForCrafting);
+                ViewModel.CurrentCraftingHero.Hero.AddSkillXp(DefaultSkills.Crafting, craftingXp);
 
-                ArmorCrafting.UpdateCraftingHero(_craftingVM.CurrentCraftingHero);
+                ArmorCrafting.UpdateCraftingHero(ViewModel.CurrentCraftingHero);
             }
 
             UpdateAll();
@@ -242,18 +209,18 @@ namespace Bannerlord.BannerCraft.Mixins
         [DataSourceMethod]
         public void ExecuteSwitchToArmor()
         {
-            _craftingVM.IsInSmeltingMode = false;
-            _craftingVM.IsInCraftingMode = false;
-            _craftingVM.IsInRefinementMode = false;
+            ViewModel.IsInSmeltingMode = false;
+            ViewModel.IsInCraftingMode = false;
+            ViewModel.IsInRefinementMode = false;
             IsInArmorMode = true;
 
             ViewModel?.OnItemRefreshed?.Invoke(isItemVisible: false);
 
             string t = GameTexts.FindText("str_bannercraft_crafting_category_armor").ToString();
-            _craftingVM.CurrentCategoryText = t;
-            _craftingVM.MainActionText = t;
+            ViewModel.CurrentCategoryText = t;
+            ViewModel.MainActionText = t;
 
-            ArmorCrafting?.UpdateCraftingHero(_craftingVM.CurrentCraftingHero);
+            ArmorCrafting?.UpdateCraftingHero(ViewModel.CurrentCraftingHero);
 
             UpdateAll();
         }
@@ -261,19 +228,22 @@ namespace Bannerlord.BannerCraft.Mixins
         [DataSourceMethod]
         public void CloseWithWait()
         {
-            _craftingVM.ExecuteCancel();
+            ViewModel.ExecuteCancel();
         }
 
-        public void UpdateCraftingHero(CraftingAvailableHeroItemVM newHero)
+        public override void OnRefresh()
         {
-            _craftingVM.UpdateCraftingHero(newHero);
+            base.OnRefresh();
 
-            ArmorCrafting.UpdateCraftingHero(newHero);
+            if (ViewModel.IsInCraftingMode || ViewModel.IsInRefinementMode || ViewModel.IsInSmeltingMode)
+            {
+                IsInArmorMode = false;
+                return;
+            }
 
-            UpdateCurrentMaterialCosts();
+            ArmorCrafting?.UpdateCraftingHero(ViewModel.CurrentCraftingHero);
 
-            RefreshEnableMainAction();
-            UpdateCraftingSkills();
+            UpdateAll();
         }
 
         private ItemModifier GetRandomModifierWithTarget(ItemModifierGroup modifierGroup, int modifierTier)
@@ -287,20 +257,20 @@ namespace Bannerlord.BannerCraft.Mixins
         {
             var smithingModel = Campaign.Current.Models.SmithingModel;
 
-            if (_craftingVM.CurrentCraftingHero?.Hero != null)
+            if (ViewModel.CurrentCraftingHero?.Hero != null)
             {
                 if (IsInArmorMode)
                 {
                     if (ArmorCrafting.CurrentItem != null && smithingModel is BannerCraftSmithingModel bcSmithingModel)
                     {
-                        return bcSmithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, _craftingVM.CurrentCraftingHero.Hero);
+                        return bcSmithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, ViewModel.CurrentCraftingHero.Hero);
                     }
                     else
                     {
                         return 0;
                     }
                 }
-                return smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), _craftingVM.CurrentCraftingHero.Hero);
+                return smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), ViewModel.CurrentCraftingHero.Hero);
             }
             return 0;
         }
@@ -309,17 +279,17 @@ namespace Bannerlord.BannerCraft.Mixins
         {
             var baseSmithingModel = Campaign.Current.Models.SmithingModel;
 
-            if (_craftingVM.CurrentCraftingHero?.Hero != null)
+            if (ViewModel.CurrentCraftingHero?.Hero != null)
             {
                 if (IsInArmorMode)
                 {
                     if (ArmorCrafting.CurrentItem != null && baseSmithingModel is BannerCraftSmithingModel smithingModel)
                     {
-                        return _craftingBehavior.GetHeroCraftingStamina(_craftingVM.CurrentCraftingHero.Hero) >= smithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, _craftingVM.CurrentCraftingHero.Hero);
+                        return _craftingBehavior.GetHeroCraftingStamina(ViewModel.CurrentCraftingHero.Hero) >= smithingModel.GetEnergyCostForArmor(ArmorCrafting.CurrentItem.Item, ViewModel.CurrentCraftingHero.Hero);
                     }
                     return false;
                 }
-                return _craftingBehavior.GetHeroCraftingStamina(_craftingVM.CurrentCraftingHero.Hero) >= baseSmithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), _craftingVM.CurrentCraftingHero.Hero);
+                return _craftingBehavior.GetHeroCraftingStamina(ViewModel.CurrentCraftingHero.Hero) >= baseSmithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), ViewModel.CurrentCraftingHero.Hero);
             }
 
             return true;
@@ -327,7 +297,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private bool HaveMaterialsNeeded()
         {
-            return !(_craftingVM.PlayerCurrentMaterials.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0)
+            return !(ViewModel.PlayerCurrentMaterials.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0)
                      || ExtraMaterials.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0));
         }
 
@@ -346,7 +316,7 @@ namespace Bannerlord.BannerCraft.Mixins
             {
                 for (int i = 0; i < (int)CraftingMaterials.NumCraftingMats; i++)
                 {
-                    _craftingVM.PlayerCurrentMaterials[i].ResourceChangeAmount = 0;
+                    ViewModel.PlayerCurrentMaterials[i].ResourceChangeAmount = 0;
                 }
 
                 for (int i = 0; i < (int)ExtraCraftingMaterials.NumExtraCraftingMats; i++)
@@ -364,7 +334,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
                 for (int i = 0; i < (int)CraftingMaterials.NumCraftingMats; i++)
                 {
-                    _craftingVM.PlayerCurrentMaterials[i].ResourceChangeAmount = craftingCostsForArmorCrafting[i];
+                    ViewModel.PlayerCurrentMaterials[i].ResourceChangeAmount = craftingCostsForArmorCrafting[i];
                 }
 
                 for (int i = 0; i < (int)ExtraCraftingMaterials.NumExtraCraftingMats; i++)
@@ -376,19 +346,19 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private void UpdateCurrentMaterialsAvailable()
         {
-            if (_craftingVM.PlayerCurrentMaterials == null)
+            if (ViewModel.PlayerCurrentMaterials == null)
             {
-                _craftingVM.PlayerCurrentMaterials = new MBBindingList<CraftingResourceItemVM>();
+                ViewModel.PlayerCurrentMaterials = new MBBindingList<CraftingResourceItemVM>();
                 for (int i = 0; i < (int)CraftingMaterials.NumCraftingMats; i++)
                 {
-                    _craftingVM.PlayerCurrentMaterials.Add(new CraftingResourceItemVM((CraftingMaterials)i, 0));
+                    ViewModel.PlayerCurrentMaterials.Add(new CraftingResourceItemVM((CraftingMaterials)i, 0));
                 }
             }
 
             for (int i = 0; i < (int)CraftingMaterials.NumCraftingMats; i++)
             {
                 ItemObject craftingMaterialItem = Campaign.Current.Models.SmithingModel.GetCraftingMaterialItem((CraftingMaterials)i);
-                _craftingVM.PlayerCurrentMaterials[i].ResourceAmount = MobileParty.MainParty.ItemRoster.GetItemNumber(craftingMaterialItem);
+                ViewModel.PlayerCurrentMaterials[i].ResourceAmount = MobileParty.MainParty.ItemRoster.GetItemNumber(craftingMaterialItem);
             }
         }
 
@@ -418,7 +388,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private void UpdateCraftingStamina()
         {
-            foreach (CraftingAvailableHeroItemVM item in _craftingVM.AvailableCharactersForSmithing)
+            foreach (CraftingAvailableHeroItemVM item in ViewModel.AvailableCharactersForSmithing)
             {
                 item.RefreshStamina();
             }
@@ -426,7 +396,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private void UpdateCraftingSkills()
         {
-            foreach (CraftingAvailableHeroItemVM item in _craftingVM.AvailableCharactersForSmithing)
+            foreach (CraftingAvailableHeroItemVM item in ViewModel.AvailableCharactersForSmithing)
             {
                 item.RefreshSkills();
             }
@@ -436,7 +406,7 @@ namespace Bannerlord.BannerCraft.Mixins
         {
             if (Campaign.Current.GameMode == CampaignGameMode.Tutorial)
             {
-                _craftingVM.IsMainActionEnabled = true;
+                ViewModel.IsMainActionEnabled = true;
                 return;
             }
 
@@ -446,37 +416,37 @@ namespace Bannerlord.BannerCraft.Mixins
 				 * This is stupid as hell, but CraftingVM.RefreshEnableMainAction is private
 				 * UpdateCraftingHero is the only public function that calls it
 				 */
-                _craftingVM.UpdateCraftingHero(_craftingVM.CurrentCraftingHero);
+                ViewModel.UpdateCraftingHero(ViewModel.CurrentCraftingHero);
                 return;
             }
 
             UpdateCurrentMaterialsAvailable();
             UpdateExtraMaterialsAvailable();
 
-            _craftingVM.IsMainActionEnabled = true;
+            ViewModel.IsMainActionEnabled = true;
             if (!HaveEnergy())
             {
-                _craftingVM.IsMainActionEnabled = false;
-                if (_craftingVM.MainActionHint != null)
+                ViewModel.IsMainActionEnabled = false;
+                if (ViewModel.MainActionHint != null)
                 {
-                    _craftingVM.MainActionHint = new BasicTooltipViewModel(() =>
+                    ViewModel.MainActionHint = new BasicTooltipViewModel(() =>
                         GameTexts.FindText("str_bannercraft_crafting_stamina_display")
-                            .SetTextVariable("HERONAME", _craftingVM.CurrentCraftingHero.Hero.Name.ToString())
+                            .SetTextVariable("HERONAME", ViewModel.CurrentCraftingHero.Hero.Name.ToString())
                             .SetTextVariable("REQUIRED", GetRequiredEnergy())
-                            .SetTextVariable("CURRENT", _craftingBehavior.GetHeroCraftingStamina(_craftingVM.CurrentCraftingHero.Hero)).ToString());
+                            .SetTextVariable("CURRENT", _craftingBehavior.GetHeroCraftingStamina(ViewModel.CurrentCraftingHero.Hero)).ToString());
                 }
             }
             else if (!HaveMaterialsNeeded())
             {
-                _craftingVM.IsMainActionEnabled = false;
-                if (_craftingVM.MainActionHint != null)
+                ViewModel.IsMainActionEnabled = false;
+                if (ViewModel.MainActionHint != null)
                 {
-                    _craftingVM.MainActionHint = new BasicTooltipViewModel(() => new TextObject("{=gduqxfck}You don't have all required materials!").ToString());
+                    ViewModel.MainActionHint = new BasicTooltipViewModel(() => new TextObject("{=gduqxfck}You don't have all required materials!").ToString());
                 }
             }
             else if (ArmorCrafting.CurrentItem == null)
             {
-                _craftingVM.IsMainActionEnabled = false;
+                ViewModel.IsMainActionEnabled = false;
             }
         }
 
