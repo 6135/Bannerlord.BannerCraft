@@ -4,7 +4,6 @@ using Bannerlord.UIExtenderEx.Prefabs2;
 
 namespace Bannerlord.BannerCraft.PrefabExtensions
 {
-
     [PrefabExtension("Crafting", "descendant::ButtonWidget[@Id='MainActionButtonWidget']")]
     internal class MainActionButtonPatch : PrefabExtensionSetAttributePatch
     {
