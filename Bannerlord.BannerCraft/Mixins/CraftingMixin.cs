@@ -218,13 +218,11 @@ namespace Bannerlord.BannerCraft.Mixins
                     modifierGroup = item.WeaponComponent.ItemModifierGroup;
                 }
 
-                if (modifierGroup is null)
+                if (modifierGroup is not null)
                 {
-                    throw new InvalidOperationException($"Could not assign modifier group to '{item.Name}'");
+                    ItemModifier modifier = GetRandomModifierWithTarget(modifierGroup, modifierTier);
+                    element.SetModifier(modifier);
                 }
-
-                ItemModifier modifier = GetRandomModifierWithTarget(modifierGroup, modifierTier);
-                element.SetModifier(modifier);
             }
 
             ArmorCrafting.CreateCraftingResultPopup(element);
