@@ -32,6 +32,31 @@ namespace Bannerlord.BannerCraft.Mixins
             { ArmorComponent.ArmorMaterialTypes.None, "cloth_unarmored" }
         };
 
+        public static void ApplyPatches(Harmony harmony)
+        {
+            harmony.Patch(
+                AccessTools.PropertySetter(typeof(CraftingVM), nameof(CraftingVM.IsInCraftingMode)),
+                postfix: new HarmonyMethod(AccessTools.Method(typeof(CraftingMixin), nameof(ModePropertiesPostfix))));
+            harmony.Patch(
+                AccessTools.PropertySetter(typeof(CraftingVM), nameof(CraftingVM.IsInRefinementMode)),
+                postfix: new HarmonyMethod(AccessTools.Method(typeof(CraftingMixin), nameof(ModePropertiesPostfix))));
+            harmony.Patch(
+                AccessTools.PropertySetter(typeof(CraftingVM), nameof(CraftingVM.IsInSmeltingMode)),
+                postfix: new HarmonyMethod(AccessTools.Method(typeof(CraftingMixin), nameof(ModePropertiesPostfix))));
+        }
+
+        private static void ModePropertiesPostfix(ref CraftingVM __instance)
+        {
+            if (__instance.GetPropertyValue("Mixin") is WeakReference<CraftingMixin> weakReference
+                && weakReference.TryGetTarget(out var mixin))
+            {
+                if (__instance.IsInCraftingMode || __instance.IsInRefinementMode || __instance.IsInSmeltingMode)
+                {
+                    mixin.IsInArmorMode = false;
+                }
+            }
+        }
+
         private readonly Crafting _crafting;
         private ArmorCraftingVM _armorCraftingVm;
 
@@ -55,6 +80,9 @@ namespace Bannerlord.BannerCraft.Mixins
 
             UpdateAll();
         }
+
+        [DataSourceProperty]
+        public WeakReference<CraftingMixin> Mixin => new(this);
 
         [DataSourceProperty]
         public bool IsInArmorMode
@@ -168,12 +196,6 @@ namespace Bannerlord.BannerCraft.Mixins
         public override void OnRefresh()
         {
             base.OnRefresh();
-
-            if (ViewModel.IsInCraftingMode || ViewModel.IsInRefinementMode || ViewModel.IsInSmeltingMode)
-            {
-                IsInArmorMode = false;
-                return;
-            }
 
             ArmorCrafting?.UpdateCraftingHero(ViewModel.CurrentCraftingHero.Hero);
 

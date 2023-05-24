@@ -200,7 +200,6 @@ namespace Bannerlord.BannerCraft.ViewModels
                 {
                     _currentItem = value;
                     OnPropertyChangedWithValue(value, "CurrentItem");
-                    _mixin.OnRefresh();
                     RefreshSecondaryUsages();
                 }
             }

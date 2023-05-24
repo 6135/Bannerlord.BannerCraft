@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Bannerlord.BannerCraft.Mixins;
 using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.Patches;
 using Bannerlord.UIExtenderEx;
@@ -43,6 +44,8 @@ namespace Bannerlord.BannerCraft
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
+
+            CraftingMixin.ApplyPatches(_harmony);
 
             _extender.Register(typeof(SubModule).Assembly);
             _extender.Enable();
