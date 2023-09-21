@@ -1,4 +1,8 @@
 # BannerCraft
+
+![example event parameter](https://github.com/6135/Bannerlord.BannerCraft/actions/workflows/build.yml/badge.svg?event=push)
+
+
 Crafting extension for Mount and Blade 2: Bannerlord
 
 # License
