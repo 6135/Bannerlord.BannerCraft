@@ -75,7 +75,7 @@ namespace Bannerlord.BannerCraft.Mixins
             _armorText = GameTexts.FindText("str_bannercraft_crafting_category_armor").ToString();
             _armorCraftingVm = new ArmorCraftingVM(this, vm, _crafting);
 
-            // TODO: Optimize this, somehow
+             //TODO: Optimize this, somehow
             _updateAllBase = AccessTools.Method(typeof(CraftingVM), "UpdateAll");
             _refreshEnableMainActionBase = AccessTools.Method(typeof(CraftingVM), "RefreshEnableMainAction");
 
@@ -138,6 +138,8 @@ namespace Bannerlord.BannerCraft.Mixins
 
             if (!HaveMaterialsNeeded() || !HaveEnergy(hero))
             {
+                //print to chat that we don't have enough materials
+                InformationManager.DisplayMessage(new InformationMessage("Not enough materials"));
                 return;
             }
 
@@ -196,7 +198,6 @@ namespace Bannerlord.BannerCraft.Mixins
         public override void OnRefresh()
         {
             base.OnRefresh();
-
             ArmorCrafting?.UpdateCraftingHero(ViewModel.CurrentCraftingHero.Hero);
 
             UpdateAll();
@@ -204,6 +205,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private void UpdateAll()
         {
+
             _updateAllBase.Invoke(ViewModel, Array.Empty<object>());
 
             UpdateExtraMaterialsAvailable();
@@ -228,7 +230,7 @@ namespace Bannerlord.BannerCraft.Mixins
                     {
                         var lookup = MaterialTypeMap[item.ArmorComponent.MaterialType];
                         modifierGroup = Game.Current.ObjectManager.GetObjectTypeList<ItemModifierGroup>()
-                            .FirstOrDefault((x) => x.GetName().ToString().ToLower() == lookup);
+                            .Find((x) => x.GetName().ToString().ToLower() == lookup);
                     }
                     else
                     {
@@ -294,6 +296,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private void UpdateCurrentMaterialCosts()
         {
+
             if (!IsInArmorMode)
             {
                 for (int i = 0; i < (int)ExtraCraftingMaterials.NumExtraCraftingMats; i++)
