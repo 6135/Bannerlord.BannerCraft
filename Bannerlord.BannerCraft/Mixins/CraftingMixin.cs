@@ -23,6 +23,7 @@ namespace Bannerlord.BannerCraft.Mixins
     [ViewModelMixin("RefreshValues")]
     public class CraftingMixin : BaseViewModelMixin<CraftingVM>
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0090:Use 'new(...)'", Justification = "<Pending>")]
         private static readonly Dictionary<ArmorComponent.ArmorMaterialTypes, string> MaterialTypeMap = new Dictionary<ArmorComponent.ArmorMaterialTypes, string>
         {
             { ArmorComponent.ArmorMaterialTypes.Plate, "plate" },
@@ -127,9 +128,8 @@ namespace Bannerlord.BannerCraft.Mixins
             }
 
             var craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
-            var smithingModel = Campaign.Current.Models.SmithingModel as BannerCraftSmithingModel;
 
-            if (smithingModel is null)
+            if (Campaign.Current.Models.SmithingModel is not BannerCraftSmithingModel smithingModel)
             {
                 throw new InvalidOperationException("BannerCraft's SmithingModel is null.");
             }
