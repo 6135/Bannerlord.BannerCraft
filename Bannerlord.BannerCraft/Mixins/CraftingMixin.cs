@@ -204,7 +204,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private void UpdateAll()
         {
-            _updateAllBase.Invoke(ViewModel, Array.Empty<object>());
+            _updateAllBase?.Invoke(ViewModel, Array.Empty<object>());
 
             UpdateExtraMaterialsAvailable();
             UpdateCurrentMaterialCosts();
@@ -364,7 +364,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private void RefreshEnableMainAction()
         {
-            _refreshEnableMainActionBase.Invoke(ViewModel, Array.Empty<object>());
+            _refreshEnableMainActionBase?.Invoke(ViewModel, Array.Empty<object>());
 
             var craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
             var hero = ViewModel.CurrentCraftingHero.Hero;
