@@ -23,7 +23,6 @@ namespace Bannerlord.BannerCraft.Mixins
     [ViewModelMixin("RefreshValues")]
     public class CraftingMixin : BaseViewModelMixin<CraftingVM>
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0090:Use 'new(...)'", Justification = "<Pending>")]
         private static readonly Dictionary<ArmorComponent.ArmorMaterialTypes, string> MaterialTypeMap = new Dictionary<ArmorComponent.ArmorMaterialTypes, string>
         {
             { ArmorComponent.ArmorMaterialTypes.Plate, "plate" },
@@ -128,8 +127,9 @@ namespace Bannerlord.BannerCraft.Mixins
             }
 
             var craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
+            var smithingModel = Campaign.Current.Models.SmithingModel as BannerCraftSmithingModel;
 
-            if (Campaign.Current.Models.SmithingModel is not BannerCraftSmithingModel smithingModel)
+            if (smithingModel is null)
             {
                 throw new InvalidOperationException("BannerCraft's SmithingModel is null.");
             }
@@ -204,7 +204,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private void UpdateAll()
         {
-            _updateAllBase?.Invoke(ViewModel, Array.Empty<object>());
+            _updateAllBase.Invoke(ViewModel, Array.Empty<object>());
 
             UpdateExtraMaterialsAvailable();
             UpdateCurrentMaterialCosts();
@@ -364,7 +364,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private void RefreshEnableMainAction()
         {
-            _refreshEnableMainActionBase?.Invoke(ViewModel, Array.Empty<object>());
+            _refreshEnableMainActionBase.Invoke(ViewModel, Array.Empty<object>());
 
             var craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
             var hero = ViewModel.CurrentCraftingHero.Hero;
