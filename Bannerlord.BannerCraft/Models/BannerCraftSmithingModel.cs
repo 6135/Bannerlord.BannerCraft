@@ -23,7 +23,7 @@ namespace Bannerlord.BannerCraft.Models
 
         public override int CalculateWeaponDesignDifficulty(WeaponDesign weaponDesign) => _model.CalculateWeaponDesignDifficulty(weaponDesign);
 
-#if v120 || v121 || v122 || v123
+#if v120
         
         public override ItemModifier GetCraftedWeaponModifier(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetCraftedWeaponModifier(weaponDesign, weaponsmith);
 #else
