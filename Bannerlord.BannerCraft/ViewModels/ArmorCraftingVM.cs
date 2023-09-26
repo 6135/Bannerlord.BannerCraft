@@ -14,7 +14,6 @@ using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection;
 using TaleWorlds.Core.ViewModelCollection.Selector;
 using TaleWorlds.Library;
-using TaleWorlds.LinQuick;
 using TaleWorlds.Localization;
 
 namespace Bannerlord.BannerCraft.ViewModels
@@ -202,7 +201,6 @@ namespace Bannerlord.BannerCraft.ViewModels
                     _currentItem = value;
                     OnPropertyChangedWithValue(value, "CurrentItem");
                     RefreshSecondaryUsages();
-                    _mixin.OnRefresh(); //Added refresh in CraftingMixin to update the materials
                 }
             }
         }

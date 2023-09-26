@@ -12,7 +12,7 @@ namespace Bannerlord.BannerCraft.Models
 {
     public class BannerCraftSmithingModel : SmithingModel
     {
-        private readonly SmithingModel _model;
+        private SmithingModel _model;
 
         public BannerCraftSmithingModel(SmithingModel model)
         {

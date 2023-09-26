@@ -11,7 +11,6 @@ using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.Smelting;
 using TaleWorlds.Core;
-using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
 namespace Bannerlord.BannerCraft
@@ -25,7 +24,6 @@ namespace Bannerlord.BannerCraft
 
         protected override void OnGameStart(Game game, IGameStarter gameStarter)
         {
-
             base.OnGameStart(game, gameStarter);
 
             if (gameStarter is not CampaignGameStarter)
@@ -41,7 +39,6 @@ namespace Bannerlord.BannerCraft
             }
 
             gameStarter.AddModel(new BannerCraftSmithingModel(smithingModel));
-
         }
 
         protected override void OnSubModuleLoad()
