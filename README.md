@@ -13,4 +13,4 @@ Special thanks to the BannerKings mod team (https://github.com/R-Vaccari/bannerl
 Forked from @adwitkow updated version of the mod.
 Original author: https://github.com/Evangel63/BannerCraft
 
-Edit:Reupload with new file name
+Edit:Reupload with new file name 2
