@@ -38,7 +38,7 @@ jobs:
       - name: Compress build
         shell: pwsh
         run: |
-          Compress-Archive -Path Build/* -DestinationPath Release-${{ steps.get-version.outputs.version }}.zip
+          Compress-Archive -Path Build/* -DestinationPath ${{ github.event.repository.name }}-release-${{ steps.get-version.outputs.version }}.zip
 
       - name: Create release
         id: create-release
@@ -56,7 +56,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./${{ github.event.repository.name }}release-${{ steps.get-version.outputs.version }}.zip
+          asset_path: ./${{ github.event.repository.name }}-release-${{ steps.get-version.outputs.version }}.zip
           asset_name: ${{ github.event.repository.name }}-release-${{ steps.get-version.outputs.version }}.zip
           asset_content_type: application/zip
         env:
