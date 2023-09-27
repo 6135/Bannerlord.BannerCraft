@@ -12,3 +12,5 @@ Do whatever you want, just provide a link back here if you use it in your own pr
 Special thanks to the BannerKings mod team (https://github.com/R-Vaccari/bannerlord-banner-kings) for showing how to edit the crafting system.
 Forked from @adwitkow updated version of the mod.
 Original author: https://github.com/Evangel63/BannerCraft
+
+Edit:Reupload with new file name 2
