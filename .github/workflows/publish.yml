@@ -56,8 +56,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./Release-${{ steps.get-version.outputs.version }}.zip
-          asset_name: Release-${{ steps.get-version.outputs.version }}.zip
+          asset_path: ./${{ github.event.repository.name }}release-${{ steps.get-version.outputs.version }}.zip
+          asset_name: ${{ github.event.repository.name }}-release-${{ steps.get-version.outputs.version }}.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
