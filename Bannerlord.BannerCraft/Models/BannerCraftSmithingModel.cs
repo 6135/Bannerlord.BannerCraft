@@ -23,7 +23,7 @@ namespace Bannerlord.BannerCraft.Models
 
         public override int CalculateWeaponDesignDifficulty(WeaponDesign weaponDesign) => _model.CalculateWeaponDesignDifficulty(weaponDesign);
 
-#if v120
+#if v120 || v121 || v122 || v123
         
         public override ItemModifier GetCraftedWeaponModifier(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetCraftedWeaponModifier(weaponDesign, weaponsmith);
 #else
@@ -565,9 +565,13 @@ namespace Bannerlord.BannerCraft.Models
                 return GetModifierTierPenaltyForLowSkill(difference, randomInt);
             }
 
-            float legendarySmithChance = hero.GetPerkValue(DefaultPerks.Crafting.LegendarySmith) ? DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + Math.Max(0, hero.GetSkillValue(DefaultSkills.Crafting) - 300) * 0.01f : 0f;
-            float masterSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.MasterSmith) ? DefaultPerks.Crafting.MasterSmith.PrimaryBonus : 0f;
-            float experiencedSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.ExperiencedSmith) ? DefaultPerks.Crafting.ExperiencedSmith.PrimaryBonus : 0f;
+            float legendarySmithChangeModifier = 0.001f;
+            float masterSmithChangeModifier = 0.0015f;
+            float experiencedSmithChangeModifier = 0.002f;
+
+            float legendarySmithChance = hero.GetPerkValue(DefaultPerks.Crafting.LegendarySmith) ? DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + Math.Max(0, hero.GetSkillValue(DefaultSkills.Crafting) - 300) * 0.01f : difference * legendarySmithChangeModifier > 0 ? difference * legendarySmithChangeModifier : legendarySmithChangeModifier;
+            float masterSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.MasterSmith) ? DefaultPerks.Crafting.MasterSmith.PrimaryBonus : difference * masterSmithChangeModifier > 0 ? difference * masterSmithChangeModifier : masterSmithChangeModifier;
+            float experiencedSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.ExperiencedSmith) ? DefaultPerks.Crafting.ExperiencedSmith.PrimaryBonus : difference * experiencedSmithChangeModifier > 0 ? difference * experiencedSmithChangeModifier : experiencedSmithChangeModifier;
 
             /*
 			 * And now change randomInt back to between 0 and 100, then convert to between 0 and 1
@@ -594,7 +598,7 @@ namespace Bannerlord.BannerCraft.Models
                 return 2;
             }
 
-            return -1;
+            return 0;
         }
 
         private int GetModifierTierPenaltyForLowSkill(int difference, int randomInt)

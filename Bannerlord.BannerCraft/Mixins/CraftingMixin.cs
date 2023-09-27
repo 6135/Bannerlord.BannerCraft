@@ -253,7 +253,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private ItemModifier GetRandomModifierWithTarget(ItemModifierGroup modifierGroup, int modifierTier)
         {
-            var results = modifierGroup.ItemModifiers.OrderByDescending(mod => mod.PriceMultiplier);
+            var results = modifierGroup.ItemModifiers.OrderBy(mod => mod.PriceMultiplier);
 
             return results.ElementAt(Math.Min(results.Count() - 1, modifierTier));
         }
@@ -389,7 +389,7 @@ namespace Bannerlord.BannerCraft.Mixins
                     return new TextObject("{=gduqxfck}You don't have all required materials!").ToString();
                 });
             }
-            else if (ArmorCrafting.CurrentItem == null)
+            else if (ArmorCrafting?.CurrentItem == null)
             {
                 ViewModel.IsMainActionEnabled = false;
             }

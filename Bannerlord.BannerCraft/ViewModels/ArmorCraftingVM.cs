@@ -6,6 +6,7 @@ using Bannerlord.BannerCraft.Mixins;
 using Bannerlord.BannerCraft.Models;
 using Bannerlord.UIExtenderEx.Attributes;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Extensions;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting;
@@ -472,8 +473,71 @@ namespace Bannerlord.BannerCraft.ViewModels
             DifficultyText = GameTexts.FindText("str_difficulty").ToString();
         }
 
+        //delegate to decide how to access the fields of the item due to the fact that the fields are private in versions prior to 1.2.0
+        private delegate T GetItemFieldDelegate<T>(EquipmentElement item, string _fieldName);
+        GetItemFieldDelegate<int> getItemFieldDelegateInstanceInt;
+        GetItemFieldDelegate<short> getItemFieldDelegateInstanceShort;
+        //If original value is higher than modifier value, then the result will be the modifier value
+        //If the original value is lower or equal to the modifier value, then the result will be original value minus 1
+        
+#if v120 || v121 || v122 || v123
+        //they were made public in these verions
+        private int GetItemFieldInt(EquipmentElement item, string _fieldName)
+        {
+            var value = item.GetType()?.GetField(_fieldName)?.GetValue(item,null);
+            if (value is not null)
+                return (int) value;
+            else return 0;
+        }
+        private short GetItemFieldShort(EquipmentElement item, string _fieldName)
+        {
+            var value = item.GetType()?.GetField(_fieldName)?.GetValue(item,null);
+            if (value is not null)
+                return (short) value;
+            else return 0;
+        }
+#else
+        private int GetItemFieldInt(EquipmentElement item, string _fieldName)
+        {
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+            var value = item.ItemModifier.GetType()?.GetField(_fieldName, bindingFlags)?.GetValue(item.ItemModifier);
+            if (value is not null)
+                return (int) value;
+            else return 0;
+        }
+        private short GetItemFieldShort(EquipmentElement item, string _fieldName)
+        {
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+            var value = item.ItemModifier.GetType()?.GetField(_fieldName, bindingFlags)?.GetValue(item.ItemModifier);
+            if (value is not null)
+                return (short)value;
+            else return 0;
+        }
+#endif
         private List<int> GenerateModifierValues(ItemType itemType, EquipmentElement element)
         {
+
+            getItemFieldDelegateInstanceInt = GetItemFieldInt;
+            getItemFieldDelegateInstanceShort = GetItemFieldShort;
+            string _armor;
+            string _hitPoints;
+            string _speed;
+            string _damage;
+            string _missileSpeed;
+            string _stackCount;
+
+
+#if v120 || v121 || v122 || v123
+            _armor = "Armor";
+
+#else
+            _armor = "_armor";
+            _hitPoints = "_hitPoints";
+            _speed = "_speed";
+            _damage = "_damage";
+            _missileSpeed = "_missileSpeed";
+            _stackCount = "_stackCount";
+#endif
             /*
 			 * This is a very fragile function that should be refactored alongside RefreshStats
 			 * But not right now
@@ -515,9 +579,10 @@ namespace Bannerlord.BannerCraft.ViewModels
                     armor = 0;
                     if (element.ItemModifier != null)
                     {
-                        armor = (int)element.ItemModifier?.GetType().GetField("_armor", bindingFlags)?.GetValue(element.ItemModifier);
+                        armor = getItemFieldDelegateInstanceInt(element, _armor);
+                        //armor = (int)element.ItemModifier?.GetType().GetField(_armor, bindingFlags)?.GetValue(element.ItemModifier);
                     }
-
+                    //Subtract armor from this because we dont wan't negative values...
                     ret.Add(CurrentItem.Item.ArmorComponent.HeadArmor > 0 ? armor : 0);
                     ret.Add(CurrentItem.Item.ArmorComponent.BodyArmor > 0 ? armor : 0);
                     ret.Add(CurrentItem.Item.ArmorComponent.LegArmor > 0 ? armor : 0);
@@ -529,7 +594,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     armor = 0;
                     if (element.ItemModifier != null)
                     {
-                        armor = (int)element.ItemModifier.GetType().GetField("_armor", bindingFlags).GetValue(element.ItemModifier);
+                        armor = (int)element.ItemModifier.GetType().GetField(_armor, bindingFlags).GetValue(element.ItemModifier);
                     }
 
                     ret.Add(armor);
@@ -541,8 +606,8 @@ namespace Bannerlord.BannerCraft.ViewModels
                     shieldHitPoints = 0;
                     if (element.ItemModifier != null)
                     {
-                        shieldSpeed = (int)element.ItemModifier.GetType().GetField("_speed", bindingFlags).GetValue(element.ItemModifier);
-                        shieldHitPoints = (short)element.ItemModifier.GetType().GetField("_hitPoints", bindingFlags).GetValue(element.ItemModifier);
+                        shieldSpeed = (int)element.ItemModifier.GetType().GetField(_speed, bindingFlags).GetValue(element.ItemModifier);
+                        shieldHitPoints = (short)element.ItemModifier.GetType().GetField(_hitPoints, bindingFlags).GetValue(element.ItemModifier);
                     }
 
                     ret.Add(shieldSpeed);
@@ -557,9 +622,9 @@ namespace Bannerlord.BannerCraft.ViewModels
                     int missileDamage = 0;
                     if (element.ItemModifier != null)
                     {
-                        speed = (int)element.ItemModifier.GetType().GetField("_speed", bindingFlags).GetValue(element.ItemModifier);
-                        missileSpeed = (int)element.ItemModifier.GetType().GetField("_missileSpeed", bindingFlags).GetValue(element.ItemModifier);
-                        missileDamage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
+                        speed = (int)element.ItemModifier.GetType().GetField(_speed, bindingFlags).GetValue(element.ItemModifier);
+                        missileSpeed = (int)element.ItemModifier.GetType().GetField(_missileSpeed, bindingFlags).GetValue(element.ItemModifier);
+                        missileDamage = (int)element.ItemModifier.GetType().GetField(_damage, bindingFlags).GetValue(element.ItemModifier);
                     }
 
                     ret.Add(speed);
@@ -580,8 +645,8 @@ namespace Bannerlord.BannerCraft.ViewModels
                     short stackCount = 0;
                     if (element.ItemModifier != null)
                     {
-                        missileDamage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
-                        stackCount = (short)element.ItemModifier.GetType().GetField("_stackCount", bindingFlags).GetValue(element.ItemModifier);
+                        missileDamage = (int)element.ItemModifier.GetType().GetField(_damage, bindingFlags).GetValue(element.ItemModifier);
+                        stackCount = (short)element.ItemModifier.GetType().GetField(_stackCount, bindingFlags).GetValue(element.ItemModifier);
                     }
 
                     ret.Add(missileDamage);
@@ -607,7 +672,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                             speed = 0;
                             if (element.ItemModifier != null)
                             {
-                                speed = (int)element.ItemModifier.GetType().GetField("_speed", bindingFlags).GetValue(element.ItemModifier);
+                                speed = (int)element.ItemModifier.GetType().GetField(_speed, bindingFlags).GetValue(element.ItemModifier);
                             }
                             ret.Add(speed);
                         }
@@ -618,7 +683,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                             speed = 0;
                             if (element.ItemModifier != null)
                             {
-                                speed = (int)element.ItemModifier.GetType().GetField("_speed", bindingFlags).GetValue(element.ItemModifier);
+                                speed = (int)element.ItemModifier.GetType().GetField(_speed, bindingFlags).GetValue(element.ItemModifier);
                             }
                             ret.Add(speed);
                         }
@@ -629,7 +694,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                             int damage = 0;
                             if (element.ItemModifier != null)
                             {
-                                damage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
+                                damage = (int)element.ItemModifier.GetType().GetField(_damage, bindingFlags).GetValue(element.ItemModifier);
                             }
                             ret.Add(damage);
                         }
@@ -640,7 +705,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                             int damage = 0;
                             if (element.ItemModifier != null)
                             {
-                                damage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
+                                damage = (int)element.ItemModifier.GetType().GetField(_damage, bindingFlags).GetValue(element.ItemModifier);
                             }
                             ret.Add(damage);
                         }
@@ -654,9 +719,9 @@ namespace Bannerlord.BannerCraft.ViewModels
                         stackCount = 0;
                         if (element.ItemModifier != null)
                         {
-                            damage = (int)element.ItemModifier.GetType().GetField("_damage", bindingFlags).GetValue(element.ItemModifier);
-                            missileSpeed = (int)element.ItemModifier.GetType().GetField("_missileSpeed", bindingFlags).GetValue(element.ItemModifier);
-                            stackCount = (short)element.ItemModifier.GetType().GetField("_stackCount", bindingFlags).GetValue(element.ItemModifier);
+                            damage = (int)element.ItemModifier.GetType().GetField(_damage, bindingFlags).GetValue(element.ItemModifier);
+                            missileSpeed = (int)element.ItemModifier.GetType().GetField(_missileSpeed, bindingFlags).GetValue(element.ItemModifier);
+                            stackCount = (short)element.ItemModifier.GetType().GetField(_stackCount, bindingFlags).GetValue(element.ItemModifier);
                         }
                         ret.Add(damage);
                         ret.Add(missileSpeed);
