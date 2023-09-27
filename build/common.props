@@ -34,7 +34,8 @@
         <Nullable>enable</Nullable>
         <ModuleId>Bannerlord.BannerCraft</ModuleId>
         <ModuleName>$(ModuleId)</ModuleName>
-        <DisplayName>BannerCraft</DisplayName>
+		<ModuleUrl>https://www.nexusmods.com/mountandblade2bannerlord/mods/5932</ModuleUrl>
+		<DisplayName>BannerCraft</DisplayName>
         <RootNamespace>$(ModuleId)</RootNamespace>
     </PropertyGroup>
 

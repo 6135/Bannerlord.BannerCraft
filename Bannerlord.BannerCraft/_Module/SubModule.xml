@@ -7,6 +7,7 @@
   <DefaultModule value="false" />
   <ModuleCategory value="Singleplayer" />
   <ModuleType value="Community" />
+  <Url value="$moduleurl$" />
   <DependedModules>
     <DependedModule Id="Bannerlord.Harmony" DependentVersion="v$harmonyversion$" />
     <DependedModule Id="Bannerlord.UIExtenderEx" DependentVersion="v$uiextenderexversion$" />
