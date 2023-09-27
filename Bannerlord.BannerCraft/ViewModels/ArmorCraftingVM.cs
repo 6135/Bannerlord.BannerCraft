@@ -73,9 +73,9 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private bool _isCurrentHeroAtMaxCraftingSkill;
 
-        private TextObject _currentCraftingSkillValueTextObj;
+        private readonly TextObject _currentCraftingSkillValueTextObj;
 
-        private TextObject _currentDifficultyTextObj;
+        private readonly TextObject _currentDifficultyTextObj;
 
         private string _itemSearchText;
 
@@ -192,12 +192,12 @@ namespace Bannerlord.BannerCraft.ViewModels
         }
 
         [DataSourceProperty]
-        public ArmorItemVM CurrentItem
+        public ArmorItemVM? CurrentItem
         {
             get => _currentItem;
             set
             {
-                if (value != _currentItem)
+                if (value != _currentItem && value is not null)
                 {
                     _currentItem = value;
                     OnPropertyChangedWithValue(value, "CurrentItem");
@@ -237,12 +237,9 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         public static bool AllowItemType(ItemType itemType)
         {
-            if (!Settings.Instance.AllowCraftingNormalWeapons)
+            if (!Settings.Instance.AllowCraftingNormalWeapons && ItemTypeIsWeapon(itemType))
             {
-                if (ItemTypeIsWeapon(itemType))
-                {
-                    return false;
-                }
+                return false;
             }
             return true;
         }
@@ -474,24 +471,22 @@ namespace Bannerlord.BannerCraft.ViewModels
         }
 
         //delegate to decide how to access the fields of the item due to the fact that the fields are private in versions prior to 1.2.0
-        private delegate T GetItemFieldDelegate<T>(EquipmentElement item, string _fieldName);
-        GetItemFieldDelegate<int> getItemFieldDelegateInstanceInt;
-        GetItemFieldDelegate<short> getItemFieldDelegateInstanceShort;
-        //If original value is higher than modifier value, then the result will be the modifier value
-        //If the original value is lower or equal to the modifier value, then the result will be original value minus 1
-        
+        private delegate T GetItemFieldDelegate<out T>(EquipmentElement item, string _fieldName);
+        GetItemFieldDelegate<int>? getItemFieldDelegateInstanceInt = null;
+        GetItemFieldDelegate<short>? getItemFieldDelegateInstanceShort = null;
+
 #if v120 || v121 || v122 || v123
-        //they were made public in these verions
+        //they were into properties.
         private int GetItemFieldInt(EquipmentElement item, string _fieldName)
         {
-            var value = item.GetType()?.GetField(_fieldName)?.GetValue(item,null);
+            var value = item.ItemModifier.GetType()?.GetProperty(_fieldName)?.GetValue(item.ItemModifier);
             if (value is not null)
                 return (int) value;
             else return 0;
         }
         private short GetItemFieldShort(EquipmentElement item, string _fieldName)
         {
-            var value = item.GetType()?.GetField(_fieldName)?.GetValue(item,null);
+            var value = item.ItemModifier.GetType()?.GetProperty(_fieldName)?.GetValue(item.ItemModifier);
             if (value is not null)
                 return (short) value;
             else return 0;
@@ -529,6 +524,11 @@ namespace Bannerlord.BannerCraft.ViewModels
 
 #if v120 || v121 || v122 || v123
             _armor = "Armor";
+            _speed = "Speed";
+            _hitPoints = "HitPoints";
+            _damage = "Damage";
+            _missileSpeed = "MissileSpeed";
+            _stackCount = "StackCount";
 
 #else
             _armor = "_armor";
@@ -544,7 +544,8 @@ namespace Bannerlord.BannerCraft.ViewModels
 			 */
             if (itemType == ItemType.Invalid)
             {
-                return null;
+                //was null
+                return new();
             }
 
             List<int> ret = new List<int>
@@ -558,7 +559,6 @@ namespace Bannerlord.BannerCraft.ViewModels
             /*
 			 * Once again we need to get private values
 			 */
-            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
             switch (itemType)
             {
                 case ItemType.Invalid:
@@ -580,7 +580,6 @@ namespace Bannerlord.BannerCraft.ViewModels
                     if (element.ItemModifier != null)
                     {
                         armor = getItemFieldDelegateInstanceInt(element, _armor);
-                        //armor = (int)element.ItemModifier?.GetType().GetField(_armor, bindingFlags)?.GetValue(element.ItemModifier);
                     }
                     //Subtract armor from this because we dont wan't negative values...
                     ret.Add(CurrentItem.Item.ArmorComponent.HeadArmor > 0 ? armor : 0);
@@ -594,7 +593,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     armor = 0;
                     if (element.ItemModifier != null)
                     {
-                        armor = (int)element.ItemModifier.GetType().GetField(_armor, bindingFlags).GetValue(element.ItemModifier);
+                        armor = getItemFieldDelegateInstanceInt(element, _armor);
                     }
 
                     ret.Add(armor);
@@ -606,8 +605,8 @@ namespace Bannerlord.BannerCraft.ViewModels
                     shieldHitPoints = 0;
                     if (element.ItemModifier != null)
                     {
-                        shieldSpeed = (int)element.ItemModifier.GetType().GetField(_speed, bindingFlags).GetValue(element.ItemModifier);
-                        shieldHitPoints = (short)element.ItemModifier.GetType().GetField(_hitPoints, bindingFlags).GetValue(element.ItemModifier);
+                        shieldSpeed = getItemFieldDelegateInstanceInt(element, _speed);
+                        shieldHitPoints = getItemFieldDelegateInstanceShort(element, _hitPoints);
                     }
 
                     ret.Add(shieldSpeed);
@@ -622,9 +621,9 @@ namespace Bannerlord.BannerCraft.ViewModels
                     int missileDamage = 0;
                     if (element.ItemModifier != null)
                     {
-                        speed = (int)element.ItemModifier.GetType().GetField(_speed, bindingFlags).GetValue(element.ItemModifier);
-                        missileSpeed = (int)element.ItemModifier.GetType().GetField(_missileSpeed, bindingFlags).GetValue(element.ItemModifier);
-                        missileDamage = (int)element.ItemModifier.GetType().GetField(_damage, bindingFlags).GetValue(element.ItemModifier);
+                        speed = getItemFieldDelegateInstanceInt(element, _speed);
+                        missileSpeed = getItemFieldDelegateInstanceInt(element, _missileSpeed);
+                        missileDamage = getItemFieldDelegateInstanceInt(element, _damage);
                     }
 
                     ret.Add(speed);
@@ -645,8 +644,8 @@ namespace Bannerlord.BannerCraft.ViewModels
                     short stackCount = 0;
                     if (element.ItemModifier != null)
                     {
-                        missileDamage = (int)element.ItemModifier.GetType().GetField(_damage, bindingFlags).GetValue(element.ItemModifier);
-                        stackCount = (short)element.ItemModifier.GetType().GetField(_stackCount, bindingFlags).GetValue(element.ItemModifier);
+                        missileDamage = getItemFieldDelegateInstanceInt(element, _damage);
+                        stackCount = getItemFieldDelegateInstanceShort(element, _stackCount);
                     }
 
                     ret.Add(missileDamage);
@@ -672,7 +671,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                             speed = 0;
                             if (element.ItemModifier != null)
                             {
-                                speed = (int)element.ItemModifier.GetType().GetField(_speed, bindingFlags).GetValue(element.ItemModifier);
+                                speed = getItemFieldDelegateInstanceInt(element, _speed);
                             }
                             ret.Add(speed);
                         }
@@ -683,7 +682,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                             speed = 0;
                             if (element.ItemModifier != null)
                             {
-                                speed = (int)element.ItemModifier.GetType().GetField(_speed, bindingFlags).GetValue(element.ItemModifier);
+                                speed = getItemFieldDelegateInstanceInt(element, _speed);
                             }
                             ret.Add(speed);
                         }
@@ -694,7 +693,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                             int damage = 0;
                             if (element.ItemModifier != null)
                             {
-                                damage = (int)element.ItemModifier.GetType().GetField(_damage, bindingFlags).GetValue(element.ItemModifier);
+                                damage = getItemFieldDelegateInstanceInt(element, _damage);
                             }
                             ret.Add(damage);
                         }
@@ -705,7 +704,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                             int damage = 0;
                             if (element.ItemModifier != null)
                             {
-                                damage = (int)element.ItemModifier.GetType().GetField(_damage, bindingFlags).GetValue(element.ItemModifier);
+                                damage = getItemFieldDelegateInstanceInt(element, _damage);
                             }
                             ret.Add(damage);
                         }
@@ -719,9 +718,9 @@ namespace Bannerlord.BannerCraft.ViewModels
                         stackCount = 0;
                         if (element.ItemModifier != null)
                         {
-                            damage = (int)element.ItemModifier.GetType().GetField(_damage, bindingFlags).GetValue(element.ItemModifier);
-                            missileSpeed = (int)element.ItemModifier.GetType().GetField(_missileSpeed, bindingFlags).GetValue(element.ItemModifier);
-                            stackCount = (short)element.ItemModifier.GetType().GetField(_stackCount, bindingFlags).GetValue(element.ItemModifier);
+                            damage = getItemFieldDelegateInstanceInt(element, _damage);
+                            missileSpeed = getItemFieldDelegateInstanceInt(element, _missileSpeed);
+                            stackCount = getItemFieldDelegateInstanceShort(element, _stackCount);
                         }
                         ret.Add(damage);
                         ret.Add(missileSpeed);
@@ -747,7 +746,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                 return;
             }
 
-            TextObject weightDescriptionText = GameTexts.FindText("str_crafting_stat", "Weight"); ;
+            TextObject weightDescriptionText = GameTexts.FindText("str_crafting_stat", "Weight");
             switch (itemType)
             {
                 case ItemType.Invalid:
@@ -1190,7 +1189,7 @@ namespace Bannerlord.BannerCraft.ViewModels
             if (_equipmentElement.ItemModifier != null)
             {
                 itemName += _equipmentElement.ItemModifier.Name.ToString();
-            };
+            }
             itemName += CurrentItem.Item.Name.ToString();
 
             ArmorCraftResultPopup = new ArmorCraftResultPopupVM(ExecuteFinalizeCrafting, _crafting, ItemFlagIconsList, CurrentItem.Item, itemName, DesignResultPropertyList, ItemVisualModel);

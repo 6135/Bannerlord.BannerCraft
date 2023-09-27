@@ -48,12 +48,9 @@ namespace Bannerlord.BannerCraft.Mixins
         private static void ModePropertiesPostfix(ref CraftingVM __instance)
         {
             if (__instance.GetPropertyValue("Mixin") is WeakReference<CraftingMixin> weakReference
-                && weakReference.TryGetTarget(out var mixin))
+                && weakReference.TryGetTarget(out var mixin) && (__instance.IsInCraftingMode || __instance.IsInRefinementMode || __instance.IsInSmeltingMode))
             {
-                if (__instance.IsInCraftingMode || __instance.IsInRefinementMode || __instance.IsInSmeltingMode)
-                {
-                    mixin.IsInArmorMode = false;
-                }
+                mixin.IsInArmorMode = false;
             }
         }
 
@@ -74,7 +71,7 @@ namespace Bannerlord.BannerCraft.Mixins
             _armorText = GameTexts.FindText("str_bannercraft_crafting_category_armor").ToString();
             _armorCraftingVm = new ArmorCraftingVM(this, vm, _crafting);
 
-            // TODO: Optimize this, somehow
+            //TODO: Optimize this, somehow
             _updateAllBase = AccessTools.Method(typeof(CraftingVM), "UpdateAll");
             _refreshEnableMainActionBase = AccessTools.Method(typeof(CraftingVM), "RefreshEnableMainAction");
 
@@ -227,8 +224,10 @@ namespace Bannerlord.BannerCraft.Mixins
                     if (item.ArmorComponent.ItemModifierGroup is null)
                     {
                         var lookup = MaterialTypeMap[item.ArmorComponent.MaterialType];
+#pragma warning disable S6602 // "Find" method should be used instead of the "FirstOrDefault" extension
                         modifierGroup = Game.Current.ObjectManager.GetObjectTypeList<ItemModifierGroup>()
                             .FirstOrDefault((x) => x.GetName().ToString().ToLower() == lookup);
+#pragma warning restore S6602 // "Find" method should be used instead of the "FirstOrDefault" extension
                     }
                     else
                     {
