@@ -474,24 +474,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         private delegate T GetItemFieldDelegate<out T>(EquipmentElement item, string _fieldName);
         GetItemFieldDelegate<int>? getItemFieldDelegateInstanceInt = null;
         GetItemFieldDelegate<short>? getItemFieldDelegateInstanceShort = null;
-
-#if v120 || v121 || v122 || v123
-        //they were into properties.
-        private int GetItemFieldInt(EquipmentElement item, string _fieldName)
-        {
-            var value = item.ItemModifier.GetType()?.GetProperty(_fieldName)?.GetValue(item.ItemModifier);
-            if (value is not null)
-                return (int) value;
-            else return 0;
-        }
-        private short GetItemFieldShort(EquipmentElement item, string _fieldName)
-        {
-            var value = item.ItemModifier.GetType()?.GetProperty(_fieldName)?.GetValue(item.ItemModifier);
-            if (value is not null)
-                return (short) value;
-            else return 0;
-        }
-#else
+#if v116 || v115 || v114 || v113 || v112 || v111 || v110 || v103 || v102 || v101 || v100
         private int GetItemFieldInt(EquipmentElement item, string _fieldName)
         {
             BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
@@ -508,6 +491,23 @@ namespace Bannerlord.BannerCraft.ViewModels
                 return (short)value;
             else return 0;
         }
+#else
+        //they were into properties.
+        private int GetItemFieldInt(EquipmentElement item, string _fieldName)
+        {
+            var value = item.ItemModifier.GetType()?.GetProperty(_fieldName)?.GetValue(item.ItemModifier);
+            if (value is not null)
+                return (int) value;
+            else return 0;
+        }
+        private short GetItemFieldShort(EquipmentElement item, string _fieldName)
+        {
+            var value = item.ItemModifier.GetType()?.GetProperty(_fieldName)?.GetValue(item.ItemModifier);
+            if (value is not null)
+                return (short) value;
+            else return 0;
+        }
+
 #endif
         private List<int> GenerateModifierValues(ItemType itemType, EquipmentElement element)
         {
@@ -522,7 +522,16 @@ namespace Bannerlord.BannerCraft.ViewModels
             string _stackCount;
 
 
-#if v120 || v121 || v122 || v123
+#if v116 || v115 || v114 || v113 || v112 || v111 || v110 || v103 || v102 || v101 || v100
+
+            _armor = "_armor";
+            _hitPoints = "_hitPoints";
+            _speed = "_speed";
+            _damage = "_damage";
+            _missileSpeed = "_missileSpeed";
+            _stackCount = "_stackCount";
+
+#else
             _armor = "Armor";
             _speed = "Speed";
             _hitPoints = "HitPoints";
@@ -530,13 +539,7 @@ namespace Bannerlord.BannerCraft.ViewModels
             _missileSpeed = "MissileSpeed";
             _stackCount = "StackCount";
 
-#else
-            _armor = "_armor";
-            _hitPoints = "_hitPoints";
-            _speed = "_speed";
-            _damage = "_damage";
-            _missileSpeed = "_missileSpeed";
-            _stackCount = "_stackCount";
+
 #endif
             /*
 			 * This is a very fragile function that should be refactored alongside RefreshStats

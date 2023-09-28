@@ -28,12 +28,13 @@ namespace Bannerlord.BannerCraft.Models
 
         public override int CalculateWeaponDesignDifficulty(WeaponDesign weaponDesign) => _model.CalculateWeaponDesignDifficulty(weaponDesign);
 
-#if v120 || v121 || v122 || v123
+#if v116 || v115 || v114 || v113 || v112 || v111 || v110 || v103 || v102 || v101 || v100
         
-        public override ItemModifier GetCraftedWeaponModifier(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetCraftedWeaponModifier(weaponDesign, weaponsmith);
-#else
         public override int GetModifierTierForSmithedWeapon(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetModifierTierForSmithedWeapon(weaponDesign, weaponsmith);
         public override Crafting.OverrideData GetModifierChanges(int modifierTier, Hero hero, WeaponComponentData weapon) => _model.GetModifierChanges(modifierTier, hero, weapon);
+
+#else
+        public override ItemModifier GetCraftedWeaponModifier(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetCraftedWeaponModifier(weaponDesign, weaponsmith);
 
 #endif
 
@@ -644,6 +645,7 @@ namespace Bannerlord.BannerCraft.Models
         {
             int itemQuality = modifierQualityProbabilities[modifierQualityProbabilities.Count - 1].Item1;
             float num = MBRandom.RandomFloat;
+
             foreach (ValueTuple<int, float> valueTuple in modifierQualityProbabilities)
             {
                 if (num <= valueTuple.Item2)
@@ -687,9 +689,6 @@ namespace Bannerlord.BannerCraft.Models
             float fineChanceIncreaseSettings = Settings.Instance.FineChanceIncrease;
             float masterworkChanceIncreaseSettings = Settings.Instance.MasterworkChanceIncrease;
             float legendaryChanceIncreaseSettings = Settings.Instance.LegendaryChanceIncrease;
-
-
-
 
             //use vanilla code to obtain a quality index instead.
             List<ValueTuple<int,float>> modifierQualityProbabilities = GetModifierQualityProbabilities(item, hero);
