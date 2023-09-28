@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Bannerlord.BannerCraft.ViewModels;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
+using TaleWorlds.CampaignSystem.Extensions;
+using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using static TaleWorlds.Core.ArmorComponent;
@@ -540,11 +545,243 @@ namespace Bannerlord.BannerCraft.Models
             return MBMath.ClampInt((int)result, 10, 300);
         }
 
+        private float CalculateSigmoidFunction(float x, float mean, float curvature)
+        {
+            double num = Math.Exp((double)(curvature * (x - mean)));
+            return (float)(num / (1.0 + num));
+        }
+        private List<ValueTuple<int,float>> GetModifierQualityProbabilities(ItemObject item, Hero hero)
+        {
+            int num = CalculateArmorDifficulty(item);
+            int skillValue = hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
+            List<ValueTuple<int, float>> list = new List<ValueTuple<int, float>>();
+            float num2 = MathF.Clamp((float)(skillValue - num), -300f, 300f);
+            list.Add(new ValueTuple<int, float>(0, 0.36f * (1f - this.CalculateSigmoidFunction(num2, -70f, 0.018f)))); //poor
+            list.Add(new ValueTuple<int, float>(1, 0.45f * (1f - this.CalculateSigmoidFunction(num2, -55f, 0.018f)))); //inferior
+            list.Add(new ValueTuple<int, float>(-1, this.CalculateSigmoidFunction(num2, 25f, 0.018f)));                 //Common
+            list.Add(new ValueTuple<int, float>(2, 0.36f * this.CalculateSigmoidFunction(num2, 40f, 0.018f)));         // Fine
+            list.Add(new ValueTuple<int, float>(3, 0.27f * this.CalculateSigmoidFunction(num2, 70f, 0.018f)));          //Masterwork
+            list.Add(new ValueTuple<int, float>(4, 0.18f * this.CalculateSigmoidFunction(num2, 115f, 0.018f)));         //Legendary
+            float num3 = list.Sum((ValueTuple<int, float> tuple) => tuple.Item2);
+            for (int i = 0; i < list.Count; i++)
+            {
+                ValueTuple<int, float> valueTuple = list[i];
+                list[i] = new ValueTuple<int, float>(valueTuple.Item1, valueTuple.Item2 / num3);
+            }
+
+            List<int> list2 = new List<int>();
+            bool perkValue = hero.CharacterObject.GetPerkValue(DefaultPerks.Crafting.ExperiencedSmith);
+            if (perkValue)
+            {
+                list2.Add(3);
+                list2.Add(4);
+                AdjustModifierProbabilities(list, 2, DefaultPerks.Crafting.ExperiencedSmith.PrimaryBonus, list2);
+            }
+            bool perkValue2 = hero.CharacterObject.GetPerkValue(DefaultPerks.Crafting.MasterSmith);
+            if (perkValue2)
+            {
+                list2.Clear();
+                list2.Add(4);
+                if (perkValue)
+                {
+                    list2.Add(2);
+                }
+                AdjustModifierProbabilities(list, 3, DefaultPerks.Crafting.MasterSmith.PrimaryBonus, list2);
+            }
+            if (hero.CharacterObject.GetPerkValue(DefaultPerks.Crafting.LegendarySmith))
+            {
+                list2.Clear();
+                if (perkValue)
+                {
+                    list2.Add(2);
+                }
+                if (perkValue2)
+                {
+                    list2.Add(3);
+                }
+                float num4 = DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + Math.Max((float)(skillValue - 275), 0f) / 5f * 0.01f;
+                AdjustModifierProbabilities(list, 4, num4, list2);
+            }
+            return list;
+        }
+
+        private static void AdjustModifierProbabilities( List<ValueTuple<int, float>> modifierProbabilities, int qualityToAdjust, float amount, List<int> qualitiesToIgnore)
+        {
+            int num = modifierProbabilities.Count - (qualitiesToIgnore.Count + 1);
+            float num2 = amount / (float)num;
+            float num3 = 0f;
+            for (int i = 0; i < modifierProbabilities.Count; i++)
+            {
+                ValueTuple<int, float> valueTuple = modifierProbabilities[i];
+                if (valueTuple.Item1 == qualityToAdjust)
+                {
+                    modifierProbabilities[i] = new ValueTuple<int, float>(valueTuple.Item1, valueTuple.Item2 + amount);
+                }
+                else if (!qualitiesToIgnore.Contains(valueTuple.Item1))
+                {
+                    float num4 = valueTuple.Item2 - (num2 + num3);
+                    if (num4 < 0f)
+                    {
+                        num3 = -num4;
+                        num4 = 0f;
+                    }
+                    else
+                    {
+                        num3 = 0f;
+                    }
+                    modifierProbabilities[i] = new ValueTuple<int, float>(valueTuple.Item1, num4);
+                }
+            }
+            float num5 = modifierProbabilities.Sum( (ValueTuple< int, float> tuple) => tuple.Item2);
+            for (int j = 0; j < modifierProbabilities.Count; j++)
+            {
+                ValueTuple<int, float> valueTuple2 = modifierProbabilities[j];
+                modifierProbabilities[j] = new ValueTuple<int, float>(valueTuple2.Item1, valueTuple2.Item2 / num5);
+            }
+        }
+
+        public int GetCraftedArmorModifier(List<ValueTuple<int, float>> modifierQualityProbabilities)
+        {
+            int itemQuality = modifierQualityProbabilities[modifierQualityProbabilities.Count - 1].Item1;
+            float num = MBRandom.RandomFloat;
+            foreach (ValueTuple<int, float> valueTuple in modifierQualityProbabilities)
+            {
+                if (num <= valueTuple.Item2)
+                {
+                    itemQuality = valueTuple.Item1;
+                    break;
+                }
+                num -= valueTuple.Item2;
+            }
+            return itemQuality;
+        }
+
         public int GetModifierTierForItem(ItemObject item, Hero hero)
+        {
+            bool useOldModifierBehaviour = Settings.Instance?.UseOldModifierBehaviour ?? false;
+            if (useOldModifierBehaviour)
+            {
+                return oldGetModifierTierForItem(item, hero);
+            }
+            else
+            {
+                return newGetModifierTierForItem(item, hero);
+            }
+        }
+        private int newGetModifierTierForItem(ItemObject item, Hero hero)
         {
             /*
 			 * 25 is just the default value from MCM
 			 *
+			 * Items have 4 modifiers, 2 good, 2 bad
+			 * Negative modifier is neutral and gives the item as is
+			 * Modifiers 0 and 1 give the bad ones and are achievable from anywhere up to 25 skill over difficulty
+			 * Modifiers 2, 3, and 4 give the good ones and are achievable from skill equals difficulty
+			 */
+            int skillValue = hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
+            int itemDifficulty = CalculateArmorDifficulty(item);
+            int skillFloor = Settings.Instance?.SkillOverDifficultyBeforeNoPenalty ?? 0;
+            float poorChanceIncreaseSettings = Settings.Instance.PoorChanceIncrease;
+            float inferiorChanceIncreaseSettings = Settings.Instance.InferiorChanceIncrease;
+            float commonChanceIncreaseSettings = Settings.Instance.CommonChanceIncrease;
+            float fineChanceIncreaseSettings = Settings.Instance.FineChanceIncrease;
+            float masterworkChanceIncreaseSettings = Settings.Instance.MasterworkChanceIncrease;
+            float legendaryChanceIncreaseSettings = Settings.Instance.LegendaryChanceIncrease;
+
+
+
+
+            //use vanilla code to obtain a quality index instead.
+            List<ValueTuple<int,float>> modifierQualityProbabilities = GetModifierQualityProbabilities(item, hero);
+            if (poorChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 0, poorChanceIncreaseSettings, new());
+            if (inferiorChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 1, inferiorChanceIncreaseSettings, new() {});
+            if (commonChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, -1, commonChanceIncreaseSettings, new() {});
+            if (fineChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 2, fineChanceIncreaseSettings, new() {});
+            if (masterworkChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 3, masterworkChanceIncreaseSettings, new() {});
+            if (legendaryChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 4, legendaryChanceIncreaseSettings, new() {});
+
+
+            int itemQuality = GetCraftedArmorModifier(modifierQualityProbabilities);
+
+            /*
+			 * randomInt - skillFloor becomes between -25 and 75 with default settings
+			 * if difference is smaller than skillFloor, we get a chance to get a penalty
+			 * if 
+			 */
+            int randomInt = MBRandom.RandomInt(0, 100) - skillFloor;
+            int difference = skillValue - itemDifficulty;
+            if (difference + randomInt < 0)
+            {
+                return GetModifierTierPenaltyForLowSkill(difference, randomInt);
+            }
+            return itemQuality;
+            
+
+        }
+        private int oldGetModifierTierForItem(ItemObject item, Hero hero)
+        {
+            //        int skillValue = hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
+            //        int itemDifficulty = CalculateArmorDifficulty(item);
+            //        int skillFloor = Settings.Instance?.SkillOverDifficultyBeforeNoPenalty ?? 0;
+
+            //        float legendarySmithChangeModifier = 0.001f;
+            //        float masterSmithChangeModifier = 0.0015f;
+            //        float experiencedSmithChangeModifier = 0.002f;
+            //        int randomInt = MBRandom.RandomInt(0, 100) - skillFloor;
+            //        int difference = skillValue - itemDifficulty;
+
+            //        float legendarySmithChance = hero.GetPerkValue(DefaultPerks.Crafting.LegendarySmith) ? DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + Math.Max(0, hero.GetSkillValue(DefaultSkills.Crafting) - 300) * 0.01f : 0;
+            //        if (legendarySmithChance > 0)
+            //        {
+            //            legendarySmithChance = difference * legendarySmithChangeModifier > 0 ? difference * legendarySmithChangeModifier : legendarySmithChangeModifier;
+            //        }
+
+            //        float masterSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.MasterSmith) ? DefaultPerks.Crafting.MasterSmith.PrimaryBonus : 0;
+            //        if (masterSmithChance > 0)
+            //        {
+            //            masterSmithChance = difference * masterSmithChangeModifier > 0 ? difference * masterSmithChangeModifier : masterSmithChangeModifier;
+            //        }
+
+            //        float experiencedSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.ExperiencedSmith) ? DefaultPerks.Crafting.ExperiencedSmith.PrimaryBonus : 0;
+            //        if (experiencedSmithChance > 0)
+            //        {
+            //            experiencedSmithChance = difference * experiencedSmithChangeModifier > 0 ? difference * experiencedSmithChangeModifier : experiencedSmithChangeModifier;
+            //        }
+
+            //        /*
+            //* And now change randomInt back to between 0 and 100, then convert to between 0 and 1
+            //*/
+            //        float randomFloat = (randomInt + skillFloor) * 0.01f;
+            //        if (randomFloat < legendarySmithChance)
+            //        {
+            //            /*
+            // * Just pick the highest tier thing available
+            // * This makes sure we work with things like Large Bag of Balanced which has a price_factor of 1.8
+            // * Our legendary things have a price factor of 2.5 and the masterwork vanilla items have a price factor of 1.5
+            // * So our numbers still work
+            // */
+            //            return 10;
+            //        }
+
+            //        if (randomFloat < legendarySmithChance + masterSmithChance)
+            //        {
+            //            return 3;
+            //        }
+
+            //        if (randomFloat < legendarySmithChance + masterSmithChance + experiencedSmithChance)
+            //        {
+            //            return 2;
+            //        }
+
+            //        if (randomFloat < legendarySmithChance + masterSmithChance + experiencedSmithChance + skillValue * 0.15f)
+            //        {
+            //            return 1;
+            //        }
+            //        return 0;
+
+            /*
+			 * 25 is just the default value from MCM
+			 * 
 			 * Items have 4 modifiers, 2 good, 2 bad
 			 * Negative modifier is neutral and gives the item as is
 			 * Modifiers 0 and 1 give the bad ones and are achievable from anywhere up to 25 skill over difficulty
@@ -565,27 +802,9 @@ namespace Bannerlord.BannerCraft.Models
                 return GetModifierTierPenaltyForLowSkill(difference, randomInt);
             }
 
-            float legendarySmithChangeModifier = 0.001f;
-            float masterSmithChangeModifier = 0.0015f;
-            float experiencedSmithChangeModifier = 0.002f;
-
-            float legendarySmithChance = hero.GetPerkValue(DefaultPerks.Crafting.LegendarySmith) ? DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + Math.Max(0, hero.GetSkillValue(DefaultSkills.Crafting) - 300) * 0.01f : 0;
-            if(legendarySmithChance > 0)
-            {
-                legendarySmithChance = difference * legendarySmithChangeModifier > 0 ? difference * legendarySmithChangeModifier : legendarySmithChangeModifier;
-            }
-
-            float masterSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.MasterSmith) ? DefaultPerks.Crafting.MasterSmith.PrimaryBonus : 0;
-            if (masterSmithChance > 0)
-            {
-                masterSmithChance = difference* masterSmithChangeModifier > 0 ? difference * masterSmithChangeModifier : masterSmithChangeModifier;
-            }
-
-            float experiencedSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.ExperiencedSmith) ? DefaultPerks.Crafting.ExperiencedSmith.PrimaryBonus : 0;
-            if (experiencedSmithChance > 0)
-            {
-                experiencedSmithChance = difference * experiencedSmithChangeModifier > 0 ? difference * experiencedSmithChangeModifier : experiencedSmithChangeModifier;
-            }
+            float legendarySmithChance = hero.GetPerkValue(DefaultPerks.Crafting.LegendarySmith) ? (DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + Math.Max(0, hero.GetSkillValue(DefaultSkills.Crafting) - 300) * 0.01f) : 0f;
+            float masterSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.MasterSmith) ? DefaultPerks.Crafting.MasterSmith.PrimaryBonus : 0f;
+            float experiencedSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.ExperiencedSmith) ? DefaultPerks.Crafting.ExperiencedSmith.PrimaryBonus : 0f;
 
             /*
 			 * And now change randomInt back to between 0 and 100, then convert to between 0 and 1
@@ -612,14 +831,8 @@ namespace Bannerlord.BannerCraft.Models
                 return 2;
             }
 
-            if (randomFloat < legendarySmithChance + masterSmithChance + experiencedSmithChance + skillValue * 0.15f)
-            {
-                return 1;
-            }
-            return 0;
-
+            return -1;
         }
-
         private int GetModifierTierPenaltyForLowSkill(int difference, int randomInt)
         {
             if (difference >= 0)

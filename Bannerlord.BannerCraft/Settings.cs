@@ -16,6 +16,120 @@ namespace Bannerlord.BannerCraft
 
         private bool _allowCraftingNormalWeapons = false;
 
+        /**
+         * 
+         * For testing porpuses
+         */
+        private bool _useOldModifierBehaviour = false;
+        [SettingPropertyBool("Use old modifier behaviour", HintText = "Use old modifier behaviour", RequireRestart = false)]
+        [SettingPropertyGroup("General/Modifiers")]
+        public bool UseOldModifierBehaviour
+        {
+            get => _useOldModifierBehaviour;
+            set
+            {
+                if (value != _useOldModifierBehaviour)
+                {
+                    _useOldModifierBehaviour = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private float _legendaryChanceIncrease = 0f;
+
+        [SettingPropertyFloatingInteger("Increased legendary chance", 0f, 1f, "#0%", HintText = "Increased legendary chance", RequireRestart = false)]
+        [SettingPropertyGroup("General/Chances")]
+        public float LegendaryChanceIncrease
+        {
+            get => _legendaryChanceIncrease;
+            set
+            {
+                if (value != _legendaryChanceIncrease)
+                {
+                    _legendaryChanceIncrease = value;
+                    OnPropertyChanged();
+                }
+            }
+        }   
+        private float _masterworkChanceIncrease = 0f;
+        [SettingPropertyFloatingInteger("Increased masterwork chance", 0f, 1f, "#0%", HintText = "Increased masterwork chance", RequireRestart = false)]
+        [SettingPropertyGroup("General/Chances")]
+        public float MasterworkChanceIncrease
+        {
+            get => _masterworkChanceIncrease;
+            set
+            {
+                if (value != _masterworkChanceIncrease)
+                {
+                    _masterworkChanceIncrease = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private float _fineChanceIncrease = 0f;
+        [SettingPropertyFloatingInteger("Increased fine chance", 0f, 1f, "#0%", HintText = "Increased fine chance", RequireRestart = false)]
+        [SettingPropertyGroup("General/Chances")]
+        public float FineChanceIncrease
+        {
+            get => _fineChanceIncrease;
+            set
+            {
+                if (value != _fineChanceIncrease)
+                {
+                    _fineChanceIncrease = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private float _commonChanceIncrease = 0f;
+        [SettingPropertyFloatingInteger("Increased common chance", 0f, 1f, "#0%", HintText = "Increased common chance", RequireRestart = false)]
+        [SettingPropertyGroup("General/Chances")]
+        public float CommonChanceIncrease
+        {
+            get => _commonChanceIncrease;
+            set
+            {
+                if (value != _commonChanceIncrease)
+                {
+                    _commonChanceIncrease = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private float _inferiorChanceIncrease = 0f;
+        [SettingPropertyFloatingInteger("Increased inferior chance", 0f, 1f, "#0%", HintText = "Increased inferior chance", RequireRestart = false)]
+        [SettingPropertyGroup("General/Chances")]
+        public float InferiorChanceIncrease
+        {
+            get => _inferiorChanceIncrease;
+            set
+            {
+                if (value != _inferiorChanceIncrease)
+                {
+                    _inferiorChanceIncrease = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private float _poorChanceIncrease = 0f;
+        [SettingPropertyFloatingInteger("Increased poor chance", 0f, 1f, "#0%", HintText = "Increased poor chance", RequireRestart = false)]
+        [SettingPropertyGroup("General/Chances")]
+        public float PoorChanceIncrease
+        {
+            get => _poorChanceIncrease;
+            set
+            {
+                if (value != _poorChanceIncrease)
+                {
+                    _poorChanceIncrease = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        /**
+         * 
+         * For testing porpuses
+         */
         public override string Id => "Bannerlord.BannerCraft";
         public override string DisplayName => "BannerCraft";
         public override string FolderName => "BannerCraft";
