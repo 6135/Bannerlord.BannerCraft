@@ -15,8 +15,10 @@ using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.Information;
+using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
+using static TaleWorlds.CampaignSystem.CampaignOptions;
 
 namespace Bannerlord.BannerCraft.Mixins
 {
@@ -55,6 +57,7 @@ namespace Bannerlord.BannerCraft.Mixins
         }
 
         private readonly Crafting _crafting;
+        private readonly CraftingVM _craftingVm;
         private ArmorCraftingVM _armorCraftingVm;
 
         private bool _isInArmorMode;
@@ -67,6 +70,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         public CraftingMixin(CraftingVM vm) : base(vm)
         {
+            _craftingVm = vm;
             _crafting = Traverse.Create(vm).Field("_crafting").GetValue<Crafting>();
             _armorText = GameTexts.FindText("str_bannercraft_crafting_category_armor").ToString();
             _armorCraftingVm = new ArmorCraftingVM(this, vm, _crafting);
@@ -125,49 +129,76 @@ namespace Bannerlord.BannerCraft.Mixins
 
             var craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
             var smithingModel = Campaign.Current.Models.SmithingModel as BannerCraftSmithingModel;
+            var hero = ViewModel.CurrentCraftingHero.Hero;
+            int craftingXp;
 
             if (smithingModel is null)
             {
                 throw new InvalidOperationException("BannerCraft's SmithingModel is null.");
             }
 
-            var hero = ViewModel.CurrentCraftingHero.Hero;
-
             if (!HaveMaterialsNeeded() || !HaveEnergy(hero))
             {
                 return;
             }
-
-            var difficulty = ArmorCrafting.CurrentItem.Difficulty;
-            float botchChance = smithingModel.CalculateBotchingChance(hero, difficulty);
-
-            SpendMaterials();
-
-            var item = ArmorCrafting.CurrentItem.Item;
-            int energyCost = smithingModel.GetEnergyCostForArmor(item, hero);
-
-            if (MBRandom.RandomFloat < botchChance)
+            int energyCostForSmithing = 0;
+            if (!IsInArmorMode)
             {
-                /*
-                 * Crafting is botched, materials spent, item not crafted
-                 */
-                MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
-                        .SetTextVariable("HERO", hero.Name)
-                        .SetTextVariable("ITEM", item.Name),
-                    0, null, "event:/ui/notification/relation");
-
-                energyCost /= 2;
-            }
-            else
+                float botchChance;
+                float randomFloat = MBRandom.RandomFloat;
+                if (_craftingVm.WeaponDesign.IsInOrderMode)
+                {
+                    botchChance = smithingModel.CalculateBotchingChance(_craftingVm.CurrentCraftingHero.Hero, _craftingVm.WeaponDesign.CurrentOrderDifficulty);
+                }
+                else
+                {
+                    botchChance = smithingModel.CalculateBotchingChance(_craftingVm.CurrentCraftingHero.Hero, _craftingVm.WeaponDesign.CurrentDifficulty);
+                }
+                if(randomFloat < botchChance)
+                {
+                    SpendMaterials(_crafting.CurrentWeaponDesign);
+                    MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
+                            .SetTextVariable("HERO", hero.Name)
+                            .SetTextVariable("ITEM", _crafting.CraftedWeaponName),
+                        0, null, "event:/ui/notification/relation");
+                    
+                    energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(),hero) / 2;
+                    UpdateStamina(craftingBehavior, hero, energyCostForSmithing);
+                } else
+                {
+                    _craftingVm.ExecuteMainAction();
+                }
+            } else
             {
-                CraftItem(smithingModel, hero, item);
+                var difficulty = ArmorCrafting.CurrentItem.Difficulty;
+                float botchChance = smithingModel.CalculateBotchingChance(hero, difficulty);
+                var item = ArmorCrafting.CurrentItem.Item;
+                energyCostForSmithing = smithingModel.GetEnergyCostForArmor(item, hero);
+
+                SpendMaterials();
+
+                if (MBRandom.RandomFloat < botchChance)
+                {
+                    /*
+                     * Crafting is botched, materials spent, item not crafted
+                     */
+                    MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
+                            .SetTextVariable("HERO", hero.Name)
+                            .SetTextVariable("ITEM", item.Name),
+                        0, null, "event:/ui/notification/relation");
+
+                    energyCostForSmithing /= 2;
+                }
+                else
+                {
+                    CraftItem(smithingModel, hero, item);
+                }
+
+                UpdateXp(smithingModel, hero, item);
+                ArmorCrafting.UpdateCraftingHero(hero);
             }
 
-            UpdateStamina(craftingBehavior, hero, energyCost);
-            UpdateXp(smithingModel, hero, item);
-
-            ArmorCrafting.UpdateCraftingHero(hero);
-
+            UpdateStamina(craftingBehavior, hero, energyCostForSmithing);
             UpdateAll();
         }
 
@@ -391,6 +422,20 @@ namespace Bannerlord.BannerCraft.Mixins
             else if (ArmorCrafting?.CurrentItem == null)
             {
                 ViewModel.IsMainActionEnabled = false;
+            }
+        }
+
+        private void SpendMaterials(WeaponDesign weaponDesign)
+        {
+            var smithingModel = Campaign.Current.Models.SmithingModel as BannerCraftSmithingModel;
+            ItemRoster itemRoster = MobileParty.MainParty.ItemRoster;
+            int[] smithingCostsForWeaponDesign = smithingModel.GetSmithingCostsForWeaponDesign(weaponDesign);
+            for (int i = 0; i < smithingCostsForWeaponDesign.Length; i++)
+            {
+                if (smithingCostsForWeaponDesign[i] != 0)
+                {
+                    itemRoster.AddToCounts(smithingModel.GetCraftingMaterialItem((CraftingMaterials)i), smithingCostsForWeaponDesign[i]);
+                }
             }
         }
 
