@@ -1,4 +1,14 @@
 Changelog
+
+v1.0.22
+Refactored modifier behaviour using vanilla formulas, and added the option to switch between behaviours. Added options to increase an individual modifier's chance of showing up. Fixed a major bug when crafting vanilla items.
+
+v1.0.21
+Updated to 1.2.3
+
+v1.0.20
+Updated to 1.1.6
+
 1.0.5
 Fixed mismatched ordering between what's shown on armor crafting result popup and the actual result.
 
