@@ -72,4 +72,29 @@
 
 	<string id="str_bannercraft_mcm_crafting_penalty_threshold" text="{=bannercraft_mcm_crafting_penalty_threshold}Crafting penalty threshold" />
 	<string id="str_bannercraft_mcm_crafting_penalty_threshold_description" text="{=bannercraft_mcm_crafting_penalty_threshold_description}How much higher your skill has to be than the item difficulty before you have no chance of making a bad item." />
+	
+	<!-- Legendary -->
+	<string id="str_bannercraft_mcm_crafting_legendary_added_chance" text="{=bannercraft_mcm_crafting_legendary_added_chance}Legendary added chance" />
+	<string id="str_bannercraft_mcm_crafting_legendary_added_chance_description" text="{=bannercraft_mcm_crafting_legendary_added_chance_description}Added chance to get a Legendary crafting result." />
+	
+	<!-- Masterwork -->
+	<string id="str_bannercraft_mcm_crafting_masterwork_added_chance" text="{=bannercraft_mcm_crafting_masterwork_added_chance}Masterwork added chance" />
+	<string id="str_bannercraft_mcm_crafting_masterwork_added_chance_description" text="{=bannercraft_mcm_crafting_masterwork_added_chance_description}Added chance to get a Masterwork crafting result." />
+	
+	<!-- Fine -->
+	<string id="str_bannercraft_mcm_crafting_fine_added_chance" text="{=bannercraft_mcm_crafting_fine_added_chance}Fine added chance" />
+	<string id="str_bannercraft_mcm_crafting_fine_added_chance_description" text="{=bannercraft_mcm_crafting_fine_added_chance_description}Added chance to get a Fine crafting result." />
+	
+	<!-- Common -->
+	<string id="str_bannercraft_mcm_crafting_common_added_chance" text="{=bannercraft_mcm_crafting_common_added_chance}Common added chance" />
+	<string id="str_bannercraft_mcm_crafting_common_added_chance_description" text="{=bannercraft_mcm_crafting_common_added_chance_description}Added chance to get a Common crafting result." />
+	
+	<!-- Inferior -->
+	<string id="str_bannercraft_mcm_crafting_inferior_added_chance" text="{=bannercraft_mcm_crafting_inferior_added_chance}Inferior added chance" />
+	<string id="str_bannercraft_mcm_crafting_inferior_added_chance_description" text="{=bannercraft_mcm_crafting_inferior_added_chance_description}Added chance to get a Inferior crafting result." />
+	
+	<!-- Poor -->
+	<string id="str_bannercraft_mcm_crafting_poor_added_chance" text="{=bannercraft_mcm_crafting_poor_added_chance}Poor added chance" />
+	<string id="str_bannercraft_mcm_crafting_poor_added_chance_description" text="{=bannercraft_mcm_crafting_poor_added_chance_description}Added chance to get a Poor crafting result." />
+
 </strings>

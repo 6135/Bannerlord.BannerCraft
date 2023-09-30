@@ -53,6 +53,8 @@ namespace Bannerlord.BannerCraft.Mixins
                 && weakReference.TryGetTarget(out var mixin) && (__instance.IsInCraftingMode || __instance.IsInRefinementMode || __instance.IsInSmeltingMode))
             {
                 mixin.IsInArmorMode = false;
+                mixin.UpdateCurrentMaterialCosts();
+
             }
         }
 
@@ -321,17 +323,38 @@ namespace Bannerlord.BannerCraft.Mixins
             return !(ViewModel.PlayerCurrentMaterials.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0)
                      || ExtraMaterials.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0));
         }
-
+        private enum fallBackExtraCraftingMaterials
+        {
+            Fur,
+            Leather,
+            Linen,
+            Velvet,
+            NumExtraCraftingMats
+        };
         private void UpdateCurrentMaterialCosts()
         {
+
+            //TODO: Remove at a later date if issue is recreatable
             if (!IsInArmorMode)
             {
-                for (int i = 0; i < (int)ExtraCraftingMaterials.NumExtraCraftingMats; i++)
-                {
-                    ExtraMaterials[i].ResourceChangeAmount = 0;
-                }
+                try { 
+                    for (int i = 0; i < (int)ExtraCraftingMaterials.NumExtraCraftingMats; i++)
+                    {
+                        ExtraMaterials[i].ResourceChangeAmount = 0;
+                    }
 
-                return;
+                    return;
+                }
+                catch /*Catch NullReferenceException */ (NullReferenceException)
+                {
+                    ExtraMaterials = new MBBindingList<ExtraMaterialItemVM>();
+                    for (int i = 0; i < (int)fallBackExtraCraftingMaterials.NumExtraCraftingMats; ++i)
+                    {
+                        ExtraMaterials[i].ResourceChangeAmount = 0;
+
+                    }
+                    return;
+                }   
             }
 
             if (ArmorCrafting.CurrentItem == null)
