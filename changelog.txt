@@ -1,4 +1,11 @@
 Changelog
+v1.0.26.0
+Added 3 cheats. 
+
+1) sets material costs to 0. 
+2) sets stamina cost to 0.
+3) sets item difficulty to 0 (removing botch chances and increasing chances at better results)
+
 v1.0.25.0
 
 Updated to 1.2.4 and made it easier to keep old version compatible code when updating by reversing the conditions on the preprocessor directives. Fixed a visual and functional but where the previous extra crafting materials where shown when switching to normal crafting. Possible fix for a nullRefExeption on updating materials (temporary fix).
