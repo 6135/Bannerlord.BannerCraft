@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.ViewModels;
 using Bannerlord.UIExtenderEx.Attributes;
 using Bannerlord.UIExtenderEx.ViewModels;
 using HarmonyLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
@@ -16,10 +15,8 @@ using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.Information;
-using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
-using static TaleWorlds.CampaignSystem.CampaignOptions;
 
 namespace Bannerlord.BannerCraft.Mixins
 {
@@ -55,7 +52,6 @@ namespace Bannerlord.BannerCraft.Mixins
             {
                 mixin.IsInArmorMode = false;
                 mixin.UpdateCurrentMaterialCosts();
-
             }
         }
 
@@ -160,28 +156,30 @@ namespace Bannerlord.BannerCraft.Mixins
                 {
                     botchChance = smithingModel.CalculateBotchingChance(_craftingVm.CurrentCraftingHero.Hero, _craftingVm.WeaponDesign.CurrentDifficulty);
                 }
-                if(randomFloat < botchChance)
+                if (randomFloat < botchChance)
                 {
                     SpendMaterials(_crafting.CurrentWeaponDesign);
                     MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
                             .SetTextVariable("HERO", hero.Name)
                             .SetTextVariable("ITEM", _crafting.CraftedWeaponName),
                         0, null, "event:/ui/notification/relation");
-                    
-                    energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(),hero) / 2;
+
+                    energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), hero) / 2;
                     UpdateStamina(craftingBehavior, hero, energyCostForSmithing);
-                } else
+                }
+                else
                 {
                     _craftingVm.ExecuteMainAction();
                 }
-            } else
+            }
+            else
             {
                 var difficulty = noSkillRequired ? 0 : ArmorCrafting.CurrentItem.Difficulty;
                 float botchChance = smithingModel.CalculateBotchingChance(hero, difficulty);
                 var item = ArmorCrafting.CurrentItem.Item;
                 energyCostForSmithing = noStaminaRequired ? 0 : smithingModel.GetEnergyCostForArmor(item, hero);
 
-                if(!noMaterialsRequired)
+                if (!noMaterialsRequired)
                     SpendMaterials();
 
                 if (MBRandom.RandomFloat < botchChance)
@@ -326,6 +324,7 @@ namespace Bannerlord.BannerCraft.Mixins
             return !(ViewModel.PlayerCurrentMaterials.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0)
                      || ExtraMaterials.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0));
         }
+
         private enum fallBackExtraCraftingMaterials
         {
             Fur,
@@ -356,7 +355,8 @@ namespace Bannerlord.BannerCraft.Mixins
             //TODO: Remove at a later date if issue is recreatable
             if (!IsInArmorMode)
             {
-                try { 
+                try
+                {
                     for (int i = 0; i < (int)ExtraCraftingMaterials.NumExtraCraftingMats; i++)
                     {
                         ExtraMaterials[i].ResourceChangeAmount = 0;
@@ -370,10 +370,9 @@ namespace Bannerlord.BannerCraft.Mixins
                     for (int i = 0; i < (int)fallBackExtraCraftingMaterials.NumExtraCraftingMats; ++i)
                     {
                         ExtraMaterials[i].ResourceChangeAmount = 0;
-
                     }
                     return;
-                }   
+                }
             }
 
             if (ArmorCrafting.CurrentItem == null)

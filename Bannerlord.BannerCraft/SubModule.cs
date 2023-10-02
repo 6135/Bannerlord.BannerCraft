@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using Bannerlord.BannerCraft.Mixins;
+﻿using Bannerlord.BannerCraft.Mixins;
 using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.Patches;
 using Bannerlord.UIExtenderEx;
 using HarmonyLib;
+using System;
+using System.Linq;
+using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;

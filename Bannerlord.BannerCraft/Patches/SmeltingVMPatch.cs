@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using Bannerlord.BannerCraft.ViewModels;
+﻿using Bannerlord.BannerCraft.ViewModels;
 using HarmonyLib;
+using System;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.Smelting;

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using Bannerlord.BannerCraft.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using Bannerlord.BannerCraft.ViewModels;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
-using TaleWorlds.CampaignSystem.Extensions;
-using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using static TaleWorlds.Core.ArmorComponent;
@@ -29,11 +25,12 @@ namespace Bannerlord.BannerCraft.Models
         public override int CalculateWeaponDesignDifficulty(WeaponDesign weaponDesign) => _model.CalculateWeaponDesignDifficulty(weaponDesign);
 
 #if v116 || v115 || v114 || v113 || v112 || v111 || v110 || v103 || v102 || v101 || v100
-        
+
         public override int GetModifierTierForSmithedWeapon(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetModifierTierForSmithedWeapon(weaponDesign, weaponsmith);
         public override Crafting.OverrideData GetModifierChanges(int modifierTier, Hero hero, WeaponComponentData weapon) => _model.GetModifierChanges(modifierTier, hero, weapon);
 
 #else
+
         public override ItemModifier GetCraftedWeaponModifier(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetCraftedWeaponModifier(weaponDesign, weaponsmith);
 
 #endif
@@ -171,7 +168,7 @@ namespace Bannerlord.BannerCraft.Models
         public int CalculateArmorDifficulty(ItemObject item)
         {
             bool noSkillRequired = Settings.Instance?.NoSkillRequired ?? false;
-            if(noSkillRequired)
+            if (noSkillRequired)
             {
                 return 1;
             }
@@ -556,7 +553,8 @@ namespace Bannerlord.BannerCraft.Models
             double num = Math.Exp((double)(curvature * (x - mean)));
             return (float)(num / (1.0 + num));
         }
-        private List<ValueTuple<int,float>> GetModifierQualityProbabilities(ItemObject item, Hero hero)
+
+        private List<ValueTuple<int, float>> GetModifierQualityProbabilities(ItemObject item, Hero hero)
         {
             int num = CalculateArmorDifficulty(item);
             int skillValue = hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
@@ -611,7 +609,7 @@ namespace Bannerlord.BannerCraft.Models
             return list;
         }
 
-        private static void AdjustModifierProbabilities( List<ValueTuple<int, float>> modifierProbabilities, int qualityToAdjust, float amount, List<int> qualitiesToIgnore)
+        private static void AdjustModifierProbabilities(List<ValueTuple<int, float>> modifierProbabilities, int qualityToAdjust, float amount, List<int> qualitiesToIgnore)
         {
             int num = modifierProbabilities.Count - (qualitiesToIgnore.Count + 1);
             float num2 = amount / (float)num;
@@ -638,7 +636,7 @@ namespace Bannerlord.BannerCraft.Models
                     modifierProbabilities[i] = new ValueTuple<int, float>(valueTuple.Item1, num4);
                 }
             }
-            float num5 = modifierProbabilities.Sum( (ValueTuple< int, float> tuple) => tuple.Item2);
+            float num5 = modifierProbabilities.Sum((ValueTuple<int, float> tuple) => tuple.Item2);
             for (int j = 0; j < modifierProbabilities.Count; j++)
             {
                 ValueTuple<int, float> valueTuple2 = modifierProbabilities[j];
@@ -675,6 +673,7 @@ namespace Bannerlord.BannerCraft.Models
                 return newGetModifierTierForItem(item, hero);
             }
         }
+
         private int newGetModifierTierForItem(ItemObject item, Hero hero)
         {
             /*
@@ -697,20 +696,20 @@ namespace Bannerlord.BannerCraft.Models
             float legendaryChanceIncreaseSettings = Settings.Instance?.LegendaryChanceIncrease ?? 0f;
 
             //use vanilla code to obtain a quality index instead.
-            List<ValueTuple<int,float>> modifierQualityProbabilities = GetModifierQualityProbabilities(item, hero);
+            List<ValueTuple<int, float>> modifierQualityProbabilities = GetModifierQualityProbabilities(item, hero);
             if (poorChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 0, poorChanceIncreaseSettings, new());
-            if (inferiorChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 1, inferiorChanceIncreaseSettings, new() {});
-            if (commonChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, -1, commonChanceIncreaseSettings, new() {});
-            if (fineChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 2, fineChanceIncreaseSettings, new() {});
-            if (masterworkChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 3, masterworkChanceIncreaseSettings, new() {});
-            if (legendaryChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 4, legendaryChanceIncreaseSettings, new() {});
+            if (inferiorChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 1, inferiorChanceIncreaseSettings, new() { });
+            if (commonChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, -1, commonChanceIncreaseSettings, new() { });
+            if (fineChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 2, fineChanceIncreaseSettings, new() { });
+            if (masterworkChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 3, masterworkChanceIncreaseSettings, new() { });
+            if (legendaryChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 4, legendaryChanceIncreaseSettings, new() { });
 
             int itemQuality = GetCraftedArmorModifier(modifierQualityProbabilities);
 
             /*
 			 * randomInt - skillFloor becomes between -25 and 75 with default settings
 			 * if difference is smaller than skillFloor, we get a chance to get a penalty
-			 * if 
+			 * if
 			 */
             int randomInt = MBRandom.RandomInt(0, 100) - skillFloor;
             int difference = skillValue - itemDifficulty;
@@ -719,14 +718,13 @@ namespace Bannerlord.BannerCraft.Models
                 return GetModifierTierPenaltyForLowSkill(difference, randomInt);
             }
             return itemQuality;
-            
-
         }
+
         private int oldGetModifierTierForItem(ItemObject item, Hero hero)
         {
             /*
 			 * 25 is just the default value from MCM
-			 * 
+			 *
 			 * Items have 4 modifiers, 2 good, 2 bad
 			 * Negative modifier is neutral and gives the item as is
 			 * Modifiers 0 and 1 give the bad ones and are achievable from anywhere up to 25 skill over difficulty
@@ -778,6 +776,7 @@ namespace Bannerlord.BannerCraft.Models
 
             return -1;
         }
+
         private int GetModifierTierPenaltyForLowSkill(int difference, int randomInt)
         {
             if (difference >= 0)

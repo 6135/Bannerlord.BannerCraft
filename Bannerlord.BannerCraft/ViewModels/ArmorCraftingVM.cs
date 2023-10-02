@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Bannerlord.BannerCraft.Mixins;
+﻿using Bannerlord.BannerCraft.Mixins;
 using Bannerlord.BannerCraft.Models;
 using Bannerlord.UIExtenderEx.Attributes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.Extensions;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting;
@@ -472,8 +470,9 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         //delegate to decide how to access the fields of the item due to the fact that the fields are private in versions prior to 1.2.0
         private delegate T GetItemFieldDelegate<out T>(EquipmentElement item, string _fieldName);
-        GetItemFieldDelegate<int>? getItemFieldDelegateInstanceInt = null;
-        GetItemFieldDelegate<short>? getItemFieldDelegateInstanceShort = null;
+
+        private GetItemFieldDelegate<int>? getItemFieldDelegateInstanceInt = null;
+        private GetItemFieldDelegate<short>? getItemFieldDelegateInstanceShort = null;
 #if v116 || v115 || v114 || v113 || v112 || v111 || v110 || v103 || v102 || v101 || v100
         private int GetItemFieldInt(EquipmentElement item, string _fieldName)
         {
@@ -492,26 +491,28 @@ namespace Bannerlord.BannerCraft.ViewModels
             else return 0;
         }
 #else
+
         //they were into properties.
         private int GetItemFieldInt(EquipmentElement item, string _fieldName)
         {
             var value = item.ItemModifier.GetType()?.GetProperty(_fieldName)?.GetValue(item.ItemModifier);
             if (value is not null)
-                return (int) value;
+                return (int)value;
             else return 0;
         }
+
         private short GetItemFieldShort(EquipmentElement item, string _fieldName)
         {
             var value = item.ItemModifier.GetType()?.GetProperty(_fieldName)?.GetValue(item.ItemModifier);
             if (value is not null)
-                return (short) value;
+                return (short)value;
             else return 0;
         }
 
 #endif
+
         private List<int> GenerateModifierValues(ItemType itemType, EquipmentElement element)
         {
-
             getItemFieldDelegateInstanceInt = GetItemFieldInt;
             getItemFieldDelegateInstanceShort = GetItemFieldShort;
             string _armor;
@@ -520,7 +521,6 @@ namespace Bannerlord.BannerCraft.ViewModels
             string _damage;
             string _missileSpeed;
             string _stackCount;
-
 
 #if v116 || v115 || v114 || v113 || v112 || v111 || v110 || v103 || v102 || v101 || v100
 
@@ -538,7 +538,6 @@ namespace Bannerlord.BannerCraft.ViewModels
             _damage = "Damage";
             _missileSpeed = "MissileSpeed";
             _stackCount = "StackCount";
-
 
 #endif
             /*
