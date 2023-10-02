@@ -97,4 +97,15 @@
 	<string id="str_bannercraft_mcm_crafting_poor_added_chance" text="{=bannercraft_mcm_crafting_poor_added_chance}Poor added chance" />
 	<string id="str_bannercraft_mcm_crafting_poor_added_chance_description" text="{=bannercraft_mcm_crafting_poor_added_chance_description}Added chance to get a Poor crafting result." />
 
+	<!-- Cheats-->
+	<string id="str_bannercraft_mcm_no_materials_required" text="{=bannercraft_mcm_no_materials_required}No materials required" />
+	<string id="str_bannercraft_mcm_no_materials_required_description" text="{=bannercraft_mcm_no_materials_required_description}If enabled, crafting will not require any materials." />
+	
+	<string id="str_bannercraft_mcm_difficulty_one" text="{=bannercraft_mcm_difficulty_one}Set difficulty to 1" />
+	<string id="str_bannercraft_mcm_difficulty_one_description" text="{=bannercraft_mcm_difficulty_one_description}If enabled, crafting difficulty will be set to 1." />
+
+	<string id="str_bannercraft_mcm_no_stamina_required" text="{=bannercraft_mcm_no_stamina_required}No stamina required" />
+	<string id="str_bannercraft_mcm_no_stamina_required_description" text="{=bannercraft_mcm_no_stamina_required_description}If enabled, crafting will not require any stamina." />
+	
+
 </strings>

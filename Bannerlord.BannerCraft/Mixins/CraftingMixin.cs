@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Bannerlord.BannerCraft.Models;
 using Bannerlord.BannerCraft.ViewModels;
 using Bannerlord.UIExtenderEx.Attributes;
@@ -132,17 +133,20 @@ namespace Bannerlord.BannerCraft.Mixins
             var craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
             var smithingModel = Campaign.Current.Models.SmithingModel as BannerCraftSmithingModel;
             var hero = ViewModel.CurrentCraftingHero.Hero;
-            int craftingXp;
+            bool noMaterialsRequired = Settings.Instance?.NoMaterialsRequired ?? false;
+            bool noStaminaRequired = Settings.Instance?.NoStaminaRequired ?? false;
+            bool noSkillRequired = Settings.Instance?.NoSkillRequired ?? false;
 
             if (smithingModel is null)
             {
                 throw new InvalidOperationException("BannerCraft's SmithingModel is null.");
             }
 
-            if (!HaveMaterialsNeeded() || !HaveEnergy(hero))
+            if (!HaveMaterialsNeeded() || (!HaveEnergy(hero) && !noStaminaRequired))
             {
                 return;
             }
+
             int energyCostForSmithing = 0;
             if (!IsInArmorMode)
             {
@@ -172,12 +176,13 @@ namespace Bannerlord.BannerCraft.Mixins
                 }
             } else
             {
-                var difficulty = ArmorCrafting.CurrentItem.Difficulty;
+                var difficulty = noSkillRequired ? 0 : ArmorCrafting.CurrentItem.Difficulty;
                 float botchChance = smithingModel.CalculateBotchingChance(hero, difficulty);
                 var item = ArmorCrafting.CurrentItem.Item;
-                energyCostForSmithing = smithingModel.GetEnergyCostForArmor(item, hero);
+                energyCostForSmithing = noStaminaRequired ? 0 : smithingModel.GetEnergyCostForArmor(item, hero);
 
-                SpendMaterials();
+                if(!noMaterialsRequired)
+                    SpendMaterials();
 
                 if (MBRandom.RandomFloat < botchChance)
                 {
@@ -257,10 +262,8 @@ namespace Bannerlord.BannerCraft.Mixins
                     if (item.ArmorComponent.ItemModifierGroup is null)
                     {
                         var lookup = MaterialTypeMap[item.ArmorComponent.MaterialType];
-#pragma warning disable S6602 // "Find" method should be used instead of the "FirstOrDefault" extension
                         modifierGroup = Game.Current.ObjectManager.GetObjectTypeList<ItemModifierGroup>()
                             .FirstOrDefault((x) => x.GetName().ToString().ToLower() == lookup);
-#pragma warning restore S6602 // "Find" method should be used instead of the "FirstOrDefault" extension
                     }
                     else
                     {
@@ -331,9 +334,25 @@ namespace Bannerlord.BannerCraft.Mixins
             Velvet,
             NumExtraCraftingMats
         };
+
         private void UpdateCurrentMaterialCosts()
         {
-
+            var noMaterialsRequired = Settings.Instance?.NoMaterialsRequired ?? false;
+            /*
+             * This part sets the resource change amount to 0 for all materials if the player has the option to craft without materials
+             */
+            if (noMaterialsRequired)
+            {
+                for (int i = 0; i < (int)ExtraCraftingMaterials.NumExtraCraftingMats; i++)
+                {
+                    ExtraMaterials[i].ResourceChangeAmount = 0;
+                }
+                for (int i = 0; i < (int)CraftingMaterials.NumCraftingMats; i++)
+                {
+                    ViewModel.PlayerCurrentMaterials[i].ResourceChangeAmount = 0;
+                }
+                return;
+            }
             //TODO: Remove at a later date if issue is recreatable
             if (!IsInArmorMode)
             {
@@ -421,9 +440,9 @@ namespace Bannerlord.BannerCraft.Mixins
 
             var craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
             var hero = ViewModel.CurrentCraftingHero.Hero;
-
+            bool noStaminaRequired = Settings.Instance?.NoStaminaRequired ?? false;
             ViewModel.IsMainActionEnabled = true;
-            if (!HaveEnergy(hero))
+            if (!HaveEnergy(hero) && !noStaminaRequired)
             {
                 var stamina = craftingBehavior.GetHeroCraftingStamina(hero);
                 var requiredStamina = GetRequiredEnergy(hero);
@@ -434,6 +453,7 @@ namespace Bannerlord.BannerCraft.Mixins
                         .SetTextVariable("REQUIRED", requiredStamina)
                         .SetTextVariable("CURRENT", stamina).ToString());
             }
+            //dont need to add this check for armor crafting cheat because the cheat already sets the required materials to 0
             else if (!HaveMaterialsNeeded())
             {
                 ViewModel.IsMainActionEnabled = false;

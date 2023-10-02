@@ -170,6 +170,11 @@ namespace Bannerlord.BannerCraft.Models
 
         public int CalculateArmorDifficulty(ItemObject item)
         {
+            bool noSkillRequired = Settings.Instance?.NoSkillRequired ?? false;
+            if(noSkillRequired)
+            {
+                return 1;
+            }
             float result = item.Tierf * 20f;
 
             ItemType itemType = ArmorCraftingVM.GetItemType(item);
@@ -683,12 +688,13 @@ namespace Bannerlord.BannerCraft.Models
             int skillValue = hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
             int itemDifficulty = CalculateArmorDifficulty(item);
             int skillFloor = Settings.Instance?.SkillOverDifficultyBeforeNoPenalty ?? 0;
-            float poorChanceIncreaseSettings = Settings.Instance.PoorChanceIncrease;
-            float inferiorChanceIncreaseSettings = Settings.Instance.InferiorChanceIncrease;
-            float commonChanceIncreaseSettings = Settings.Instance.CommonChanceIncrease;
-            float fineChanceIncreaseSettings = Settings.Instance.FineChanceIncrease;
-            float masterworkChanceIncreaseSettings = Settings.Instance.MasterworkChanceIncrease;
-            float legendaryChanceIncreaseSettings = Settings.Instance.LegendaryChanceIncrease;
+
+            float poorChanceIncreaseSettings = Settings.Instance?.PoorChanceIncrease ?? 0f;
+            float inferiorChanceIncreaseSettings = Settings.Instance?.InferiorChanceIncrease ?? 0f;
+            float commonChanceIncreaseSettings = Settings.Instance?.CommonChanceIncrease ?? 0f;
+            float fineChanceIncreaseSettings = Settings.Instance?.FineChanceIncrease ?? 0f;
+            float masterworkChanceIncreaseSettings = Settings.Instance?.MasterworkChanceIncrease ?? 0f;
+            float legendaryChanceIncreaseSettings = Settings.Instance?.LegendaryChanceIncrease ?? 0f;
 
             //use vanilla code to obtain a quality index instead.
             List<ValueTuple<int,float>> modifierQualityProbabilities = GetModifierQualityProbabilities(item, hero);
@@ -698,7 +704,6 @@ namespace Bannerlord.BannerCraft.Models
             if (fineChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 2, fineChanceIncreaseSettings, new() {});
             if (masterworkChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 3, masterworkChanceIncreaseSettings, new() {});
             if (legendaryChanceIncreaseSettings > 0f) AdjustModifierProbabilities(modifierQualityProbabilities, 4, legendaryChanceIncreaseSettings, new() {});
-
 
             int itemQuality = GetCraftedArmorModifier(modifierQualityProbabilities);
 
@@ -719,65 +724,6 @@ namespace Bannerlord.BannerCraft.Models
         }
         private int oldGetModifierTierForItem(ItemObject item, Hero hero)
         {
-            //        int skillValue = hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
-            //        int itemDifficulty = CalculateArmorDifficulty(item);
-            //        int skillFloor = Settings.Instance?.SkillOverDifficultyBeforeNoPenalty ?? 0;
-
-            //        float legendarySmithChangeModifier = 0.001f;
-            //        float masterSmithChangeModifier = 0.0015f;
-            //        float experiencedSmithChangeModifier = 0.002f;
-            //        int randomInt = MBRandom.RandomInt(0, 100) - skillFloor;
-            //        int difference = skillValue - itemDifficulty;
-
-            //        float legendarySmithChance = hero.GetPerkValue(DefaultPerks.Crafting.LegendarySmith) ? DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + Math.Max(0, hero.GetSkillValue(DefaultSkills.Crafting) - 300) * 0.01f : 0;
-            //        if (legendarySmithChance > 0)
-            //        {
-            //            legendarySmithChance = difference * legendarySmithChangeModifier > 0 ? difference * legendarySmithChangeModifier : legendarySmithChangeModifier;
-            //        }
-
-            //        float masterSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.MasterSmith) ? DefaultPerks.Crafting.MasterSmith.PrimaryBonus : 0;
-            //        if (masterSmithChance > 0)
-            //        {
-            //            masterSmithChance = difference * masterSmithChangeModifier > 0 ? difference * masterSmithChangeModifier : masterSmithChangeModifier;
-            //        }
-
-            //        float experiencedSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.ExperiencedSmith) ? DefaultPerks.Crafting.ExperiencedSmith.PrimaryBonus : 0;
-            //        if (experiencedSmithChance > 0)
-            //        {
-            //            experiencedSmithChance = difference * experiencedSmithChangeModifier > 0 ? difference * experiencedSmithChangeModifier : experiencedSmithChangeModifier;
-            //        }
-
-            //        /*
-            //* And now change randomInt back to between 0 and 100, then convert to between 0 and 1
-            //*/
-            //        float randomFloat = (randomInt + skillFloor) * 0.01f;
-            //        if (randomFloat < legendarySmithChance)
-            //        {
-            //            /*
-            // * Just pick the highest tier thing available
-            // * This makes sure we work with things like Large Bag of Balanced which has a price_factor of 1.8
-            // * Our legendary things have a price factor of 2.5 and the masterwork vanilla items have a price factor of 1.5
-            // * So our numbers still work
-            // */
-            //            return 10;
-            //        }
-
-            //        if (randomFloat < legendarySmithChance + masterSmithChance)
-            //        {
-            //            return 3;
-            //        }
-
-            //        if (randomFloat < legendarySmithChance + masterSmithChance + experiencedSmithChance)
-            //        {
-            //            return 2;
-            //        }
-
-            //        if (randomFloat < legendarySmithChance + masterSmithChance + experiencedSmithChance + skillValue * 0.15f)
-            //        {
-            //            return 1;
-            //        }
-            //        return 0;
-
             /*
 			 * 25 is just the default value from MCM
 			 * 
