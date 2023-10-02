@@ -4,6 +4,7 @@ using Bannerlord.UIExtenderEx.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
@@ -474,14 +475,16 @@ namespace Bannerlord.BannerCraft.ViewModels
         private GetItemFieldDelegate<int>? getItemFieldDelegateInstanceInt = null;
         private GetItemFieldDelegate<short>? getItemFieldDelegateInstanceShort = null;
 #if v116 || v115 || v114 || v113 || v112 || v111 || v110 || v103 || v102 || v101 || v100
+
         private int GetItemFieldInt(EquipmentElement item, string _fieldName)
         {
             BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
             var value = item.ItemModifier.GetType()?.GetField(_fieldName, bindingFlags)?.GetValue(item.ItemModifier);
             if (value is not null)
-                return (int) value;
+                return (int)value;
             else return 0;
         }
+
         private short GetItemFieldShort(EquipmentElement item, string _fieldName)
         {
             BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
@@ -490,11 +493,13 @@ namespace Bannerlord.BannerCraft.ViewModels
                 return (short)value;
             else return 0;
         }
+
 #else
 
         //they were into properties.
         private int GetItemFieldInt(EquipmentElement item, string _fieldName)
         {
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
             var value = item.ItemModifier.GetType()?.GetProperty(_fieldName)?.GetValue(item.ItemModifier);
             if (value is not null)
                 return (int)value;
@@ -503,6 +508,7 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private short GetItemFieldShort(EquipmentElement item, string _fieldName)
         {
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
             var value = item.ItemModifier.GetType()?.GetProperty(_fieldName)?.GetValue(item.ItemModifier);
             if (value is not null)
                 return (short)value;
