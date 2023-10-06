@@ -15,6 +15,10 @@ Original author: https://github.com/Evangel63/BannerCraft
 
 # Changelog
 
+**v1.0.27.0**
+
+Added setting to change crafting costs, it works as a multiplier, by default it is x1.00, a value of 0 will effectively set the costs to x0.00 and a value of x5.00 will increase costs by 5 times.
+
 **v1.0.26.0**
 
 Added 3 cheats. 
