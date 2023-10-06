@@ -27,6 +27,7 @@ namespace Bannerlord.BannerCraft.Models
 #if v116 || v115 || v114 || v113 || v112 || v111 || v110 || v103 || v102 || v101 || v100
 
         public override int GetModifierTierForSmithedWeapon(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetModifierTierForSmithedWeapon(weaponDesign, weaponsmith);
+
         public override Crafting.OverrideData GetModifierChanges(int modifierTier, Hero hero, WeaponComponentData weapon) => _model.GetModifierChanges(modifierTier, hero, weapon);
 
 #else
@@ -497,7 +498,12 @@ namespace Bannerlord.BannerCraft.Models
                     }
                     break;
             }
-
+            //Apply cost modifier.
+            float craftingCostModifier = Settings.Instance?.CraftingCostModifier ?? 1f;
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = (int)Math.Floor(result[i] * craftingCostModifier);
+            }
             return result;
         }
 

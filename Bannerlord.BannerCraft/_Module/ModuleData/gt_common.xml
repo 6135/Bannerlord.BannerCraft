@@ -73,6 +73,10 @@
 	<string id="str_bannercraft_mcm_crafting_penalty_threshold" text="{=bannercraft_mcm_crafting_penalty_threshold}Crafting penalty threshold" />
 	<string id="str_bannercraft_mcm_crafting_penalty_threshold_description" text="{=bannercraft_mcm_crafting_penalty_threshold_description}How much higher your skill has to be than the item difficulty before you have no chance of making a bad item." />
 
+	<!-- Material Cost -->
+	<string id="str_bannercraft_mcm_crafting_material_cost" text="{=bannercraft_mcm_crafting_material_cost}Material cost modifier" />
+	<string id="str_bannercraft_mcm_crafting_material_cost_description" text="{=bannercraft_mcm_crafting_material_cost_description}How much the material cost is multiplied by when crafting. Default is x1.00" />
+
 	<!-- Legendary -->
 	<string id="str_bannercraft_mcm_crafting_legendary_added_chance" text="{=bannercraft_mcm_crafting_legendary_added_chance}Legendary added chance" />
 	<string id="str_bannercraft_mcm_crafting_legendary_added_chance_description" text="{=bannercraft_mcm_crafting_legendary_added_chance_description}Added chance to get a Legendary crafting result." />

@@ -138,14 +138,13 @@ namespace Bannerlord.BannerCraft.Mixins
                 throw new InvalidOperationException("BannerCraft's SmithingModel is null.");
             }
 
-            if (!HaveMaterialsNeeded() || (!HaveEnergy(hero) && !noStaminaRequired))
-            {
-                return;
-            }
-
             int energyCostForSmithing = 0;
             if (!IsInArmorMode)
             {
+                if (!HaveMaterialsNeeded() || !HaveEnergy(hero))
+                {
+                    return;
+                }
                 float botchChance;
                 float randomFloat = MBRandom.RandomFloat;
                 if (_craftingVm.WeaponDesign.IsInOrderMode)
@@ -174,6 +173,10 @@ namespace Bannerlord.BannerCraft.Mixins
             }
             else
             {
+                if (!HaveMaterialsNeeded() || (!HaveEnergy(hero) && !noStaminaRequired))
+                {
+                    return;
+                }
                 var difficulty = noSkillRequired ? 0 : ArmorCrafting.CurrentItem.Difficulty;
                 float botchChance = smithingModel.CalculateBotchingChance(hero, difficulty);
                 var item = ArmorCrafting.CurrentItem.Item;
