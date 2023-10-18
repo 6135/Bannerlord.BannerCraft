@@ -1,9 +1,24 @@
 # BannerCraft
 
-![example event parameter](https://github.com/6135/Bannerlord.BannerCraft/actions/workflows/build.yml/badge.svg?event=push)
+![build](https://github.com/6135/Bannerlord.BannerCraft/actions/workflows/build.yml/badge.svg?event=push)
 
 
 Crafting extension for Mount and Blade 2: Bannerlord
+
+# Download
+
+Visit [nexus mods](https://www.nexusmods.com/mountandblade2bannerlord/mods/5932) to download or download [latest release](https://github.com/6135/Bannerlord.BannerCraft/releases/latest) and install manually. 
+
+# Depencies 
+
+
+| Dependency                   | Version  | Required |
+|------------------------------|----------|----------|
+| Harmony                      | >= 2.2.2 | ✅        |
+| ButterLib                    | >= 2.6.3 | ✅        |
+| UIExtenderEx                 | >= 2.8.0 | ✅        |
+| Mod Configuration Menu (MCM) | >= 5.9.1 | ✅        |
+
 
 # License
 Do whatever you want, just provide a link back here if you use it in your own project.
