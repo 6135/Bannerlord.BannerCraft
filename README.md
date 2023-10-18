@@ -21,7 +21,8 @@ Visit [nexus mods](https://www.nexusmods.com/mountandblade2bannerlord/mods/5932)
 
 
 # License
-Do whatever you want, just provide a link back here if you use it in your own project.
+
+[See license](https://github.com/6135/Bannerlord.BannerCraft/blob/master/LICENSE)
 
 # Credits
 Special thanks to the BannerKings mod team (https://github.com/R-Vaccari/bannerlord-banner-kings) for showing how to edit the crafting system.
