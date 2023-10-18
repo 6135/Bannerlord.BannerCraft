@@ -14,10 +14,10 @@ Visit [nexus mods](https://www.nexusmods.com/mountandblade2bannerlord/mods/5932)
 
 | Dependency                   | Version  | Required |
 |------------------------------|----------|----------|
-| Harmony                      | >= 2.2.2 | ✅        |
-| ButterLib                    | >= 2.6.3 | ✅        |
-| UIExtenderEx                 | >= 2.8.0 | ✅        |
-| Mod Configuration Menu (MCM) | >= 5.9.1 | ✅        |
+| [Harmony](https://www.nexusmods.com/mountandblade2bannerlord/mods/2006)                      | >= 2.2.2 | ✅        |
+| [ButterLib](https://www.nexusmods.com/mountandblade2bannerlord/mods/2018)                    | >= 2.6.3 | ✅        |
+| [UIExtenderEx](https://www.nexusmods.com/mountandblade2bannerlord/mods/2102)                 | >= 2.8.0 | ✅        |
+| [Mod Configuration Menu (MCM)](https://www.nexusmods.com/mountandblade2bannerlord/mods/612) | >= 5.9.1 | ✅        |
 
 
 # License
