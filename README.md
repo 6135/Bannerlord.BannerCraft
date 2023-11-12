@@ -31,6 +31,14 @@ Original author: https://github.com/Evangel63/BannerCraft
 
 # Changelog
 
+**v1.0.28**
+
+Fixed 3 bugs
+
+1) Duplicate items in the smelting list
+2) When smelting list only has items added by the mod, the selection would reset to none, now it resets to top of the list, like in vanilla
+3) The difficulty cheat wasnt properly applying to chance calculation
+
 **v1.0.27.0**
 
 Added setting to change crafting costs, it works as a multiplier, by default it is x1.00, a value of 0 will effectively set the costs to x0.00 and a value of x5.00 will increase costs by 5 times.
