@@ -62,7 +62,7 @@ namespace Bannerlord.BannerCraft.Mixins
         private bool _isInArmorMode;
         private string _armorText;
 
-        private MBBindingList<ExtraMaterialItemVM> _craftingResourceItems;
+        private MBBindingList<ExtraMaterialItemVM>? _craftingResourceItems;
 
         private readonly MethodInfo _updateAllBase;
         private readonly MethodInfo _refreshEnableMainActionBase;
@@ -106,7 +106,7 @@ namespace Bannerlord.BannerCraft.Mixins
         }
 
         [DataSourceProperty]
-        public MBBindingList<ExtraMaterialItemVM> ExtraMaterials
+        public MBBindingList<ExtraMaterialItemVM>? ExtraMaterials
         {
             get => _craftingResourceItems;
             set => SetField(ref _craftingResourceItems, value, nameof(ExtraMaterials));
@@ -177,7 +177,7 @@ namespace Bannerlord.BannerCraft.Mixins
                 {
                     return;
                 }
-                var difficulty = noSkillRequired ? 0 : ArmorCrafting.CurrentItem.Difficulty;
+                var difficulty = noSkillRequired ? 0 : ArmorCrafting.CurrentItem?.Difficulty ?? 0;
                 float botchChance = smithingModel.CalculateBotchingChance(hero, difficulty);
                 var item = ArmorCrafting.CurrentItem.Item;
                 energyCostForSmithing = noStaminaRequired ? 0 : smithingModel.GetEnergyCostForArmor(item, hero);

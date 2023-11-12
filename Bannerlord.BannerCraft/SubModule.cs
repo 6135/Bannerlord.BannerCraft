@@ -22,23 +22,23 @@ namespace Bannerlord.BannerCraft
         private readonly UIExtender _extender = new UIExtender(Namespace);
         private readonly Harmony _harmony = new Harmony(Namespace);
 
-        protected override void OnGameStart(Game game, IGameStarter gameStarter)
+        protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
-            base.OnGameStart(game, gameStarter);
+            base.OnGameStart(game, gameStarterObject);
 
-            if (gameStarter is not CampaignGameStarter)
+            if (gameStarterObject is not CampaignGameStarter)
             {
                 return;
             }
 
-            var smithingModel = GetGameModel<SmithingModel>(gameStarter);
+            var smithingModel = GetGameModel<SmithingModel>(gameStarterObject);
 
             if (smithingModel is null)
             {
                 throw new InvalidOperationException("Default SmithingModel was not found.");
             }
 
-            gameStarter.AddModel(new BannerCraftSmithingModel(smithingModel));
+            gameStarterObject.AddModel(new BannerCraftSmithingModel(smithingModel));
         }
 
         protected override void OnSubModuleLoad()

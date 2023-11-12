@@ -562,7 +562,7 @@ namespace Bannerlord.BannerCraft.Models
 
         private List<ValueTuple<int, float>> GetModifierQualityProbabilities(ItemObject item, Hero hero)
         {
-            int num = CalculateArmorDifficulty(item);
+            int num = (Settings.Instance?.NoSkillRequired ?? false) ? 1 : CalculateArmorDifficulty(item);
             int skillValue = hero.CharacterObject.GetSkillValue(DefaultSkills.Crafting);
             List<ValueTuple<int, float>> list = new List<ValueTuple<int, float>>();
             float num2 = MathF.Clamp((float)(skillValue - num), -300f, 300f);

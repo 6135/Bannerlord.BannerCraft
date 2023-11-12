@@ -9,7 +9,7 @@ using TaleWorlds.Core;
 
 namespace Bannerlord.BannerCraft.Patches
 {
-    internal class SmeltingVMPatch
+    internal static class SmeltingVMPatch
     {
         static SmeltingVMPatch()
         {
@@ -36,42 +36,47 @@ namespace Bannerlord.BannerCraft.Patches
 
         public static void RefreshListPostfix(ref SmeltingVM __instance)
         {
-            if (!Settings.Instance.AllowSmeltingOtherItems)
+            bool allowCraftingOtherItems = Settings.Instance?.AllowSmeltingOtherItems ?? false;
+            if (allowCraftingOtherItems)
             {
-                return;
-            }
+                var smithingModel = Campaign.Current.Models.SmithingModel;
 
-            var smithingModel = Campaign.Current.Models.SmithingModel;
+                var playerItemRoster = GetPlayerItemRoster(__instance);
+                var onItemSelection = GetOnItemSelectionAction(__instance);
+                var processLockItem = GetProcessLockItemAction(__instance);
 
-            var playerItemRoster = GetPlayerItemRoster(__instance);
-            var onItemSelection = GetOnItemSelectionAction(__instance);
-            var processLockItem = GetProcessLockItemAction(__instance);
-
-            for (int i = 0; i < playerItemRoster.Count; i++)
-            {
-                var elementCopyAtIndex = playerItemRoster.GetElementCopyAtIndex(i);
-                var item = elementCopyAtIndex.EquipmentElement.Item;
-                var itemType = ArmorCraftingVM.GetItemType(item);
-                var smeltingOutputs = smithingModel.GetSmeltingOutputForItem(item);
-                var givesOutput = smeltingOutputs.Any(output => output > 0);
-                if (!ArmorCraftingVM.ItemTypeIsWeapon(itemType) && givesOutput)
+                for (int i = 0; i < playerItemRoster.Count; i++)
                 {
-                    bool isLocked = IsItemLocked(__instance, elementCopyAtIndex.EquipmentElement);
+                    var elementCopyAtIndex = playerItemRoster.GetElementCopyAtIndex(i);
+                    var item = elementCopyAtIndex.EquipmentElement.Item;
+                    var itemType = ArmorCraftingVM.GetItemType(item);
+                    var smeltingOutputs = smithingModel.GetSmeltingOutputForItem(item);
+                    var givesOutput = smeltingOutputs.Any(output => output > 0);
+                    if (!ArmorCraftingVM.ItemTypeIsWeapon(itemType) && givesOutput)
+                    {
+                        bool isLocked = IsItemLocked(__instance, elementCopyAtIndex.EquipmentElement);
 
-                    SmeltingItemVM smeltingItem = new SmeltingItemVM(
-                        elementCopyAtIndex.EquipmentElement,
-                        onItemSelection,
-                        processLockItem,
-                        isLocked,
-                        elementCopyAtIndex.Amount);
-
-                    __instance.SmeltableItemList.Add(smeltingItem);
+                        SmeltingItemVM smeltingItem = new SmeltingItemVM(
+                            elementCopyAtIndex.EquipmentElement,
+                            onItemSelection,
+                            processLockItem,
+                            isLocked,
+                            elementCopyAtIndex.Amount);
+                        //if it's already added, don't add it again
+                        if (!__instance.SmeltableItemList.Any(smeltableItem => smeltableItem.EquipmentElement.Item.Equals(item)))
+                            __instance.SmeltableItemList.Add(smeltingItem);
+                    }
                 }
-            }
 
-            if (__instance.SmeltableItemList.Count == 0)
-            {
-                __instance.CurrentSelectedItem = null;
+                if (__instance.SmeltableItemList.Count == 0)
+                {
+                    __instance.CurrentSelectedItem = null;
+                } /* if has values and current value is set to null, then get first or default on updated list*/
+                else if (__instance.CurrentSelectedItem is null)
+                {
+                    var newItem = __instance.SmeltableItemList.FirstOrDefault();
+                    onItemSelection(newItem);
+                }
             }
         }
     }

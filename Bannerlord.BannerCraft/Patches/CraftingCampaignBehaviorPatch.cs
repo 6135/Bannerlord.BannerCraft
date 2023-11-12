@@ -6,7 +6,7 @@ using TaleWorlds.Core;
 
 namespace Bannerlord.BannerCraft.Patches
 {
-    internal class CraftingCampaignBehaviorPatch
+    internal static class CraftingCampaignBehaviorPatch
     {
         public static bool DoSmeltingPrefix(CraftingCampaignBehavior __instance, Hero hero, EquipmentElement equipmentElement)
         {
