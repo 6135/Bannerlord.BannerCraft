@@ -1,12 +1,28 @@
 # BannerCraft
 
-![example event parameter](https://github.com/6135/Bannerlord.BannerCraft/actions/workflows/build.yml/badge.svg?event=push)
+![build](https://github.com/6135/Bannerlord.BannerCraft/actions/workflows/build.yml/badge.svg?event=push)
 
 
 Crafting extension for Mount and Blade 2: Bannerlord
 
+# Download
+
+Visit [nexus mods](https://www.nexusmods.com/mountandblade2bannerlord/mods/5932) to download or download [latest release](https://github.com/6135/Bannerlord.BannerCraft/releases/latest) and install manually. 
+
+# Depencies 
+
+
+| Dependency                   | Version  | Required |
+|------------------------------|----------|----------|
+| [Harmony](https://www.nexusmods.com/mountandblade2bannerlord/mods/2006)                      | >= 2.2.2 | ✅        |
+| [ButterLib](https://www.nexusmods.com/mountandblade2bannerlord/mods/2018)                    | >= 2.6.3 | ✅        |
+| [UIExtenderEx](https://www.nexusmods.com/mountandblade2bannerlord/mods/2102)                 | >= 2.8.0 | ✅        |
+| [Mod Configuration Menu (MCM)](https://www.nexusmods.com/mountandblade2bannerlord/mods/612) | >= 5.9.1 | ✅        |
+
+
 # License
-Do whatever you want, just provide a link back here if you use it in your own project.
+
+[See license](https://github.com/6135/Bannerlord.BannerCraft/blob/master/LICENSE)
 
 # Credits
 Special thanks to the BannerKings mod team (https://github.com/R-Vaccari/bannerlord-banner-kings) for showing how to edit the crafting system.
@@ -14,6 +30,10 @@ Forked from @adwitkow updated version of the mod.
 Original author: https://github.com/Evangel63/BannerCraft
 
 # Changelog
+
+**v1.0.27.0**
+
+Added setting to change crafting costs, it works as a multiplier, by default it is x1.00, a value of 0 will effectively set the costs to x0.00 and a value of x5.00 will increase costs by 5 times.
 
 **v1.0.26.0**
 
