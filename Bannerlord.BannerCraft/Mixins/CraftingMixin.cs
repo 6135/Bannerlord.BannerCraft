@@ -147,21 +147,23 @@ namespace Bannerlord.BannerCraft.Mixins
                 }
                 float botchChance;
                 float randomFloat = MBRandom.RandomFloat;
+                int difficulty = 0;
                 if (_craftingVm.WeaponDesign.IsInOrderMode)
                 {
-                    botchChance = smithingModel.CalculateBotchingChance(_craftingVm.CurrentCraftingHero.Hero, _craftingVm.WeaponDesign.CurrentOrderDifficulty);
+                    difficulty = _craftingVm.WeaponDesign.CurrentOrderDifficulty;
                 }
                 else
                 {
-                    botchChance = smithingModel.CalculateBotchingChance(_craftingVm.CurrentCraftingHero.Hero, _craftingVm.WeaponDesign.CurrentDifficulty);
+                    difficulty = _craftingVm.WeaponDesign.CurrentDifficulty;
                 }
+                botchChance = smithingModel.CalculateBotchingChance(_craftingVm.CurrentCraftingHero.Hero, difficulty);
                 if (randomFloat < botchChance)
                 {
                     SpendMaterials(_crafting.CurrentWeaponDesign);
                     MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
                             .SetTextVariable("HERO", hero.Name)
                             .SetTextVariable("ITEM", _crafting.CraftedWeaponName),
-                        0, null, "event:/ui/notification/relation");
+                        2000, null, "event:/ui/notification/relation");
 
                     energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), hero) / 2;
                     UpdateStamina(craftingBehavior, hero, energyCostForSmithing);
@@ -328,15 +330,6 @@ namespace Bannerlord.BannerCraft.Mixins
                      || ExtraMaterials.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0));
         }
 
-        private enum fallBackExtraCraftingMaterials
-        {
-            Fur,
-            Leather,
-            Linen,
-            Velvet,
-            NumExtraCraftingMats
-        };
-
         private void UpdateCurrentMaterialCosts()
         {
             var noMaterialsRequired = Settings.Instance?.NoMaterialsRequired ?? false;
@@ -369,11 +362,17 @@ namespace Bannerlord.BannerCraft.Mixins
                 }
                 catch /*Catch NullReferenceException */ (NullReferenceException)
                 {
-                    ExtraMaterials = new MBBindingList<ExtraMaterialItemVM>();
-                    for (int i = 0; i < (int)fallBackExtraCraftingMaterials.NumExtraCraftingMats; ++i)
+                    BannerCraftSmithingModel tempSmithingModel = (BannerCraftSmithingModel)Campaign.Current.Models.SmithingModel;
+
+                    MBBindingList<ExtraMaterialItemVM> TempExtraMaterials = new();
+                    //go throw enum and add all extra materials to the list
+                    for (int i = 0; i < (int)ExtraCraftingMaterials.NumExtraCraftingMats; ++i)
                     {
-                        ExtraMaterials[i].ResourceChangeAmount = 0;
+                        var material = (ExtraCraftingMaterials)i;
+                        TempExtraMaterials.Add(new ExtraMaterialItemVM(material, tempSmithingModel.GetCraftingMaterialItem(material), 0));
                     }
+                    //using setter method to avoid null reference exception
+                    ExtraMaterials = TempExtraMaterials;
                     return;
                 }
             }
