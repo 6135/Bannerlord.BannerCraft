@@ -1,0 +1,32 @@
+<Prefab>
+  <Constants>
+  </Constants>
+  <Variables>
+  </Variables>
+  <VisualDefinitions>
+  </VisualDefinitions>
+  <Window>
+    <Widget Id="ArmorCategoryParent" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
+      <Children>
+        <!--Type & Tier Selection-->
+        <ListPanel DataSource="{ArmorCrafting}" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" MarginLeft="20" StackLayout.LayoutMethod="VerticalTopToBottom">
+          <Children>
+            <!-- Order - Category Buttons -->
+            <NavigationScopeTargeter ScopeID="ModeSelectionScope" ScopeParent="..\ModeSelection" LeftNavigationScope="None" ScopeMovements="Horizontal" />
+
+            <Widget Id="ModeSelection" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginTop="10">
+              <Children>
+                <!-- Select Free Mode & Weapon Category -->
+                <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="269" SuggestedHeight="41" VerticalAlignment="Center" HorizontalAlignment="Right" MarginRight="55" Command.Click="ExecuteOpenArmorClassSelectionPopup" Brush="Crafting.Order.CraftingModeButton" IsSelected="@IsInFreeMode" DominantSelectedState="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true" GamepadNavigationIndex="1">
+                  <Children>
+                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginTop="10" MarginBottom="3" MarginLeft="3" MarginRight="3" Text="@ChooseArmorTypeText" Brush="Crafting.Mode.Selection.Text" />
+                  </Children>
+                </ButtonWidget>
+              </Children>
+            </Widget>
+          </Children>
+        </ListPanel>
+      </Children>
+    </Widget>
+  </Window>
+</Prefab>

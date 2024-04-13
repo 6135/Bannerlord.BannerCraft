@@ -1,0 +1,5 @@
+﻿<Widget DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" IsVisible="@IsInArmorMode">
+	<Children>
+		<ArmorCraftingCategory2 Id="ArmorCategoryParent" DataSource="{ArmorCrafting}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" />
+	</Children>
+</Widget>

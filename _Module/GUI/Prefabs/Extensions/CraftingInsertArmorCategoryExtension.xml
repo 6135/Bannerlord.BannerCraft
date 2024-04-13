@@ -1,0 +1,23 @@
+﻿<ButtonWidget Id="ArmorCategoryButton" DoNotPassEventsToChildren="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="320" SuggestedHeight="136" Brush="Crafting.CraftingTab.Button" Command.Click="ExecuteSwitchToArmor" IsSelected="@IsInArmorMode" UpdateChildrenStates="true">
+  <Children>
+    <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" StackLayout.LayoutMethod="VerticalBottomToTop" MarginTop="7" UpdateChildrenStates="true" IsHidden="@IsInArmorMode">
+      <Children>
+        <BrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="33" SuggestedHeight="29" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="Crafting.Craft.Icon" />
+        <TextWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="100" MarginRight="100" MarginBottom="60" Brush="Crafting.Tabs.Text" Text="@ArmorText" />
+      </Children>
+    </ListPanel>
+
+    <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" StackLayout.LayoutMethod="VerticalBottomToTop" MarginTop="7" UpdateChildrenStates="true" IsVisible="@IsInArmorMode">
+      <Children>
+        <BrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="45" SuggestedHeight="40" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="Crafting.Craft.Icon" />
+        <TextWidget  WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="100" MarginRight="100" MarginBottom="45" Brush="Crafting.Tabs.Text.Large" Text="@ArmorText" />
+      </Children>
+    </ListPanel>
+
+    <Widget DoNotAcceptEvents="true" DoNotPassEventsToChildren="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="60" SuggestedHeight="60" HorizontalAlignment="Right" VerticalAlignment="Center" IsVisible="@CanSwitchTabs">
+      <Children>
+        <InputKeyVisualWidget DataSource="{NextTabInputKey}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" KeyID="@KeyID" IsVisible="@IsVisible" />
+      </Children>
+    </Widget>
+  </Children>
+</ButtonWidget>

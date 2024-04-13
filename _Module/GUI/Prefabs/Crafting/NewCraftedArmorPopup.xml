@@ -1,0 +1,153 @@
+﻿<Prefab>
+  <Constants>
+    <Constant Name="NextButton.Width" BrushLayer="Default" BrushName="ButtonBrush1" BrushValueType="Width" />
+    <Constant Name="NextButton.Height" BrushLayer="Default" BrushName="ButtonBrush1" BrushValueType="Height" />
+
+    <Constant Name="Crafting.NewWeapon.Popup.Background.Width" BrushLayer="Default" BrushName="Crafting.NewWeapon.Popup.Background" BrushValueType="Width" />
+    <Constant Name="Crafting.NewWeapon.Popup.Background.Height" BrushLayer="Default" BrushName="Crafting.NewWeapon.Popup.Background" BrushValueType="Height" />
+
+    <Constant Name="FadeInTimeIndexOffset" Value="0.5" />
+    <Constant Name="FadeInTime" Value="0.5" />
+    <Constant Name="CounterStartTime" Value="0.5" />
+  </Constants>
+  <Variables>
+  </Variables>
+  <VisualDefinitions>
+  </VisualDefinitions>
+  <Window>
+    <Widget Id="NewCraftedArmorPopup" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
+      <Children>
+
+        <!--Background Tint-->
+        <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"  Sprite="BlankWhiteSquare_9" Color="#000000AA" />
+
+        <NavigationForcedScopeCollectionTargeter CollectionParent="..\CraftingResult" />
+        <NavigationScopeTargeter ScopeID="CraftingResultPopupScope" ScopeParent="..\CraftingResult" ScopeMovements="Vertical" />
+
+        <ListPanel Id="CraftingResult" DataSource="{ArmorCraftResultPopup}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="330" MarginRight="330" MarginTop="150" MarginBottom="180" StackLayout.LayoutMethod="VerticalBottomToTop">
+          <Children>
+            <!-- Popup -->
+            <Widget Id="PopupParent" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="BlankWhiteSquare_9" Color="#000000FF">
+              <Children>
+
+                <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginTop="5" MarginLeft="5" MarginBottom="5" MarginRight="5" StackLayout.LayoutMethod="HorizontalLeftToRight">
+                  <Children>
+
+                    <!--Left Panel-->
+                    <Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="400" Sprite="StdAssets\Popup\canvas">
+                      <Children>
+
+                        <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="StdAssets\Popup\canvas_gradient" />
+
+                        <!-- Item Crafted Text-->
+                        <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" Brush="Crafting.Popup.Title.Text" MarginTop="30" Text="@ArmorCraftedText" />
+
+                        <!-- Item Flag Icons List -->
+                        <ListPanel DataSource="{ItemFlagIconsList}" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginTop="75" MarginLeft="10" MarginRight="10" StackLayout.LayoutMethod="HorizontalCentered">
+                          <ItemTemplate>
+                            <RichTextWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="35" SuggestedHeight="35" HorizontalAlignment="Center" Brush.FontSize="45" Text="@Icon">
+                              <Children>
+                                <HintWidget DataSource="{Hint}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
+                              </Children>
+                            </RichTextWidget>
+                          </ItemTemplate>
+                        </ListPanel>
+
+                        <!--Stats List-->
+                        <ListPanel Id="PlacementList" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginTop="100" StackLayout.LayoutMethod="VerticalBottomToTop">
+                          <Children>
+
+                            <ListPanel DataSource="{DesignResultPropertyList}" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="VerticalBottomToTop">
+                              <ItemTemplate>
+
+                                <CraftedWeaponDesignResultListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="25" MarginTop="15" MarginLeft="20" MarginRight="8" StackLayout.LayoutMethod="HorizontalLeftToRight" LabelTextWidget="Label" ValueTextWidget="ValueTextWidget" ChangeValueTextWidget="ChangeValueTextParentWidget\ChangeValueTextWidget" IsOrderResult="@IsOrderResult" InitValue="@InitialValue" TargetValue="@TargetValue" ChangeAmount="@ChangeAmount" GoldEffectorTextWidget="GoldEffectorParentWidget/GoldEffectorTextWidget" PositiveChangeBrush="Crafting.Result.Positive" NegativeChangeBrush="Crafting.Result.Negative" NeutralBrush="Crafting.Result.Neutral" FadeInTimeIndexOffset="!FadeInTimeIndexOffset" FadeInTime="!FadeInTime" CounterStartTime="!CounterStartTime">
+                                  <Children>
+
+                                    <!--Name-->
+                                    <RichTextWidget Id="Label" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="@PropertyLbl" Brush="Crafting.Popup.Property.Name.Text" />
+
+                                    <!--Value-->
+                                    <CounterTextBrushWidget ShowFloatingPoint="@ShowFloatingPoint" Id="ValueTextWidget" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="45" Brush="Crafting.Popup.Property.Value.Text">
+                                      <Children>
+                                        <HintWidget DataSource="{CraftedValueTooltip}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
+                                      </Children>
+                                    </CounterTextBrushWidget>
+
+                                    <!--Change Amount-->
+                                    <Widget Id="ChangeValueTextParentWidget" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="40">
+                                      <Children>
+                                        <CounterTextBrushWidget ShowFloatingPoint="@ShowFloatingPoint" Id="ChangeValueTextWidget" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent"  Brush="Crafting.Popup.Property.Value.Text">
+                                          <Children>
+                                            <HintWidget DataSource="{BonusPenaltyTooltip}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
+                                          </Children>
+                                        </CounterTextBrushWidget>
+                                      </Children>
+                                    </Widget>
+                                  </Children>
+                                </CraftedWeaponDesignResultListPanel>
+                              </ItemTemplate>
+                            </ListPanel>
+                          </Children>
+                        </ListPanel>
+
+                        <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="VerticalBottomToTop" MarginRight="25" MarginLeft="25" MarginBottom="30" VerticalAlignment="Bottom">
+                          <Children>
+                            <!--Name Input-->
+                            <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="HorizontalLeftToRight" IsHidden="@IsInOrderMode">
+                              <Children>
+
+                                <BrushWidget DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="55" Brush="SPOptions.Dropdown.Center">
+                                  <Children>
+                                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Crafting.NameInput.Text" Text="@ItemName" MaxLength="68" GamepadNavigationIndex="0" />
+                                  </Children>
+                                </BrushWidget>
+
+                                <!--Name Randomize Button-->
+                                <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="25" SuggestedHeight="25" VerticalAlignment="Center" Brush="RandomButtonBrush" Command.Click="ExecuteRandomCraftName" IsVisible="false" />
+                              </Children>
+                            </ListPanel>
+                          </Children>
+                        </ListPanel>
+                      </Children>
+                    </Widget>
+
+                    <!--Separator-->
+                    <Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="25" PositionXOffset="-10" Sprite="StdAssets\Popup\divider_vertical" />
+
+                    <!--Item Visual-->
+                    <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
+                      <Children>
+                        <BrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="Frame1Brush" MarginLeft="-17" />
+                        <!--Tilt Rotation Is Half PI (Center)-->
+                        <ItemTableauWidget DataSource="{ItemVisualModel}" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="750" SuggestedHeight="750" HorizontalAlignment="Center" VerticalAlignment="Center"  ItemModifierId="@ItemModifierId" StringId="@StringId" InitialTiltRotation="-1.64" />
+                      </Children>
+                    </Widget>
+                  </Children>
+                </ListPanel>
+
+                <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" ExtendLeft="15" ExtendRight="15" ExtendTop="15" ExtendBottom="15" Sprite="frame_9" DoNotAcceptEvents="true" />
+              </Children>
+            </Widget>
+
+            <!--Finalize Crafting Button-->
+            <Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="286" SuggestedHeight="82" HorizontalAlignment="Center" PositionYOffset="-19">
+              <Children>
+                <ButtonWidget Id="FinalActionButtonWidget" DoNotPassEventsToChildren="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="Standard.PopupCloseButton" IsEnabled="@CanConfirm" Command.Click="ExecuteFinalizeCrafting">
+                  <Children>
+                    <InputKeyVisualWidget DataSource="{DoneInputKey}" DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="48" SuggestedHeight="48" HorizontalAlignment="Left" VerticalAlignment="Center" PositionXOffset="42" PositionYOffset="-2" KeyID="@KeyID" IsVisible="@IsVisible" />
+                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="CharacterDeveloper.PerkPopup.ButtonText" Text="@DoneLbl" />
+                  </Children>
+                </ButtonWidget>
+                <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" IsDisabled="@CanConfirm">
+                  <Children>
+                    <HintWidget DataSource="{ConfirmDisabledReasonHint}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
+                  </Children>
+                </Widget>
+              </Children>
+            </Widget>
+          </Children>
+        </ListPanel>
+      </Children>
+    </Widget>
+  </Window>
+</Prefab>

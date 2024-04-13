@@ -1,0 +1,23 @@
+﻿<ListPanel DataSource="{ExtraMaterials}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Bottom" MarginRight="675" MarginBottom="100">
+	<ItemTemplate>
+		<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="95" SuggestedHeight="96" VerticalAlignment="Bottom" DoNotPassEventsToChildren="true">
+			<Children>
+
+				<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="VerticalBottomToTop">
+					<Children>
+						<ImageIdentifierWidget DataSource="{ImageIdentifier}" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="90" SuggestedHeight="55" HorizontalAlignment="Center" AdditionalArgs="@AdditionalArgs" ImageId="@Id" ImageTypeCode="@ImageTypeCode" />
+						<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="90" SuggestedHeight="24" VerticalAlignment="Bottom" Sprite="Crafting\number_background" Color="#EFAB6BFF">
+							<Children>
+								<TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush="Refinement.Amount.Text" HorizontalAlignment="Center" VerticalAlignment="Center" MarginTop="5" IntText="@ResourceAmount" />
+							</Children>
+						</Widget>
+					</Children>
+				</ListPanel>
+
+				<!--Material Count Change Widget-->
+				<ChangeAmountTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" PositionYOffset="-20" Brush="Crafting.Material.Text" Amount="@ResourceChangeAmount" NegativeBrushName="Crafting.Material.NegativeChange.Text" PositiveBrushName="Crafting.Material.PositiveChange.Text" />
+				<HintWidget DataSource="{ResourceHint}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" IsDisabled="true" />
+			</Children>
+		</Widget>
+	</ItemTemplate>
+</ListPanel>

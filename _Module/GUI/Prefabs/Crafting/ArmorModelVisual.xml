@@ -1,0 +1,29 @@
+﻿<Prefab>
+	<Constants>
+		<Constant Name="Popup.Width" Value="1337" />
+		<Constant Name="Popup.Height" Value="667" />
+		<Constant Name="Card.Width" Value="200" />
+		<Constant Name="Card.Height" Value="245" />
+		<Constant Name="Card.Inner.Vertical.Margin" Value="10" />
+		<Constant Name="Card.Inner.Horizontal.Margin" Value="15" />
+		<Constant Name="Card.Outer.Vertical.Margin" Value="6" />
+		<Constant Name="Card.Outer.Horizontal.Margin" Value="6" />
+	</Constants>
+	<Variables>
+	</Variables>
+	<VisualDefinitions>
+	</VisualDefinitions>
+
+	<Window>
+		<!-- General container -->
+		<Widget Id="ArmorModelVisual" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
+			<Children>
+				<Widget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="200" MarginTop="-100" IsVisible="@IsInArmorMode">
+					<Children>
+						<ItemTableauWidget DataSource="{ArmorCrafting\ItemVisualModel}" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="900" SuggestedHeight="900" HorizontalAlignment="Left" VerticalAlignment="Top" ItemModifierId="@ItemModifierId" StringId="@StringId" InitialPanRotation="3" />
+					</Children>
+				</Widget>
+			</Children>
+		</Widget>
+	</Window>
+</Prefab>

@@ -1,0 +1,88 @@
+﻿<!--Difficulty Bar-->
+<ListPanel Id="DebugDifficultyBarParent" DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="100" MarginBottom="230" IsVisible="@IsInArmorMode" StackLayout.LayoutMethod="VerticalTopToBottom">
+	<Children>
+
+		<TextWidget DataSource="{ArmorCrafting}" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="100" SuggestedHeight="30" HorizontalAlignment="Left" VerticalAlignment="Bottom" MarginLeft="10" Brush="Crafting.Difficulty.Text" Brush.FontSize="24" Text="@DifficultyText" />
+
+		<Widget Id="DebugDifficultyBarParent" DataSource="{ArmorCrafting}" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="108" SuggestedHeight="507" HorizontalAlignment="Left" VerticalAlignment="Center">
+			<Children>
+
+				<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="Crafting\progress_bar_bed" />
+
+				<CraftingDifficultyBarParentWidget Id="SkillBarParent" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" OrderDifficulty="@CurrentOrderDifficulty" SmithingLevel="@CurrentHeroCraftingSkill" SmithingLevelTextWidget="CurrentSkillValueBar\FillWidget\Text" OrderDifficultyTextWidget="OrderDifficultyBar\FillWidget\DifficultyText">
+					<Children>
+						<!--Dimension Sync Widget for the Top part of the difficulty-->
+						<ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="VerticalBottomToTop" MarginLeft="40" MarginRight="40" MarginBottom="40" MarginTop="40">
+							<Children>
+
+								<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="crafting_difficulty_top_9" />
+								<DimensionSyncWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" DimensionToSync="Vertical" IsEnabled="false" WidgetToCopyHeightFrom="..\..\CraftingHeroDifficultyBar\FillWidget" />
+							</Children>
+						</ListPanel>
+
+						<!--Vertical Fill Bar that we use to place the skill value ring-->
+						<FillBarVerticalWidget Id="CraftingHeroDifficultyBar" DoNotPassEventsToChildren="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="40" MarginRight="40" MarginBottom="40" MarginTop="40" FillWidget="FillWidget" InitialAmount="@CurrentHeroCraftingSkill" IsDirectionUpward="true" MaxAmount="@MaxDifficulty">
+							<Children>
+
+								<Widget Id="FillWidget" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="2" HorizontalAlignment="Center">
+									<Children>
+
+										<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="BlankWhiteSquare_9" Color="#00B900FF" />
+									</Children>
+								</Widget>
+							</Children>
+						</FillBarVerticalWidget>
+
+						<BrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="40" MarginRight="40" MarginBottom="40" MarginTop="40" Brush="Crafting.Difficulty.Overlay" />
+
+						<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="Crafting\progress_bar_frame" />
+
+						<!--Vertical Fill Bar that we use to color the difficulty bar-->
+						<FillBarVerticalWidget Id="DifficultyBar" DoNotPassEventsToChildren="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="40" MarginRight="40" MarginBottom="40" MarginTop="40" FillWidget="FillWidget" InitialAmount="@CurrentDifficulty" IsDirectionUpward="true" MaxAmount="@MaxDifficulty">
+							<Children>
+
+								<Widget Id="FillWidget" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="1" HorizontalAlignment="Center">
+									<Children>
+
+										<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="92" SuggestedHeight="8" HorizontalAlignment="Center" VerticalAlignment="Top" Sprite="Crafting\progress_bar_indicator" />
+										<TextWidget WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="110" HorizontalAlignment="Right" VerticalAlignment="Top" PositionXOffset="-55" Brush="Crafting.Difficulty.Text" Brush.TextHorizontalAlignment="Right" Brush.TextVerticalAlignment="Top" Text="@CurrentDifficultyText" />
+									</Children>
+								</Widget>
+							</Children>
+						</FillBarVerticalWidget>
+
+						<!--Crafting order difficulty text-->
+						<!--
+						<FillBarVerticalWidget Id="OrderDifficultyBar" DoNotPassEventsToChildren="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="40" MarginRight="40" MarginBottom="40" MarginTop="40" FillWidget="FillWidget" InitialAmount="@CurrentOrderDifficulty" IsDirectionUpward="true" MaxAmount="@MaxDifficulty" IsVisible="@IsInOrderMode">
+							<Children>
+
+								<Widget Id="FillWidget" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="1" HorizontalAlignment="Center">
+									<Children>
+
+										<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="92" SuggestedHeight="8" HorizontalAlignment="Center" VerticalAlignment="Top" Sprite="Crafting\progress_bar_indicator" Color="#00FFE8FF" />
+										<TextWidget Id="DifficultyText" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="150" HorizontalAlignment="Left" VerticalAlignment="Top" PositionXOffset="45" Brush="Crafting.Difficulty.Text" Brush.TextHorizontalAlignment="Left" Brush.TextVerticalAlignment="Top" Text="@CurrentOrderDifficultyText" />
+									</Children>
+								</Widget>
+							</Children>
+						</FillBarVerticalWidget>
+						-->
+
+						<!--Dimension Sync Widget for the crafting skill value ring-->
+						<FillBarVerticalWidget Id="CurrentSkillValueBar" DoNotPassEventsToChildren="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="40" MarginRight="40" MarginBottom="40" MarginTop="40" FillWidget="FillWidget" InitialAmount="@CurrentHeroCraftingSkill" IsDirectionUpward="true" MaxAmount="@MaxDifficulty">
+							<Children>
+
+								<Widget Id="FillWidget" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="1" HorizontalAlignment="Center">
+									<Children>
+
+										<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="64" SuggestedHeight="23" VerticalAlignment="Top" HorizontalAlignment="Center" PositionYOffset="-15" Sprite="Crafting\crafting_skill_ring" IsHidden="@IsCurrentHeroAtMaxCraftingSkill" />
+										<TextWidget Id="Text" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left"  VerticalAlignment="Top" PositionXOffset="45" Brush="Crafting.Difficulty.Text" Text="@CurrentCraftingSkillValueText" />
+									</Children>
+								</Widget>
+							</Children>
+						</FillBarVerticalWidget>
+					</Children>
+				</CraftingDifficultyBarParentWidget>
+			</Children>
+		</Widget>
+	</Children>
+</ListPanel>

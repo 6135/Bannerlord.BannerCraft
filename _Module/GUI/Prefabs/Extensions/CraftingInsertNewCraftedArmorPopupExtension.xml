@@ -1,0 +1,1 @@
+﻿<NewCraftedArmorPopup Id="NewCraftedArmorPopupWidget" DataSource="{ArmorCrafting}" IsVisible="@ArmorCraftResultPopupVisible" />
