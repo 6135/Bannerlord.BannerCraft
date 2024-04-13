@@ -1,4 +1,5 @@
-﻿using TaleWorlds.CampaignSystem;
+﻿using HarmonyLib;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Roster;
@@ -6,9 +7,10 @@ using TaleWorlds.Core;
 
 namespace Bannerlord.BannerCraft.Patches
 {
+    [HarmonyPatch(typeof(CraftingCampaignBehavior), "DoSmelting")]
     internal static class CraftingCampaignBehaviorPatch
     {
-        public static bool DoSmeltingPrefix(CraftingCampaignBehavior __instance, Hero hero, EquipmentElement equipmentElement)
+        public static bool Prefix(CraftingCampaignBehavior __instance, Hero hero, EquipmentElement equipmentElement)
         {
             ItemObject item = equipmentElement.Item;
             if (item.WeaponDesign != null && item.WeaponDesign.Template != null)

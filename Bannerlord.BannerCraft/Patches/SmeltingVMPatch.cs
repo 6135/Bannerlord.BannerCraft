@@ -9,6 +9,7 @@ using TaleWorlds.Core;
 
 namespace Bannerlord.BannerCraft.Patches
 {
+    [HarmonyPatch(typeof(SmeltingVM), "RefreshList")]
     internal static class SmeltingVMPatch
     {
         static SmeltingVMPatch()
@@ -34,7 +35,7 @@ namespace Bannerlord.BannerCraft.Patches
 
         private static Func<SmeltingVM, Action<SmeltingItemVM, bool>> GetProcessLockItemAction { get; }
 
-        public static void RefreshListPostfix(ref SmeltingVM __instance)
+        public static void Postfix(ref SmeltingVM __instance)
         {
             bool allowCraftingOtherItems = Settings.Instance?.AllowSmeltingOtherItems ?? false;
             if (allowCraftingOtherItems)

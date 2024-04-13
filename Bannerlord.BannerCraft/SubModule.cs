@@ -1,15 +1,11 @@
 ﻿using Bannerlord.BannerCraft.Mixins;
 using Bannerlord.BannerCraft.Models;
-using Bannerlord.BannerCraft.Patches;
 using Bannerlord.UIExtenderEx;
 using HarmonyLib;
 using System;
 using System.Linq;
-using System.Reflection;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
-using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.Smelting;
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 
@@ -19,8 +15,9 @@ namespace Bannerlord.BannerCraft
     {
         private static readonly string Namespace = typeof(SubModule).Namespace;
 
-        private readonly UIExtender _extender = new UIExtender(Namespace);
-        private readonly Harmony _harmony = new Harmony(Namespace);
+        private readonly UIExtender _extender = UIExtender.Create(Namespace);
+        private readonly UIExtender? _bannerKingsExtender = UIExtender.GetUIExtenderFor("BannerKings");
+        private readonly Harmony _harmony = new(Namespace);
 
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
@@ -31,12 +28,7 @@ namespace Bannerlord.BannerCraft
                 return;
             }
 
-            var smithingModel = GetGameModel<SmithingModel>(gameStarterObject);
-
-            if (smithingModel is null)
-            {
-                throw new InvalidOperationException("Default SmithingModel was not found.");
-            }
+            var smithingModel = GetGameModel<SmithingModel>(gameStarterObject) ?? throw new InvalidOperationException("Default SmithingModel was not found.");
 
             gameStarterObject.AddModel(new BannerCraftSmithingModel(smithingModel));
         }
@@ -49,14 +41,17 @@ namespace Bannerlord.BannerCraft
 
             _extender.Register(typeof(SubModule).Assembly);
             _extender.Enable();
-
-            MethodInfo original = typeof(CraftingCampaignBehavior).GetMethod(nameof(CraftingCampaignBehavior.DoSmelting));
-            MethodInfo prefix = typeof(CraftingCampaignBehaviorPatch).GetMethod(nameof(CraftingCampaignBehaviorPatch.DoSmeltingPrefix));
-            _harmony.Patch(original, prefix: new HarmonyMethod(prefix));
-
-            MethodInfo SmeltingVMOriginal = typeof(SmeltingVM).GetMethod(nameof(SmeltingVM.RefreshList));
-            MethodInfo SmeltingVMPostfix = typeof(SmeltingVMPatch).GetMethod(nameof(SmeltingVMPatch.RefreshListPostfix));
-            _harmony.Patch(SmeltingVMOriginal, postfix: new HarmonyMethod(SmeltingVMPostfix));
+            // Disable Banner Kings' armor crafting prefabs.
+            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingArmorLeftPanelExtension1"));
+            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingArmorLeftPanelExtension2"));
+            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingInsertArmorCategoryExtension"));
+            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingInsertHoursExtension"));
+            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.RefinementCategoryButtonPatch"));
+            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingCategoryButtonPatch"));
+            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.SmeltingCategoryButtonPatch"));
+            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.MainActionButtonPatch"));
+            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingCancelButtonPatch"));
+            _harmony.PatchAll();
         }
 
         private static T? GetGameModel<T>(IGameStarter gameStarterObject) where T : GameModel
