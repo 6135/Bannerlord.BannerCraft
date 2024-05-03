@@ -10,8 +10,6 @@
     <GameVersionFlat>$([System.String]::Copy('$(GameVersion)').Replace('.',''))</GameVersionFlat>
     <GameVersionConstant>v$(GameVersionFlat)</GameVersionConstant>
     <DefineConstants>$(DefineConstants);$(GameVersionConstant)</DefineConstants>
-    <BaseOutputPath>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\Bannerlord.BannerCraft\bin\Win64_Shipping_Client</BaseOutputPath>
-    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <!-- NuGet Packages -->
@@ -34,14 +32,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Bannerlord.Lib.Harmony" Version="$(HarmonyVersion)" IncludeAssets="compile" />
-    <PackageReference Include="Bannerlord.UIExtenderEx" Version="2.11.0" IncludeAssets="compile" />
+    <PackageReference Include="Bannerlord.UIExtenderEx" Version="$(UIExtenderExVersion)" IncludeAssets="compile" />
     <PackageReference Include="Bannerlord.MCM" Version="$(MCMVersion)" IncludeAssets="compile" />
 
     <!-- ReferenceAssemblies -->
-	<PackageReference Include="Bannerlord.ReferenceAssemblies.Core" Version="1.2.9.35636" PrivateAssets="All" />
-	<PackageReference Include="Bannerlord.ReferenceAssemblies.Native" Version="1.2.9.35636" PrivateAssets="All" />
-    <PackageReference Include="Bannerlord.ReferenceAssemblies.StoryMode" Version="1.2.9.35636" PrivateAssets="All" />
-    <PackageReference Include="Bannerlord.ReferenceAssemblies.Sandbox" Version="1.2.9.35636" PrivateAssets="All" />
+	<PackageReference Include="Bannerlord.ReferenceAssemblies.Core" Version="$(GameVersion).*-*" PrivateAssets="All" />
+	<PackageReference Include="Bannerlord.ReferenceAssemblies.Native" Version="$(GameVersion).*-*" PrivateAssets="All" />
+    <PackageReference Include="Bannerlord.ReferenceAssemblies.StoryMode" Version="$(GameVersion).*-*" PrivateAssets="All" />
+    <PackageReference Include="Bannerlord.ReferenceAssemblies.Sandbox" Version="$(GameVersion).*-*" PrivateAssets="All" />
   </ItemGroup>
 
   <!-- Extra Substitution Variables to Use in SubModule.xml -->
