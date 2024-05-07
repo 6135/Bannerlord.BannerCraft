@@ -41,7 +41,8 @@ namespace Bannerlord.BannerCraft
 
             _extender.Register(typeof(SubModule).Assembly);
             _extender.Enable();
-            // Disable Banner Kings' armor crafting prefabs.
+            // Disable Banner Kings' armor crafting mixin and prefabs.
+            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingMixin"));
             _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingArmorLeftPanelExtension1"));
             _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingArmorLeftPanelExtension2"));
             _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingInsertArmorCategoryExtension"));
