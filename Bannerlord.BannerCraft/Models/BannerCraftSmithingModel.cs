@@ -500,9 +500,15 @@ namespace Bannerlord.BannerCraft.Models
             }
             //Apply cost modifier.
             float craftingCostModifier = Settings.Instance?.CraftingCostModifier ?? 1f;
-            for (int i = 0; i < result.Length; i++)
+            for (int i = 0; i < 9; i++)
             {
                 result[i] = (int)Math.Floor(result[i] * craftingCostModifier);
+            }
+            float additionalCraftingCostModifier = Settings.Instance?.CraftingCostAdditionalModifier ?? 1f;
+
+            for (int i = 9; i < result.Length; i++)
+            {
+                result[i] = (int)Math.Floor(result[i] * additionalCraftingCostModifier);
             }
             return result;
         }

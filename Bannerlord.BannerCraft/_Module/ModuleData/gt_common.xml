@@ -77,6 +77,9 @@
 	<string id="str_bannercraft_mcm_crafting_material_cost" text="{=bannercraft_mcm_crafting_material_cost}Material cost modifier" />
 	<string id="str_bannercraft_mcm_crafting_material_cost_description" text="{=bannercraft_mcm_crafting_material_cost_description}How much the material cost is multiplied by when crafting. Default is x1.00" />
 
+	<string id="str_bannercraft_mcm_additional_crafting_material_cost" text="{=bannercraft_mcm_crafting_material_cost}Additional material cost modifier" />
+	<string id="str_bannercraft_mcm_additional_crafting_material_cost_description" text="{=bannercraft_mcm_crafting_material_cost_description}How much the additional materials cost is multiplied by when crafting. Default is x1.00" />
+
 	<!-- Legendary -->
 	<string id="str_bannercraft_mcm_crafting_legendary_added_chance" text="{=bannercraft_mcm_crafting_legendary_added_chance}Legendary added chance" />
 	<string id="str_bannercraft_mcm_crafting_legendary_added_chance_description" text="{=bannercraft_mcm_crafting_legendary_added_chance_description}Added chance to get a Legendary crafting result." />

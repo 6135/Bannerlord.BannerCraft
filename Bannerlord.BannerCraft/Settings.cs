@@ -24,6 +24,8 @@ namespace Bannerlord.BannerCraft
 
         private float _craftingCostModifier = 1f;
 
+        private float _craftingCostAdditionalModifier = 1f;
+
         [SettingPropertyFloatingInteger("{=bannercraft_mcm_crafting_material_cost}Material cost modifier", 0f, 5f, "x0.00", HintText = "{=bannercraft_mcm_crafting_material_cost_description}How much the material cost is multiplied by when crafting. Default is x1.00", RequireRestart = false)]
         [SettingPropertyGroup("BannerCraft/Behaviours")]
         public float CraftingCostModifier
@@ -34,6 +36,21 @@ namespace Bannerlord.BannerCraft
                 if (value != _craftingCostModifier)
                 {
                     _craftingCostModifier = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [SettingPropertyFloatingInteger("{=bannercraft_mcm_crafting_additional_material_cost}Additional material cost modifier", 0f, 5f, "x0.00", HintText = "{=bannercraft_mcm_crafting_additional_material_cost_description}How much the additional materials cost is multiplied by when crafting. Default is x1.00", RequireRestart = false)]
+        [SettingPropertyGroup("BannerCraft/Behaviours")]
+        public float CraftingCostAdditionalModifier
+        {
+            get => _craftingCostAdditionalModifier;
+            set
+            {
+                if (value != _craftingCostAdditionalModifier)
+                {
+                    _craftingCostAdditionalModifier = value;
                     OnPropertyChanged();
                 }
             }
