@@ -22,7 +22,7 @@
 	<string id="str_bannercraft_crafting_itemtype.arrows" text="{=bannercraft_crafting_itemtype_arrow}Arrows" />
 	<string id="str_bannercraft_crafting_itemtype.bolts" text="{=bannercraft_crafting_itemtype_bolt}Bolts" />
 
-	<string id="str_bannercraft_crafting_itemtype.banner" text="{=bannercraft_crafting_itemtype_barding}Banner" />
+	<string id="str_bannercraft_crafting_itemtype.banner" text="{=bannercraft_crafting_itemtype_banner}Banner" />
 
 	<string id="str_bannercraft_crafting_itemtype.onehandedweapon" text="{=bannercraft_crafting_itemtype_onehandedweapon}One Handed Weapon" />
 	<string id="str_bannercraft_crafting_itemtype.twohandedweapon" text="{=bannercraft_crafting_itemtype_twohandedweapon}Two Handed Weapon" />
