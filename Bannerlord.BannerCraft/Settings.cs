@@ -293,7 +293,7 @@ namespace Bannerlord.BannerCraft
             }
         }
 
-        [SettingPropertyBool("{=bannercraft_mcm_allow_crafting_normal_weapons}Allow crafting normal weapons", HintText = "{bannercraft_mcm_allow_crafting_normal_weapons_description}Allow crafting normal weapons without", RequireRestart = false)]
+        [SettingPropertyBool("{=bannercraft_mcm_allow_crafting_normal_weapons}Allow crafting normal weapons", HintText = "{bannercraft_mcm_allow_crafting_normal_weapons_description}Allow crafting normal weapons in Craft mode.", RequireRestart = false)]
         [SettingPropertyGroup("BannerCraft/Behaviours")]
         public bool AllowCraftingNormalWeapons
         {

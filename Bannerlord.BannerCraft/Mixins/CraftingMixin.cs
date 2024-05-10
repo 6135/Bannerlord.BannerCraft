@@ -153,7 +153,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
 #endif
 
-        private float getModifierSum(ItemModifier im)
+        private float GetModifierSum(ItemModifier im)
         {
             /*
              *           string MountHitPoints; //float
@@ -385,7 +385,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private void CraftItem(BannerCraftSmithingModel smithingModel, Hero hero, ItemObject item)
         {
-            EquipmentElement element = new EquipmentElement(ArmorCrafting.CurrentItem.Item);
+            EquipmentElement element = new(ArmorCrafting.CurrentItem.Item);
 
             int modifierTier = smithingModel.GetModifierTierForItem(item, hero);
             if (modifierTier >= 0)
@@ -432,9 +432,9 @@ namespace Bannerlord.BannerCraft.Mixins
             {
                 var modifiers = modifierGroup.ItemModifiers;
                 //remove duplicate itemModifiers and order them by the sum of the modifiers
-                var filteredOrdered = modifiers.Distinct().OrderBy(mod => getModifierSum(mod));
+                var filteredOrdered = modifiers.Distinct().OrderBy(mod => GetModifierSum(mod));
                 //create a new list with the same order, but with the sums of the modifiers as the key, there can be duplicate k
-                var resultsWithSum = filteredOrdered.Select(mod => new KeyValuePair<float, ItemModifier>(getModifierSum(mod), mod));
+                var resultsWithSum = filteredOrdered.Select(mod => new KeyValuePair<float, ItemModifier>(GetModifierSum(mod), mod));
 
                 //get the 3 highest sums
                 var highest = resultsWithSum.Skip(resultsWithSum.Count() - 3).Take(3);
