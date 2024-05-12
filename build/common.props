@@ -2,7 +2,7 @@
 
     <!--Module Version-->
     <PropertyGroup>
-        <Version>1.1.3</Version> <!-- Define game version here -->
+        <Version>1.1.3</Version> <!-- Define mod version here -->
         <GameVersion>1.0.0</GameVersion>
     </PropertyGroup>
 
@@ -37,20 +37,19 @@
 		<ModuleUrl>https://www.nexusmods.com/mountandblade2bannerlord/mods/5932</ModuleUrl>
 		<DisplayName>BannerCraft</DisplayName>
         <RootNamespace>$(ModuleId)</RootNamespace>
-		<BaseOutputPath>$(GameFolder)\Modules\Bannerlord.BannerCraft\bin\Win64_Shipping_Client</BaseOutputPath>
 
 	</PropertyGroup>
 
     <PropertyGroup>
-		<IsStable>false</IsStable>
-		<IsMinimal>false</IsMinimal>
-		<IsBeta>true</IsBeta>
-		<!-- <IsMinimal>true</IsMinimal> -->
-        <!-- <IsMinimal Condition="$(Configuration.Contains('Minimal'))">true</IsMinimal> -->
-        <!-- <IsStable>false</IsStable> -->
-        <!-- <IsStable Condition="$(Configuration.Contains('Stable'))">true</IsStable> -->
-        <!-- <IsBeta>false</IsBeta> -->
-        <!-- <IsBeta Condition="$(Configuration.Contains('Beta'))">true</IsBeta> -->
+		<!-- <IsStable>false</IsStable> -->
+		<!-- <IsMinimal>false</IsMinimal> -->
+		<!-- <IsBeta>true</IsBeta> -->
+		<IsMinimal>true</IsMinimal>
+        <IsMinimal Condition="$(Configuration.Contains('Minimal'))">true</IsMinimal>
+        <IsStable>false</IsStable>
+        <IsStable Condition="$(Configuration.Contains('Stable'))">true</IsStable>
+        <IsBeta>false</IsBeta>
+        <IsBeta Condition="$(Configuration.Contains('Beta'))">true</IsBeta>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -72,13 +71,13 @@
         <SecondLine Condition="'$(SecondLine)' == ''">$(FirstLine)</SecondLine>
         <LastLine Condition="'$(LastLine)' == ''">$(SecondLine)</LastLine>
         <!-- -->
-        <!-- <GameBetaVersion>$(FirstLine)</GameBetaVersion> -->
-        <!-- <GameStableVersion>$(SecondLine)</GameStableVersion> -->
-        <!-- <GameMinimalVersion>$(LastLine)</GameMinimalVersion> -->
+        <GameBetaVersion>$(FirstLine)</GameBetaVersion> 
+        <GameStableVersion>$(SecondLine)</GameStableVersion> 
+        <GameMinimalVersion>$(LastLine)</GameMinimalVersion> 
 
-		<GameBetaVersion>$(FirstLine)</GameBetaVersion>
-		<GameStableVersion>$(FirstLine)</GameStableVersion>
-		<GameMinimalVersion>$(FirstLine)</GameMinimalVersion>
+		<!-- <GameBetaVersion>$(FirstLine)</GameBetaVersion>-->
+		<!-- <GameStableVersion>$(FirstLine)</GameStableVersion>-->
+		<!-- <GameMinimalVersion>$(FirstLine)</GameMinimalVersion>-->
         <!-- -->
         <GameVersionWithPrefix>v1.0.0</GameVersionWithPrefix>
         <GameVersionWithPrefix Condition="$(IsMinimal)">$(GameMinimalVersion)</GameVersionWithPrefix>
@@ -95,8 +94,8 @@
     <!-- Game Folder(s) -->
     <PropertyGroup>
         <!--Bannerlord's Root Folder. Leave empty if you want it to be tried to be autoresolved.-->
-        <GameFolder Condition="$(IsStable)">$(BANNERLORD_STABLE_DIR)</GameFolder> 
-        <GameFolder Condition="$(IsBeta)">$(BANNERLORD_STABLE_DIR)$(BANNERLORD_BETA_DIR)</GameFolder>
+		<GameFolder Condition="$(IsStable)">$(BANNERLORD_STABLE_DIR)</GameFolder>
+		<GameFolder Condition="$(IsBeta)">$(BANNERLORD_BETA_DIR)</GameFolder>
         <GameFolder Condition="$(GameFolder) == ''">$(BANNERLORD_GAME_DIR)</GameFolder>
     </PropertyGroup>
 
