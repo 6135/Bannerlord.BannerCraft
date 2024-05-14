@@ -63,7 +63,7 @@ namespace Bannerlord.BannerCraft.Models
 
         public override float ResearchPointsNeedForNewPart(int totalPartCount, int openedPartCount) => _model.ResearchPointsNeedForNewPart(totalPartCount, openedPartCount);
 
-        public override int GetPartResearchGainForSmeltingItem(ItemObject item, Hero hero) => _model.GetEnergyCostForSmelting(item, hero);
+        public override int GetPartResearchGainForSmeltingItem(ItemObject item, Hero hero) => _model.GetPartResearchGainForSmeltingItem(item, hero);
 
         public override int GetPartResearchGainForSmithingItem(ItemObject item, Hero hero, bool isFreeBuildMode) => _model.GetPartResearchGainForSmithingItem(item, hero, isFreeBuildMode);
 

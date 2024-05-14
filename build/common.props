@@ -11,9 +11,7 @@
         <!--BuildResources Version-->
         <BuildResourcesVersion>1.1.0.104</BuildResourcesVersion>
         <!--Harmony Version-->
-        <HarmonyVersion>2.2.2</HarmonyVersion>
-        <!--ButterLib Version-->
-        <ButterLibVersion>2.6.3</ButterLibVersion>
+        <HarmonyVersion>2.3.3</HarmonyVersion>
         <!--MCM Version-->
         <MCMVersion>5.9.2</MCMVersion>
         <!--UIExtenderEx Version-->
