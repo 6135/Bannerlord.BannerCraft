@@ -72,8 +72,8 @@ jobs:
             $constgameversion = $gameversion.replace(".", "");
             echo "::group::Build for $gameversion"
             echo "Start building for gameversion = $gameversion"
-            dotnet clean $proj --configuration Release;
-            dotnet build $proj --configuration Release -p:OverrideGameVersion=$gameversion -p:GameFolder="$path" -p:ConstGameVersionWithPrefix="$constgameversion";
+            dotnet clean $proj --configuration Debug;
+            dotnet build $proj --configuration Debug -p:OverrideGameVersion=$gameversion -p:GameFolder="$path" -p:ConstGameVersionWithPrefix="$constgameversion";
             # Copy Implementations to the Implementations folder
             Copy-Item $pdll $impl/;
             Copy-Item $ppdb $impl/;
