@@ -268,10 +268,6 @@ namespace Bannerlord.BannerCraft.Mixins
             int energyCostForSmithing = 0;
             if (!IsInArmorMode)
             {
-                if (!HaveMaterialsNeeded() || !HaveEnergy(hero))
-                {
-                    return;
-                }
                 float botchChance;
                 float randomFloat = MBRandom.RandomFloat;
                 int difficulty;
