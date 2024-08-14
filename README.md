@@ -1,7 +1,7 @@
 # BannerCraft
 
 ![build](https://github.com/6135/Bannerlord.BannerCraft/actions/workflows/build.yml/badge.svg?event=push)
-
+[![CodeFactor](https://www.codefactor.io/repository/github/6135/bannerlord.bannercraft/badge)](https://www.codefactor.io/repository/github/6135/bannerlord.bannercraft)
 
 Crafting extension for Mount and Blade 2: Bannerlord
 
