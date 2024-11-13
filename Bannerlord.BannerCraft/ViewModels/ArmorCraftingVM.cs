@@ -1,4 +1,4 @@
-﻿using Bannerlord.BannerCraft.Mixins;
+using Bannerlord.BannerCraft.Mixins;
 using Bannerlord.BannerCraft.Models;
 using Bannerlord.UIExtenderEx.Attributes;
 using System;
@@ -409,7 +409,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                         continue;
                     }
 
-                    if (((int)_currentTierFilter & 1 << (int)item.Tier + 1) == 0)
+                    if (((int)_currentTierFilter & 1 << ((int)item.Tier + 1)) == 0)
                     {
                         continue;
                     }

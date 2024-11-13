@@ -1,4 +1,4 @@
-﻿using Bannerlord.BannerCraft.ViewModels;
+using Bannerlord.BannerCraft.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -615,7 +615,7 @@ namespace Bannerlord.BannerCraft.Models
                 {
                     list2.Add(3);
                 }
-                float num4 = DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + Math.Max((float)(skillValue - 275), 0f) / 5f * 0.01f;
+                float num4 = DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + (Math.Max((float)(skillValue - 275), 0f) / 5f * 0.01f);
                 AdjustModifierProbabilities(list, 4, num4, list2);
             }
             return list;
@@ -757,7 +757,7 @@ namespace Bannerlord.BannerCraft.Models
                 return GetModifierTierPenaltyForLowSkill(difference, randomInt);
             }
 
-            float legendarySmithChance = hero.GetPerkValue(DefaultPerks.Crafting.LegendarySmith) ? (DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + Math.Max(0, hero.GetSkillValue(DefaultSkills.Crafting) - 300) * 0.01f) : 0f;
+            float legendarySmithChance = hero.GetPerkValue(DefaultPerks.Crafting.LegendarySmith) ? (DefaultPerks.Crafting.LegendarySmith.PrimaryBonus + (Math.Max(0, hero.GetSkillValue(DefaultSkills.Crafting) - 300) * 0.01f)) : 0f;
             float masterSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.MasterSmith) ? DefaultPerks.Crafting.MasterSmith.PrimaryBonus : 0f;
             float experiencedSmithChance = hero.GetPerkValue(DefaultPerks.Crafting.ExperiencedSmith) ? DefaultPerks.Crafting.ExperiencedSmith.PrimaryBonus : 0f;
 
