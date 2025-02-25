@@ -244,8 +244,6 @@ namespace Bannerlord.BannerCraft.Models
 
                 case ItemType.Arrows:
                 case ItemType.Bolts:
-                    //result += item.WeaponComponent.PrimaryWeapon.MaxDataValue * item.WeaponComponent.PrimaryWeapon.MissileDamage;
-                    //result += result * item.Tierf / 6f;
                     result += item.WeaponComponent.PrimaryWeapon.MissileDamage * 1 / 3f;
                     result *= item.Tierf;
                     break;
