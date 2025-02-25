@@ -191,7 +191,6 @@ namespace Bannerlord.BannerCraft.Models
             switch (itemType)
             {
                 case ItemType.Barding:
-
                 case ItemType.HeadArmor:
                 case ItemType.ShoulderArmor:
                 case ItemType.BodyArmor:
@@ -245,8 +244,8 @@ namespace Bannerlord.BannerCraft.Models
 
                 case ItemType.Arrows:
                 case ItemType.Bolts:
-                    result += item.WeaponComponent.PrimaryWeapon.MaxDataValue * item.WeaponComponent.PrimaryWeapon.MissileDamage;
-                    result += result * item.Tierf / 6f;
+                    result += item.WeaponComponent.PrimaryWeapon.MissileDamage * 1 / 3f;
+                    result *= item.Tierf;
                     break;
 
                 case ItemType.Banner:
