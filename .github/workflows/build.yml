@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - 'release/**'
+      - 'deployCheck/**'
   pull_request:
     types: [opened, synchronize, reopened]
 
