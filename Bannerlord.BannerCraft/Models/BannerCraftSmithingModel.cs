@@ -244,10 +244,13 @@ namespace Bannerlord.BannerCraft.Models
 
                 case ItemType.Arrows:
                 case ItemType.Bolts:
-                    //result += item.WeaponComponent.PrimaryWeapon.MaxDataValue * item.WeaponComponent.PrimaryWeapon.MissileDamage;
-                    //result += result * item.Tierf / 6f;
-                    result += item.WeaponComponent.PrimaryWeapon.MissileDamage * 1 / 3f;
-                    result *= item.Tierf;
+
+                    //the formula is for the input variables (Ti,St,Sc) => ((Ti - 1) / 6 * 250 + St / 100 * 50) * Sc
+                    result -= item.Tierf * 20f;
+                    result += (250 * item.Tierf) / 6f;
+                    result += (50 * item.PrimaryWeapon.MaxDataValue) / 100f;
+                    result *= 1.22f;
+
                     break;
 
                 case ItemType.Banner:
