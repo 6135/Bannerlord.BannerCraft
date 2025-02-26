@@ -249,7 +249,7 @@ namespace Bannerlord.BannerCraft.Models
                     result -= item.Tierf * 20f;
                     result += (250 * MBMath.ClampFloat(item.Tierf, 0f, 6f)) / 6f;
                     result += (50 * item.PrimaryWeapon.MaxDataValue) / 100f;
-                    result *= 1.22f;
+                    result *= 1.12f;
 
                     break;
 
