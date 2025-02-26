@@ -247,7 +247,7 @@ namespace Bannerlord.BannerCraft.Models
 
                     //the formula is for the input variables (Ti,St,Sc) => ((Ti - 1) / 6 * 250 + St / 100 * 50) * Sc
                     result -= item.Tierf * 20f;
-                    result += (250 * item.Tierf) / 6f;
+                    result += (250 * MBMath.ClampFloat(item.Tierf, 0f, 6f)) / 6f;
                     result += (50 * item.PrimaryWeapon.MaxDataValue) / 100f;
                     result *= 1.22f;
 
