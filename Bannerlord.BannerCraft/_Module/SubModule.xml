@@ -51,12 +51,5 @@
         <GameType value="CampaignStoryMode" />
       </IncludedGameTypes>
     </XmlNode>
-    <XmlNode>
-      <XmlName id="ItemModifiers" path="item_modifiers" />
-      <IncludedGameTypes>
-        <GameType value="Campaign" />
-        <GameType value="CampaignStoryMode" />
-      </IncludedGameTypes>
-    </XmlNode>
   </Xmls>
 </Module>
