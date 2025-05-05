@@ -2,7 +2,7 @@
 
     <!--Module Version-->
     <PropertyGroup>
-        <Version>1.1.6</Version> <!-- Define mod version here -->
+        <Version>1.1.7</Version> <!-- Define mod version here -->
         <GameVersion>1.0.0</GameVersion>
     </PropertyGroup>
 

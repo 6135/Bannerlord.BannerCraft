@@ -521,7 +521,6 @@ namespace Bannerlord.BannerCraft.Models
         {
             float result = 0;
 
-            result += item.Weight * 5f;
             result += item.Tierf * 5f;
 
             ItemType itemType = ArmorCraftingVM.GetItemType(item);

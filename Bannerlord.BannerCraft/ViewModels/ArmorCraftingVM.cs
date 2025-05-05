@@ -1240,17 +1240,21 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private void UpdateResultPropertyList()
         {
+            ItemModifier currentItemModifier = _equipmentElement.ItemModifier;
+
             DesignResultPropertyList.Clear();
 
-            var modifiedValues = GenerateModifierValues(GetItemType(CurrentItem.Item), _equipmentElement);
-
-            foreach (Tuple<CraftingListPropertyItem, int> propertyItem in ItemProperties.Zip(modifiedValues, Tuple.Create))
+            foreach (CraftingListPropertyItem propertyItem in ItemProperties)
             {
-#if v100 || v101 || v102 || v103
-                DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Item1.Description, propertyItem.Item1.PropertyValue, propertyItem.Item2));
-#else
-                DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Item1.Description, propertyItem.Item1.PropertyValue, propertyItem.Item2, true));
-#endif
+                float changeAmount = 0f;
+                bool showFloatingPoint = propertyItem.Type == CraftingTemplate.CraftingStatTypes.Weight;
+
+                if (currentItemModifier != null && propertyItem.PropertyValue > 0f)
+                {
+                    changeAmount = currentItemModifier.ModifyArmor((int)propertyItem.PropertyValue) - propertyItem.PropertyValue;
+                }
+
+                DesignResultPropertyList.Add(new WeaponDesignResultPropertyItemVM(propertyItem.Description, propertyItem.PropertyValue, changeAmount, showFloatingPoint));
             }
         }
 
