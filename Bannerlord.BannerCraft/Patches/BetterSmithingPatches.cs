@@ -10,7 +10,7 @@ namespace Bannerlord.BannerCraft.Patches
 {
     internal static class BetterSmithingPatches
     {
-        private static bool IsOtherCraftedItem(ItemObject item) => item.HasArmorComponent || item.HasSaddleComponent || (item.HasWeaponComponent && (item.PrimaryWeapon.IsShield || item.PrimaryWeapon.WeaponClass == WeaponClass.Bow || item.PrimaryWeapon.WeaponClass == WeaponClass.Crossbow || item.PrimaryWeapon.WeaponClass == WeaponClass.Arrow || item.PrimaryWeapon.WeaponClass == WeaponClass.Bolt));
+        private static bool IsOtherCraftedItem(ItemObject item) => item.HasArmorComponent || item.HasSaddleComponent || (item.HasWeaponComponent && (item.PrimaryWeapon.IsShield || item.PrimaryWeapon.IsBow || item.PrimaryWeapon.IsCrossBow || item.PrimaryWeapon.WeaponClass == WeaponClass.Arrow || item.PrimaryWeapon.WeaponClass == WeaponClass.Bolt));
 
         [HarmonyPatch]
         internal static class SmeltingItemRosterWrapperPatch

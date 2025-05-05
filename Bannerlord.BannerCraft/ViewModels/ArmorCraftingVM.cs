@@ -1249,6 +1249,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                 float changeAmount = 0f;
                 bool showFloatingPoint = propertyItem.Type == CraftingTemplate.CraftingStatTypes.Weight;
 
+                // Skip the property if its value is 0.
                 if (currentItemModifier != null && propertyItem.PropertyValue > 0f)
                 {
                     changeAmount = currentItemModifier.ModifyArmor((int)propertyItem.PropertyValue) - propertyItem.PropertyValue;
