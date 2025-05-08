@@ -410,7 +410,7 @@ namespace Bannerlord.BannerCraft.Mixins
 
                 if (modifierGroup is not null)
                 {
-                    ItemModifier modifier = GetRandomModifierWithTarget(modifierGroup, modifierTier);
+                    ItemModifier? modifier = GetRandomModifierWithTarget(modifierGroup, modifierTier);
                     element.SetModifier(modifier);
                 }
             }
@@ -419,34 +419,43 @@ namespace Bannerlord.BannerCraft.Mixins
             MobileParty.MainParty.ItemRoster.AddToCounts(element, 1);
         }
 
-        private ItemModifier GetRandomModifierWithTarget(ItemModifierGroup modifierGroup, int modifierTier)
+        private ItemModifier? GetRandomModifierWithTarget(ItemModifierGroup modifierGroup, int modifierTier)
         {
             var results = modifierGroup.ItemModifiers.OrderBy(mod => mod.PriceMultiplier);
 
-            //check if there are more than 6 modifiers
-            if (modifierGroup.ItemModifiers.Count() > 6)
+            try
             {
-                var modifiers = modifierGroup.ItemModifiers;
-                //remove duplicate itemModifiers and order them by the sum of the modifiers
-                var filteredOrdered = modifiers.Distinct().OrderBy(mod => GetModifierSum(mod));
-                //create a new list with the same order, but with the sums of the modifiers as the key, there can be duplicate k
-                var resultsWithSum = filteredOrdered.Select(mod => new KeyValuePair<float, ItemModifier>(GetModifierSum(mod), mod));
+                //check if there are more than 6 modifiers
+                if (modifierGroup.ItemModifiers.Count() > 6)
+                {
+                    var modifiers = modifierGroup.ItemModifiers;
+                    //remove duplicate itemModifiers and order them by the sum of the modifiers
+                    var filteredOrdered = modifiers.Distinct().OrderBy(mod => GetModifierSum(mod));
+                    //create a new list with the same order, but with the sums of the modifiers as the key, there can be duplicate k
+                    var resultsWithSum = filteredOrdered.Select(mod => new KeyValuePair<float, ItemModifier>(GetModifierSum(mod), mod));
 
-                //get the 3 highest sums
-                var highest = resultsWithSum.Skip(resultsWithSum.Count() - 3).Take(3);
-                //get all the negative sums
-                var negative = resultsWithSum.Where(mod => mod.Key < 0);
-                //order the negative sums by the lowest first
-                var negativeOrdered = negative.OrderBy(mod => mod.Key);
-                //get the 2 highest sums of the negative sums without TakeLast
-                var negativeHighest = negativeOrdered.Skip(negativeOrdered.Count() - 2).Take(2);
-                //join the 3 highest sums and the 3 highest negative sums
-                var joined = negativeHighest.Concat(highest);
-                //return the modifier at modifierTier
-                return joined.ElementAt(Math.Min(joined.Count() - 1, modifierTier)).Value;
+                    //get the 3 highest sums
+                    var highest = resultsWithSum.Skip(resultsWithSum.Count() - 3).Take(3);
+                    //get all the negative sums
+                    var negative = resultsWithSum.Where(mod => mod.Key < 0);
+                    //order the negative sums by the lowest first
+                    var negativeOrdered = negative.OrderBy(mod => mod.Key);
+                    //get the 2 highest sums of the negative sums without TakeLast
+                    var negativeHighest = negativeOrdered.Skip(negativeOrdered.Count() - 2).Take(2);
+                    //join the 3 highest sums and the 3 highest negative sums
+                    var joined = negativeHighest.Concat(highest);
+                    //return the modifier at modifierTier
+                    return joined.ElementAt(Math.Min(joined.Count() - 1, modifierTier)).Value;
+                }
+
+                return results.ElementAt(Math.Min(results.Count() - 1, modifierTier));
             }
+            catch (Exception ex)
+            {
+                InformationManager.DisplayMessage(new InformationMessage(ex.ToString()));
 
-            return results.ElementAt(Math.Min(results.Count() - 1, modifierTier));
+                return null;
+            }
         }
 
         private int GetRequiredEnergy(Hero hero)
