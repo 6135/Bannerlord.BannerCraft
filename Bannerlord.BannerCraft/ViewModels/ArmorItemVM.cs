@@ -2,6 +2,7 @@ using System;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.WeaponDesign;
 using TaleWorlds.Core;
+using TaleWorlds.Core.ViewModelCollection.ImageIdentifiers;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 
@@ -26,7 +27,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         public ArmorItemVM(ArmorCraftingVM armorCrafting, ItemObject item, int difficulty, ItemType type)
         {
             _armorCrafting = armorCrafting;
-            ImageIdentifier = new ImageIdentifierVM(item);
+            ImageIdentifier = new ItemImageIdentifierVM(item);
             Item = item;
             ItemType = type;
 

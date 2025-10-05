@@ -1,4 +1,5 @@
 ﻿using TaleWorlds.Core;
+using TaleWorlds.Core.ViewModelCollection.ImageIdentifiers;
 using TaleWorlds.Core.ViewModelCollection.Information;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
@@ -27,7 +28,7 @@ namespace Bannerlord.BannerCraft.ViewModels
             ResourceMaterialTypeAsStr = ResourceMaterial.ToString();
             ResourceChangeAmount = changeAmount;
 
-            ImageIdentifier = new ImageIdentifierVM(ResourceItem);
+            ImageIdentifier = new ItemImageIdentifierVM(ResourceItem);
         }
 
         public ItemObject ResourceItem { get; private set; }
