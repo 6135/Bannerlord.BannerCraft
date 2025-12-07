@@ -286,7 +286,7 @@ namespace Bannerlord.BannerCraft.Mixins
                     MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
                             .SetTextVariable("HERO", hero.Name)
                             .SetTextVariable("ITEM", _crafting.CraftedWeaponName),
-                        2000, null, "event:/ui/notification/relation");
+                        2000, null, null, "event:/ui/notification/relation");
 
                     energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), hero) / 2;
                     UpdateStamina(craftingBehavior, hero, energyCostForSmithing);
@@ -318,7 +318,7 @@ namespace Bannerlord.BannerCraft.Mixins
                     MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
                             .SetTextVariable("HERO", hero.Name)
                             .SetTextVariable("ITEM", item.Name),
-                        0, null, "event:/ui/notification/relation");
+                        0, null, null, "event:/ui/notification/relation");
 
                     energyCostForSmithing /= 2;
                 }
