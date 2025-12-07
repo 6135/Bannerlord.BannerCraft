@@ -10,7 +10,7 @@ namespace Bannerlord.BannerCraft.Patches
     [HarmonyPatch(typeof(CraftingCampaignBehavior), "DoSmelting")]
     internal static class CraftingCampaignBehaviorPatch
     {
-        public static bool Prefix(CraftingCampaignBehavior __instance, Hero hero, EquipmentElement equipmentElement)
+        public static bool Prefix(CraftingCampaignBehavior __instance, Hero currentCraftingHero, EquipmentElement equipmentElement)
         {
             ItemObject item = equipmentElement.Item;
             if (item.WeaponDesign != null && item.WeaponDesign.Template != null)
@@ -29,10 +29,10 @@ namespace Bannerlord.BannerCraft.Patches
             }
 
             itemRoster.AddToCounts(equipmentElement, -1);
-            hero.AddSkillXp(DefaultSkills.Crafting, Campaign.Current.Models.SmithingModel.GetSkillXpForSmelting(item));
-            int energyCostForSmelting = Campaign.Current.Models.SmithingModel.GetEnergyCostForSmelting(item, hero);
-            __instance.SetHeroCraftingStamina(hero, __instance.GetHeroCraftingStamina(hero) - energyCostForSmelting);
-            CampaignEventDispatcher.Instance.OnEquipmentSmeltedByHero(hero, equipmentElement);
+            currentCraftingHero.AddSkillXp(DefaultSkills.Crafting, Campaign.Current.Models.SmithingModel.GetSkillXpForSmelting(item));
+            int energyCostForSmelting = Campaign.Current.Models.SmithingModel.GetEnergyCostForSmelting(item, currentCraftingHero);
+            __instance.SetHeroCraftingStamina(currentCraftingHero, __instance.GetHeroCraftingStamina(currentCraftingHero) - energyCostForSmelting);
+            CampaignEventDispatcher.Instance.OnEquipmentSmeltedByHero(currentCraftingHero, equipmentElement);
 
             return false;
         }
