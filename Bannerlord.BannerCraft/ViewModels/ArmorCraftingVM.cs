@@ -404,7 +404,8 @@ namespace Bannerlord.BannerCraft.ViewModels
                     ItemType itemType = GetItemType(item);
                     if (itemType == ItemType.Invalid
                         || itemType != _selectedItemType
-                        || item.IsCraftedByPlayer)
+                        || item.IsCraftedByPlayer
+                        || item.NotMerchandise)
                     {
                         continue;
                     }
@@ -774,6 +775,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     TextObject bodyDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.BodyArmor.ToString().ToLower());
                     TextObject legDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.LegArmor.ToString().ToLower());
                     TextObject armDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.ArmArmor.ToString().ToLower());
+                    TextObject stealthBonusDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "stealth_bonus");
 
                     itemProperty = new CraftingListPropertyItem(weightDescriptionText, 50f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
                     {
@@ -807,6 +809,12 @@ namespace Bannerlord.BannerCraft.ViewModels
 					 * It's ordered Head Body Arm Leg in the inventory totals, but who needs consistency
 					 */
                     itemProperty = new CraftingListPropertyItem(armDescriptionText, 100f, CurrentItem.Item.ArmorComponent.ArmArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+                    {
+                        IsValidForUsage = true
+                    };
+                    ItemProperties.Add(itemProperty);
+
+                    itemProperty = new CraftingListPropertyItem(stealthBonusDescriptionText, 100f, CurrentItem.Item.ArmorComponent.StealthFactor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
                     {
                         IsValidForUsage = true
                     };
