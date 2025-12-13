@@ -405,7 +405,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     if (itemType == ItemType.Invalid
                         || itemType != _selectedItemType
                         || item.IsCraftedByPlayer
-                        || item.NotMerchandise)
+                        || item.ItemFlags.HasAnyFlag(ItemFlags.CannotBePickedUp))
                     {
                         continue;
                     }
