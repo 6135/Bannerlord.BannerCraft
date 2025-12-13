@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Extensions;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting;
@@ -745,12 +746,14 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         public void RefreshStats(ItemType itemType)
         {
+            ItemObject? item = CurrentItem?.Item;
+
             ItemProperties.Clear();
             ItemFlagIconsList.Clear();
 
             RefreshDifficulty();
 
-            if (itemType == ItemType.Invalid)
+            if (itemType == ItemType.Invalid || item == null)
             {
                 return;
             }
@@ -777,7 +780,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     TextObject armDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.ArmArmor.ToString().ToLower());
                     TextObject stealthBonusDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "stealth_bonus");
 
-                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 50f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
+                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 50f, item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
                     {
                         IsValidForUsage = true
                     };
@@ -786,19 +789,19 @@ namespace Bannerlord.BannerCraft.ViewModels
                     /*
 					 * Use CraftingTemplate.CraftingStatTypes.StackAmount since it's the only one that is always displayed as an integer
 					 */
-                    itemProperty = new CraftingListPropertyItem(headDescriptionText, 100f, CurrentItem.Item.ArmorComponent.HeadArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+                    itemProperty = new CraftingListPropertyItem(headDescriptionText, 100f, item.ArmorComponent.HeadArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(bodyDescriptionText, 100f, CurrentItem.Item.ArmorComponent.BodyArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+                    itemProperty = new CraftingListPropertyItem(bodyDescriptionText, 100f, item.ArmorComponent.BodyArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(legDescriptionText, 100f, CurrentItem.Item.ArmorComponent.LegArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+                    itemProperty = new CraftingListPropertyItem(legDescriptionText, 100f, item.ArmorComponent.LegArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
                     {
                         IsValidForUsage = true
                     };
@@ -808,13 +811,13 @@ namespace Bannerlord.BannerCraft.ViewModels
 					 * Armor is shown Head Body Leg Arm in item hints in the vanilla UI
 					 * It's ordered Head Body Arm Leg in the inventory totals, but who needs consistency
 					 */
-                    itemProperty = new CraftingListPropertyItem(armDescriptionText, 100f, CurrentItem.Item.ArmorComponent.ArmArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+                    itemProperty = new CraftingListPropertyItem(armDescriptionText, 100f, item.ArmorComponent.ArmArmor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(stealthBonusDescriptionText, 100f, CurrentItem.Item.ArmorComponent.StealthFactor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+                    itemProperty = new CraftingListPropertyItem(stealthBonusDescriptionText, 100f, item.ArmorComponent.StealthFactor, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
                     {
                         IsValidForUsage = true
                     };
@@ -825,13 +828,13 @@ namespace Bannerlord.BannerCraft.ViewModels
                 case ItemType.Barding:
                     TextObject horseDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", ItemType.Barding.ToString().ToLower());
 
-                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 150f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
+                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 150f, item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(horseDescriptionText, 100f, CurrentItem.Item.ArmorComponent.BodyArmor, 0f, CraftingTemplate.CraftingStatTypes.Weight)
+                    itemProperty = new CraftingListPropertyItem(horseDescriptionText, 100f, item.ArmorComponent.BodyArmor, 0f, CraftingTemplate.CraftingStatTypes.Weight)
                     {
                         IsValidForUsage = true
                     };
@@ -843,19 +846,19 @@ namespace Bannerlord.BannerCraft.ViewModels
                     TextObject shieldSpeedDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "speed");
                     TextObject shieldHitPointsDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "shield_hitpoints");
 
-                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 10f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
+                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 10f, item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(shieldSpeedDescriptionText, 150f, CurrentItem.Item.PrimaryWeapon.Handling, 0f, CraftingTemplate.CraftingStatTypes.Handling)
+                    itemProperty = new CraftingListPropertyItem(shieldSpeedDescriptionText, 150f, item.PrimaryWeapon.Handling, 0f, CraftingTemplate.CraftingStatTypes.Handling)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(shieldHitPointsDescriptionText, 600f, CurrentItem.Item.PrimaryWeapon.MaxDataValue, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+                    itemProperty = new CraftingListPropertyItem(shieldHitPointsDescriptionText, 600f, item.PrimaryWeapon.MaxDataValue, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
                     {
                         IsValidForUsage = true
                     };
@@ -870,31 +873,31 @@ namespace Bannerlord.BannerCraft.ViewModels
                     TextObject accuracyDescriptionText = GameTexts.FindText("str_crafting_stat", "Accuracy");
                     TextObject missileSpeedDescriptionText = GameTexts.FindText("str_crafting_stat", "MissileSpeed");
 
-                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 10f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
+                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 10f, item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(rangedWeaponSpeedDescriptionText, 150f, CurrentItem.Item.PrimaryWeapon.SwingSpeed, 0f, CraftingTemplate.CraftingStatTypes.SwingSpeed)
+                    itemProperty = new CraftingListPropertyItem(rangedWeaponSpeedDescriptionText, 150f, item.PrimaryWeapon.SwingSpeed, 0f, CraftingTemplate.CraftingStatTypes.SwingSpeed)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(missileDamageDescriptionText, 150f, CurrentItem.Item.PrimaryWeapon.MissileDamage, 0f, CraftingTemplate.CraftingStatTypes.MissileDamage)
+                    itemProperty = new CraftingListPropertyItem(missileDamageDescriptionText, 150f, item.PrimaryWeapon.MissileDamage, 0f, CraftingTemplate.CraftingStatTypes.MissileDamage)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(accuracyDescriptionText, 150f, CurrentItem.Item.PrimaryWeapon.Accuracy, 0f, CraftingTemplate.CraftingStatTypes.Accuracy)
+                    itemProperty = new CraftingListPropertyItem(accuracyDescriptionText, 150f, item.PrimaryWeapon.Accuracy, 0f, CraftingTemplate.CraftingStatTypes.Accuracy)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(missileSpeedDescriptionText, 150f, CurrentItem.Item.PrimaryWeapon.MissileSpeed, 0f, CraftingTemplate.CraftingStatTypes.MissileSpeed)
+                    itemProperty = new CraftingListPropertyItem(missileSpeedDescriptionText, 150f, item.PrimaryWeapon.MissileSpeed, 0f, CraftingTemplate.CraftingStatTypes.MissileSpeed)
                     {
                         IsValidForUsage = true
                     };
@@ -904,7 +907,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     {
                         TextObject ammoLimitDescriptionText = GameTexts.FindText("str_bannercraft_crafting_statdisplay", "ammo_limit");
 
-                        itemProperty = new CraftingListPropertyItem(ammoLimitDescriptionText, 3f, CurrentItem.Item.PrimaryWeapon.MaxDataValue, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+                        itemProperty = new CraftingListPropertyItem(ammoLimitDescriptionText, 3f, item.PrimaryWeapon.MaxDataValue, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
                         {
                             IsValidForUsage = true
                         };
@@ -918,19 +921,19 @@ namespace Bannerlord.BannerCraft.ViewModels
                     missileDamageDescriptionText = GameTexts.FindText("str_crafting_stat", "MissileDamage");
                     TextObject ammoStackAmountDescriptionText = GameTexts.FindText("str_crafting_stat", "StackAmount");
 
-                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 100f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
+                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 100f, item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(missileDamageDescriptionText, 10f, CurrentItem.Item.WeaponComponent.PrimaryWeapon.MissileDamage, 0f, CraftingTemplate.CraftingStatTypes.MissileDamage)
+                    itemProperty = new CraftingListPropertyItem(missileDamageDescriptionText, 10f, item.WeaponComponent.PrimaryWeapon.MissileDamage, 0f, CraftingTemplate.CraftingStatTypes.MissileDamage)
                     {
                         IsValidForUsage = true
                     };
                     ItemProperties.Add(itemProperty);
 
-                    itemProperty = new CraftingListPropertyItem(ammoStackAmountDescriptionText, 50f, CurrentItem.Item.PrimaryWeapon.MaxDataValue, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
+                    itemProperty = new CraftingListPropertyItem(ammoStackAmountDescriptionText, 50f, item.PrimaryWeapon.MaxDataValue, 0f, CraftingTemplate.CraftingStatTypes.StackAmount)
                     {
                         IsValidForUsage = true
                     };
@@ -939,15 +942,23 @@ namespace Bannerlord.BannerCraft.ViewModels
                     break;
 
                 case ItemType.Banner:
-                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 2f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
+                    if (item.BannerComponent != null && item.BannerComponent.BannerEffect != null)
                     {
-                        IsValidForUsage = true
-                    };
-                    ItemProperties.Add(itemProperty);
+                        string content = string.Empty;
 
-                    if (CurrentItem.Item.BannerComponent != null && CurrentItem.Item.BannerComponent.BannerEffect != null)
-                    {
-                        BannerDescriptionText = CurrentItem.Item.BannerComponent.BannerEffect.GetDescription(CurrentItem.Item.BannerComponent.BannerLevel).ToString();
+                        if (item.BannerComponent.BannerEffect.IncrementType == EffectIncrementType.AddFactor)
+                        {
+                            content = GameTexts.FindText("str_NUMBER_percent", null).SetTextVariable("NUMBER", ((int)Math.Abs(item.BannerComponent.GetBannerEffectBonus() * 100f)).ToString()).ToString();
+                        }
+                        else if (item.BannerComponent.BannerEffect.IncrementType == EffectIncrementType.Add)
+                        {
+                            content = item.BannerComponent.GetBannerEffectBonus().ToString();
+                        }
+
+                        GameTexts.SetVariable("RANK", item.BannerComponent.BannerEffect.Name);
+                        GameTexts.SetVariable("NUMBER", content);
+
+                        BannerDescriptionText = GameTexts.FindText("str_RANK_with_NUM_between_parenthesis", null).ToString();
                     }
                     else
                     {
@@ -972,9 +983,9 @@ namespace Bannerlord.BannerCraft.ViewModels
                     accuracyDescriptionText = GameTexts.FindText("str_crafting_stat", "Accuracy");
                     ammoStackAmountDescriptionText = GameTexts.FindText("str_crafting_stat", "StackAmount");
 
-                    WeaponComponentData weaponData = CurrentItem.Item.GetWeaponWithUsageIndex(SecondaryUsageSelector.SelectedIndex);
+                    WeaponComponentData weaponData = item.GetWeaponWithUsageIndex(SecondaryUsageSelector.SelectedIndex);
 
-                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 15f, CurrentItem.Item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
+                    itemProperty = new CraftingListPropertyItem(weightDescriptionText, 15f, item.Weight, 0f, CraftingTemplate.CraftingStatTypes.Weight)
                     {
                         IsValidForUsage = true
                     };
@@ -1011,7 +1022,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                         if (weaponData.ThrustDamageType != DamageTypes.Invalid
                             && weaponData.ThrustDamage > 0)
                         {
-                            thrustDamageDescriptionText = thrustDamageDescriptionText.SetTextVariable("THRUST_DAMAGE_TYPE", GameTexts.FindText("str_inventory_dmg_type", ((int)CurrentItem.Item.PrimaryWeapon.ThrustDamageType).ToString()));
+                            thrustDamageDescriptionText = thrustDamageDescriptionText.SetTextVariable("THRUST_DAMAGE_TYPE", GameTexts.FindText("str_inventory_dmg_type", ((int)item.PrimaryWeapon.ThrustDamageType).ToString()));
                             itemProperty = new CraftingListPropertyItem(thrustDamageDescriptionText, 200f, weaponData.ThrustDamage, 0f, CraftingTemplate.CraftingStatTypes.ThrustDamage)
                             {
                                 IsValidForUsage = true
@@ -1022,7 +1033,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                         if (weaponData.SwingDamageType != DamageTypes.Invalid
                             && weaponData.SwingDamage > 0)
                         {
-                            swingDamageDescriptionText = swingDamageDescriptionText.SetTextVariable("SWING_DAMAGE_TYPE", GameTexts.FindText("str_inventory_dmg_type", ((int)CurrentItem.Item.PrimaryWeapon.SwingDamageType).ToString()));
+                            swingDamageDescriptionText = swingDamageDescriptionText.SetTextVariable("SWING_DAMAGE_TYPE", GameTexts.FindText("str_inventory_dmg_type", ((int)item.PrimaryWeapon.SwingDamageType).ToString()));
                             itemProperty = new CraftingListPropertyItem(swingDamageDescriptionText, 200f, weaponData.SwingDamage, 0f, CraftingTemplate.CraftingStatTypes.SwingDamage)
                             {
                                 IsValidForUsage = true
@@ -1075,14 +1086,14 @@ namespace Bannerlord.BannerCraft.ViewModels
                     break;
             }
 
-            foreach (Tuple<string, TextObject> itemFlagDetail in CampaignUIHelper.GetItemFlagDetails(CurrentItem.Item.ItemFlags))
+            foreach (Tuple<string, TextObject> itemFlagDetail in CampaignUIHelper.GetItemFlagDetails(item.ItemFlags))
             {
                 ItemFlagIconsList.Add(new CraftingItemFlagVM(itemFlagDetail.Item1, itemFlagDetail.Item2, isDisplayed: true));
             }
 
-            if (CurrentItem.Item.HasWeaponComponent)
+            if (item.HasWeaponComponent)
             {
-                WeaponComponentData weaponData = CurrentItem.Item.GetWeaponWithUsageIndex(SecondaryUsageSelector.SelectedIndex);
+                WeaponComponentData weaponData = item.GetWeaponWithUsageIndex(SecondaryUsageSelector.SelectedIndex);
                 ItemObject.ItemUsageSetFlags itemUsageFlags = TaleWorlds.MountAndBlade.MBItem.GetItemUsageSetFlags(weaponData.ItemUsage);
                 foreach ((string, TextObject) flagDetail in CampaignUIHelper.GetFlagDetailsForWeapon(weaponData, itemUsageFlags))
                 {
