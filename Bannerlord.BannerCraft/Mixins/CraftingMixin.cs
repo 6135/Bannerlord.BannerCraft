@@ -70,49 +70,6 @@ namespace Bannerlord.BannerCraft.Mixins
 
         private delegate T GetItemFieldDelegate<out T>(ItemModifier item, string _fieldName);
 
-#if v116 || v115 || v114 || v113 || v112 || v111 || v110 || v103 || v102 || v101 || v100
-
-        private string MountHitPoints = "_mountHitPoints";
-        private string ChargeDamage = "_chargeDamage";
-        private string Maneuver = "_maneuver";
-        private string MountSpeed = "_mountSpeed";
-        private string StackCount = "_stackCount";
-        private string HitPoints = "_hitPoints";
-        private string Armor = "_armor";
-        private string MissileSpeed = "_missileSpeed";
-        private string Speed = "_speed";
-        private string Damage = "_damage";
-        private string PriceMultiplier = "_priceMultiplier";
-
-        private int GetItemFieldInt(ItemModifier item, string _fieldName)
-        {
-            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var value = item.GetType()?.GetField(_fieldName, bindingFlags)?.GetValue(item);
-            if (value is not null)
-                return (int)value;
-            else return 0;
-        }
-
-        private short GetItemFieldShort(ItemModifier item, string _fieldName)
-        {
-            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var value = item.GetType()?.GetField(_fieldName, bindingFlags)?.GetValue(item);
-            if (value is not null)
-                return (short)value;
-            else return 0;
-        }
-
-        //float
-        private float GetItemFieldFloat(ItemModifier item, string _fieldName)
-        {
-            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var value = item.GetType()?.GetField(_fieldName, bindingFlags)?.GetValue(item);
-            if (value is not null)
-                return (float)value;
-            else return 0;
-        }
-
-#else
         private readonly string MountHitPoints = "MountHitPoints";
         private readonly string ChargeDamage = "ChargeDamage";
         private readonly string Maneuver = "Maneuver";
@@ -150,8 +107,6 @@ namespace Bannerlord.BannerCraft.Mixins
                 return (float)value;
             else return 0;
         }
-
-#endif
 
         private float GetModifierSum(ItemModifier im)
         {
