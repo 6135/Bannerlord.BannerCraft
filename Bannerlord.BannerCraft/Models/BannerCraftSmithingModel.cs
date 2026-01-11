@@ -24,17 +24,7 @@ namespace Bannerlord.BannerCraft.Models
 
         public override int CalculateWeaponDesignDifficulty(WeaponDesign weaponDesign) => _model.CalculateWeaponDesignDifficulty(weaponDesign);
 
-#if v116 || v115 || v114 || v113 || v112 || v111 || v110 || v103 || v102 || v101 || v100
-
-        public override int GetModifierTierForSmithedWeapon(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetModifierTierForSmithedWeapon(weaponDesign, weaponsmith);
-
-        public override Crafting.OverrideData GetModifierChanges(int modifierTier, Hero hero, WeaponComponentData weapon) => _model.GetModifierChanges(modifierTier, hero, weapon);
-
-#else
-
         public override ItemModifier GetCraftedWeaponModifier(WeaponDesign weaponDesign, Hero weaponsmith) => _model.GetCraftedWeaponModifier(weaponDesign, weaponsmith);
-
-#endif
 
         public override IEnumerable<Crafting.RefiningFormula> GetRefiningFormulas(Hero weaponsmith) => _model.GetRefiningFormulas(weaponsmith);
 
