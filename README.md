@@ -31,6 +31,16 @@ Original author: https://github.com/Evangel63/BannerCraft
 
 # Changelog
 
+**v1.5.0**
+
+Updated for Bannerlord 1.3.14 - 1.4.7.
+
+- Added support for game versions 1.3.14, 1.3.15 and 1.4.0 through 1.4.7. On 1.4.x there was no matching assembly to load, so the mod started without doing anything and the Craft tab never appeared.
+- Botching now also writes a message to the log saying the materials were consumed and no item was produced, instead of only a brief on-screen notification that made a botch look like the item had gone missing.
+- Fixed the armor crafting result popup drawing its OK button on top of the item preview, and stopped it reusing widget ids belonging to the vanilla popup it is inserted into.
+- Banner Kings - Redux is now detected regardless of load order, fixing the uncloseable popup in the smithy when both mods are installed. Added load order metadata for it and for Better Smithing Continued.
+- Smelting list no longer skips an item when another stack of it with a different modifier is listed, and no longer adds normal weapons a second time when "Allow crafting normal weapons" is off.
+
 **v1.0.28**
 
 Fixed 3 bugs

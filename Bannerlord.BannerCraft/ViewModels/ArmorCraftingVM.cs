@@ -1177,7 +1177,11 @@ namespace Bannerlord.BannerCraft.ViewModels
             }
             itemName += CurrentItem.Item.Name.ToString();
 
-            ArmorCraftResultPopup = new ArmorCraftResultPopupVM(ExecuteFinalizeCrafting, _crafting, ItemFlagIconsList, CurrentItem.Item, itemName, DesignResultPropertyList, ItemVisualModel);
+            /*
+             * Reuse the crafting screen's confirm key so the popup's key visual matches the rest of
+             * the screen instead of binding to nothing.
+             */
+            ArmorCraftResultPopup = new ArmorCraftResultPopupVM(ExecuteFinalizeCrafting, _crafting, ItemFlagIconsList, CurrentItem.Item, itemName, DesignResultPropertyList, ItemVisualModel, _craftingVm.ConfirmInputKey);
             ArmorCraftResultPopupVisible = true;
         }
 

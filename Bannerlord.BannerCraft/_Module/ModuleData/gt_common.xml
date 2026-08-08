@@ -29,6 +29,25 @@
 	<string id="str_bannercraft_crafting_itemtype.polearm" text="{=bannercraft_crafting_itemtype_polearm}Polearm" />
 	<string id="str_bannercraft_crafting_itemtype.thrown" text="{=bannercraft_crafting_itemtype_thrown}Thrown" />
 
+	<!-- Crafting result popup titles. One variation per ItemType, Invalid included. -->
+	<string id="str_bannercraft_crafting_result.headarmor" text="{=bannercraft_crafting_result_headarmor}Head Armor Crafted!" />
+	<string id="str_bannercraft_crafting_result.shoulderarmor" text="{=bannercraft_crafting_result_shoulderarmor}Shoulder Armor Crafted!" />
+	<string id="str_bannercraft_crafting_result.bodyarmor" text="{=bannercraft_crafting_result_bodyarmor}Body Armor Crafted!" />
+	<string id="str_bannercraft_crafting_result.armarmor" text="{=bannercraft_crafting_result_armarmor}Arm Armor Crafted!" />
+	<string id="str_bannercraft_crafting_result.legarmor" text="{=bannercraft_crafting_result_legarmor}Leg Armor Crafted!" />
+	<string id="str_bannercraft_crafting_result.barding" text="{=bannercraft_crafting_result_barding}Horse Armor Crafted!" />
+	<string id="str_bannercraft_crafting_result.shield" text="{=bannercraft_crafting_result_shield}Shield Crafted!" />
+	<string id="str_bannercraft_crafting_result.bow" text="{=bannercraft_crafting_result_bow}Bow Crafted!" />
+	<string id="str_bannercraft_crafting_result.crossbow" text="{=bannercraft_crafting_result_crossbow}Crossbow Crafted!" />
+	<string id="str_bannercraft_crafting_result.arrows" text="{=bannercraft_crafting_result_arrows}Arrows Crafted!" />
+	<string id="str_bannercraft_crafting_result.bolts" text="{=bannercraft_crafting_result_bolts}Bolts Crafted!" />
+	<string id="str_bannercraft_crafting_result.banner" text="{=bannercraft_crafting_result_banner}Banner Crafted!" />
+	<string id="str_bannercraft_crafting_result.onehandedweapon" text="{=bannercraft_crafting_result_onehandedweapon}Weapon Crafted!" />
+	<string id="str_bannercraft_crafting_result.twohandedweapon" text="{=bannercraft_crafting_result_twohandedweapon}Weapon Crafted!" />
+	<string id="str_bannercraft_crafting_result.polearm" text="{=bannercraft_crafting_result_polearm}Polearm Crafted!" />
+	<string id="str_bannercraft_crafting_result.thrown" text="{=bannercraft_crafting_result_thrown}Throwing Weapon Crafted!" />
+	<string id="str_bannercraft_crafting_result.invalid" text="{=bannercraft_crafting_result_invalid}Item Crafted!" />
+
 	<!-- Comment to break up ItemType from StatDisplay -->
 	<string id="str_bannercraft_crafting_statdisplay.headarmor" text="{=bannercraft_crafting_statdisplay_headarmor}Head Armor: " />
 	<string id="str_bannercraft_crafting_statdisplay.shoulderarmor" text="{=bannercraft_crafting_statdisplay_shoulderarmor}Shoulder Armor: " />
@@ -59,6 +78,8 @@
 	<string id="str_bannercraft_crafting_material_type.plate" text="{=bannercraft_crafting_material_type_none}Plate" />
 
 	<string id="str_bannercraft_crafting_stamina_display" text="{=bannercraft_crafting_stamina_display}{HERONAME} requires more stamina for this action. {HERONAME} has {CURRENT} stamina and needs {REQUIRED} stamina." />
+
+	<string id="str_bannercraft_crafting_botched" text="{=bannercraft_crafting_botched}{HERO} botched {ITEM}! The materials were used up and no item was produced." />
 
 	<string id="str_bannercraft_item_modifiers_legendary" text="{=bannercraft_item_modifiers_legendary}Legendary {ITEMNAME}" />
 

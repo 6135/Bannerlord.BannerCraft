@@ -1,4 +1,5 @@
 ﻿using System;
+using TaleWorlds.CampaignSystem.ViewModelCollection.Input;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.WeaponDesign;
 using TaleWorlds.Core;
@@ -33,7 +34,9 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private MBBindingList<WeaponDesignResultPropertyItemVM> _designResultPropertyList;
 
-        public ArmorCraftResultPopupVM(Action onFinalize, Crafting crafting, MBBindingList<ItemFlagVM> itemFlagIconsList, ItemObject craftedItem, string itemName, MBBindingList<WeaponDesignResultPropertyItemVM> designResultPropertyList, ItemCollectionElementViewModel itemVisualModel)
+        private InputKeyItemVM? _doneInputKey;
+
+        public ArmorCraftResultPopupVM(Action onFinalize, Crafting crafting, MBBindingList<ItemFlagVM> itemFlagIconsList, ItemObject craftedItem, string itemName, MBBindingList<WeaponDesignResultPropertyItemVM> designResultPropertyList, ItemCollectionElementViewModel itemVisualModel, InputKeyItemVM? doneInputKey)
         {
             _onFinalize = onFinalize;
             _crafting = crafting;
@@ -45,6 +48,20 @@ namespace Bannerlord.BannerCraft.ViewModels
             ItemName = itemName;
 
             DoneLbl = GameTexts.FindText("str_done").ToString();
+            DoneInputKey = doneInputKey;
+
+            /*
+             * The base ViewModel constructor does not call RefreshValues, so ArmorCraftedText would
+             * otherwise stay null until something else refreshed the popup.
+             */
+            RefreshValues();
+        }
+
+        [DataSourceProperty]
+        public InputKeyItemVM? DoneInputKey
+        {
+            get => _doneInputKey;
+            set => SetField(ref _doneInputKey, value, nameof(DoneInputKey));
         }
 
         [DataSourceProperty]
@@ -115,22 +132,12 @@ namespace Bannerlord.BannerCraft.ViewModels
         {
             base.RefreshValues();
 
+            /*
+             * Every ItemType has a matching str_bannercraft_crafting_result variation, including
+             * Invalid, so banners and normal weapons no longer fall through to a generic message.
+             */
             ItemType itemType = ArmorCraftingVM.GetItemType(_craftedItem);
-            ArmorCraftedText = itemType switch
-            {
-                ItemType.Barding => "Horse Armor Crafted!",
-                ItemType.HeadArmor => "Head Armor Crafted!",
-                ItemType.ShoulderArmor => "Shoulder Armor Crafted!",
-                ItemType.BodyArmor => "Body Armor Crafted!",
-                ItemType.ArmArmor => "Arm Armor Crafted!",
-                ItemType.LegArmor => "Leg Armor Crafted!",
-                ItemType.Shield => "Shield Crafted!",
-                ItemType.Bow => "Bow Crafted!",
-                ItemType.Crossbow => "Crossbow Crafted!",
-                ItemType.Arrows => "Arrows Crafted!",
-                ItemType.Bolts => "Bolts Crafted!",
-                _ => "Something Crafted!"
-            };
+            ArmorCraftedText = GameTexts.FindText("str_bannercraft_crafting_result", itemType.ToString().ToLower()).ToString();
         }
 
         public void ExecuteFinalizeCrafting()

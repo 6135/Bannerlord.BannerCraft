@@ -238,10 +238,7 @@ namespace Bannerlord.BannerCraft.Mixins
                 if (randomFloat < botchChance)
                 {
                     SpendMaterials(_crafting.CurrentWeaponDesign);
-                    MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
-                            .SetTextVariable("HERO", hero.Name)
-                            .SetTextVariable("ITEM", _crafting.CraftedWeaponName),
-                        2000, null, null, "event:/ui/notification/relation");
+                    NotifyBotchedCrafting(hero, _crafting.CraftedWeaponName);
 
                     energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), hero) / 2;
                     UpdateStamina(craftingBehavior, hero, energyCostForSmithing);
@@ -270,10 +267,7 @@ namespace Bannerlord.BannerCraft.Mixins
                     /*
                      * Crafting is botched, materials spent, item not crafted
                      */
-                    MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
-                            .SetTextVariable("HERO", hero.Name)
-                            .SetTextVariable("ITEM", item.Name),
-                        0, null, null, "event:/ui/notification/relation");
+                    NotifyBotchedCrafting(hero, item.Name);
 
                     energyCostForSmithing /= 2;
                 }
@@ -627,6 +621,21 @@ namespace Bannerlord.BannerCraft.Mixins
                     }
                 }
             }
+        }
+
+        /*
+         * A botch spends the materials without producing an item, which looks identical to the item
+         * going missing. The quick information alone is easy to miss, so also write a persistent
+         * entry to the message log explaining where the materials went.
+         */
+        private static void NotifyBotchedCrafting(Hero hero, TextObject itemName)
+        {
+            var message = GameTexts.FindText("str_bannercraft_crafting_botched")
+                .SetTextVariable("HERO", hero.Name)
+                .SetTextVariable("ITEM", itemName);
+
+            MBInformationManager.AddQuickInformation(message, 2000, null, null, "event:/ui/notification/relation");
+            InformationManager.DisplayMessage(new InformationMessage(message.ToString(), Colors.Red));
         }
 
         private void UpdateStamina(ICraftingCampaignBehavior craftingBehavior, Hero hero, int energyCost)

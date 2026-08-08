@@ -1,5 +1,4 @@
-﻿using Bannerlord.BannerCraft.ViewModels;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
@@ -35,6 +34,17 @@ namespace Bannerlord.BannerCraft.Patches
 
         private static Func<SmeltingVM, Action<SmeltingItemVM, bool>> GetProcessLockItemAction { get; }
 
+        /*
+         * Classify straight from the item rather than through ArmorCraftingVM.GetItemType: that
+         * collapses normal weapons to Invalid whenever AllowCraftingNormalWeapons is off (the
+         * default), and ItemTypeIsWeapon(Invalid) is false — so weapons vanilla had already listed
+         * were being appended a second time.
+         */
+        private static bool IsWeapon(ItemObject item) => item.ItemType is ItemObject.ItemTypeEnum.OneHandedWeapon
+            or ItemObject.ItemTypeEnum.TwoHandedWeapon
+            or ItemObject.ItemTypeEnum.Polearm
+            or ItemObject.ItemTypeEnum.Thrown;
+
         public static void Postfix(ref SmeltingVM __instance)
         {
             bool allowCraftingOtherItems = Settings.Instance?.AllowSmeltingOtherItems ?? false;
@@ -49,22 +59,26 @@ namespace Bannerlord.BannerCraft.Patches
                 for (int i = 0; i < playerItemRoster.Count; i++)
                 {
                     var elementCopyAtIndex = playerItemRoster.GetElementCopyAtIndex(i);
-                    var item = elementCopyAtIndex.EquipmentElement.Item;
-                    var itemType = ArmorCraftingVM.GetItemType(item);
+                    var equipmentElement = elementCopyAtIndex.EquipmentElement;
+                    var item = equipmentElement.Item;
                     var smeltingOutputs = smithingModel.GetSmeltingOutputForItem(item);
                     var givesOutput = smeltingOutputs.Any(output => output > 0);
-                    if (!ArmorCraftingVM.ItemTypeIsWeapon(itemType) && givesOutput)
+                    if (!IsWeapon(item) && givesOutput)
                     {
-                        bool isLocked = IsItemLocked(__instance, elementCopyAtIndex.EquipmentElement);
+                        bool isLocked = IsItemLocked(__instance, equipmentElement);
 
                         SmeltingItemVM smeltingItem = new SmeltingItemVM(
-                            elementCopyAtIndex.EquipmentElement,
+                            equipmentElement,
                             onItemSelection,
                             processLockItem,
                             isLocked,
                             elementCopyAtIndex.Amount);
-                        //if it's already added, don't add it again
-                        if (!__instance.SmeltableItemList.Any(smeltableItem => smeltableItem.EquipmentElement.Item.Equals(item)))
+                        /*
+                         * Compare the whole equipment element, not just the item: two roster stacks
+                         * of the same item with different modifiers are distinct entries, and
+                         * matching on the item alone silently dropped the second one.
+                         */
+                        if (!__instance.SmeltableItemList.Any(smeltableItem => smeltableItem.EquipmentElement.Equals(equipmentElement)))
                             __instance.SmeltableItemList.Add(smeltingItem);
                     }
                 }

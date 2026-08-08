@@ -30,6 +30,10 @@
     <DependedModuleMetadata id="StoryMode" order="LoadBeforeThis" />
     <DependedModuleMetadata id="CustomBattle" order="LoadBeforeThis" />
     <DependedModuleMetadata id="BannerKings" order="LoadBeforeThis" optional="true" />
+    <!-- Banner Kings - Redux ships under a different module id, so it needs its own entry. -->
+    <DependedModuleMetadata id="BannerKings.Redux" order="LoadBeforeThis" optional="true" />
+    <!-- BetterSmithingPatches only apply if Better Smithing's types already exist. -->
+    <DependedModuleMetadata id="BetterSmithingContinued" order="LoadBeforeThis" optional="true" />
   </DependedModuleMetadatas>
   <!-- Community Dependency Metadata -->
   <SubModules>
