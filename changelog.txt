@@ -1,4 +1,12 @@
 Changelog
+v1.4.7
+Added icons to the "Choose What to Craft" categories, using the game's own equipment icons.
+All texts can now be translated. Added a translation template (ModuleData/Languages/std_BannerCraft.xml) with a short guide for translators.
+The MCM settings and their groups can now be translated.
+The crafting result popup title can now be translated and has proper titles for banners and weapons.
+Fixed the armor material names and the additional material cost setting sharing translation ids.
+BannerCraft now loads after Better Smithing Continued automatically.
+
 v1.4.6
 Built against each supported game version (1.3.4 - 1.4.8) instead of always against 1.3.13.
 Fixed the smelt and refine buttons being enabled without a valid selection (smelting/refining did nothing) and smelting being blocked by the weapon crafting stamina cost.

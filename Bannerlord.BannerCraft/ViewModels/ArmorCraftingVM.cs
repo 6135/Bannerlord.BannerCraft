@@ -291,7 +291,7 @@ namespace Bannerlord.BannerCraft.ViewModels
 
             _selectedItemType = ItemType.HeadArmor;
 
-            var armorClasses = new List<TextObject>();
+            var armorClasses = new List<(TextObject Name, ItemType ItemType)>();
             foreach (ItemType value in Enum.GetValues(typeof(ItemType)))
             {
                 if (value == ItemType.Invalid)
@@ -304,7 +304,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     continue;
                 }
 
-                armorClasses.Add(GameTexts.FindText("str_bannercraft_crafting_itemtype", value.ToString().ToLower()));
+                armorClasses.Add((GameTexts.FindText("str_bannercraft_crafting_itemtype", value.ToString().ToLower()), value));
             }
 
             ArmorClassSelectionPopup = new ArmorClassSelectionPopupVM(armorClasses, delegate (int x)

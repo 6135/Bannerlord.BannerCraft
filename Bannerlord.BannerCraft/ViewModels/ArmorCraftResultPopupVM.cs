@@ -136,21 +136,25 @@ namespace Bannerlord.BannerCraft.ViewModels
             base.RefreshValues();
 
             ItemType itemType = ArmorCraftingVM.GetItemType(_craftedItem);
-            ArmorCraftedText = itemType switch
+            TextObject craftedText = itemType switch
             {
-                ItemType.Barding => "Horse Armor Crafted!",
-                ItemType.HeadArmor => "Head Armor Crafted!",
-                ItemType.ShoulderArmor => "Shoulder Armor Crafted!",
-                ItemType.BodyArmor => "Body Armor Crafted!",
-                ItemType.ArmArmor => "Arm Armor Crafted!",
-                ItemType.LegArmor => "Leg Armor Crafted!",
-                ItemType.Shield => "Shield Crafted!",
-                ItemType.Bow => "Bow Crafted!",
-                ItemType.Crossbow => "Crossbow Crafted!",
-                ItemType.Arrows => "Arrows Crafted!",
-                ItemType.Bolts => "Bolts Crafted!",
-                _ => "Something Crafted!"
+                ItemType.Barding => new TextObject("{=bannercraft_crafted_barding}Horse Armor Crafted!"),
+                ItemType.HeadArmor => new TextObject("{=bannercraft_crafted_headarmor}Head Armor Crafted!"),
+                ItemType.ShoulderArmor => new TextObject("{=bannercraft_crafted_shoulderarmor}Shoulder Armor Crafted!"),
+                ItemType.BodyArmor => new TextObject("{=bannercraft_crafted_bodyarmor}Body Armor Crafted!"),
+                ItemType.ArmArmor => new TextObject("{=bannercraft_crafted_armarmor}Arm Armor Crafted!"),
+                ItemType.LegArmor => new TextObject("{=bannercraft_crafted_legarmor}Leg Armor Crafted!"),
+                ItemType.Shield => new TextObject("{=bannercraft_crafted_shield}Shield Crafted!"),
+                ItemType.Bow => new TextObject("{=bannercraft_crafted_bow}Bow Crafted!"),
+                ItemType.Crossbow => new TextObject("{=bannercraft_crafted_crossbow}Crossbow Crafted!"),
+                ItemType.Arrows => new TextObject("{=bannercraft_crafted_arrows}Arrows Crafted!"),
+                ItemType.Bolts => new TextObject("{=bannercraft_crafted_bolts}Bolts Crafted!"),
+                ItemType.Banner => new TextObject("{=bannercraft_crafted_banner}Banner Crafted!"),
+                ItemType.OneHandedWeapon or ItemType.TwoHandedWeapon or ItemType.Polearm or ItemType.Thrown
+                    => new TextObject("{=bannercraft_crafted_weapon}Weapon Crafted!"),
+                _ => new TextObject("{=bannercraft_crafted_other}Something Crafted!")
             };
+            ArmorCraftedText = craftedText.ToString();
         }
 
         public void ExecuteFinalizeCrafting()

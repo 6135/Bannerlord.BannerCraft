@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BannerCraft localization template (English).
+  To translate: copy this file into a language folder (e.g. Languages/RU/std_BannerCraft_rus.xml),
+  change the language tag below and translate the text attributes. Keep the ids unchanged.
+  Then add the file to that folder's language_data.xml. See Languages/README.txt.
+  Strings that BannerCraft reuses from the base game (e.g. "Choose What to Craft", "Free Build")
+  are not listed here, they are already translated by the game's own language files.
+-->
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+  <tags>
+    <tag language="English" />
+  </tags>
+  <strings>
+    <string id="LuF75ia3" text="Crafting Difficulty" />
+    <string id="bannercraft_crafting_category_armor" text="Craft" />
+    <string id="bannercraft_crafting_itemtype_headarmor" text="Head Armors" />
+    <string id="bannercraft_crafting_itemtype_shoulderarmor" text="Shoulder Armors" />
+    <string id="bannercraft_crafting_itemtype_bodyarmor" text="Body Armors" />
+    <string id="bannercraft_crafting_itemtype_armarmor" text="Arm Armors" />
+    <string id="bannercraft_crafting_itemtype_legarmor" text="Leg Armors" />
+    <string id="bannercraft_crafting_itemtype_barding" text="Bardings" />
+    <string id="bannercraft_crafting_itemtype_shield" text="Shields" />
+    <string id="bannercraft_crafting_itemtype_bow" text="Bows" />
+    <string id="bannercraft_crafting_itemtype_crossbow" text="Crossbows" />
+    <string id="bannercraft_crafting_itemtype_arrow" text="Arrows" />
+    <string id="bannercraft_crafting_itemtype_bolt" text="Bolts" />
+    <string id="bannercraft_crafting_itemtype_banner" text="Banner" />
+    <string id="bannercraft_crafting_itemtype_onehandedweapon" text="One Handed Weapon" />
+    <string id="bannercraft_crafting_itemtype_twohandedweapon" text="Two Handed Weapon" />
+    <string id="bannercraft_crafting_itemtype_polearm" text="Polearm" />
+    <string id="bannercraft_crafting_itemtype_thrown" text="Thrown" />
+    <string id="bannercraft_crafting_statdisplay_headarmor" text="Head Armor: " />
+    <string id="bannercraft_crafting_statdisplay_shoulderarmor" text="Shoulder Armor: " />
+    <string id="bannercraft_crafting_statdisplay_bodyarmor" text="Body Armor: " />
+    <string id="bannercraft_crafting_statdisplay_armarmor" text="Arm Armor: " />
+    <string id="bannercraft_crafting_statdisplay_legarmor" text="Leg Armor: " />
+    <string id="bannercraft_crafting_statdisplay_stealth_bonus" text="Stealth Bonus: " />
+    <string id="bannercraft_crafting_statdisplay_barding" text="Horse Armor: " />
+    <string id="bannercraft_crafting_statdisplay_speed" text="Speed: " />
+    <string id="bannercraft_crafting_statdisplay_shield_speed" text="Hit Points: " />
+    <string id="bannercraft_crafting_statdisplay_ranged_weapon_speed" text="Speed: " />
+    <string id="bannercraft_crafting_statdisplay_missile_damage" text="Damage: " />
+    <string id="bannercraft_crafting_statdisplay_accuracy" text="Accuracy: " />
+    <string id="bannercraft_crafting_statdisplay_missile_speed" text="Missile Speed: " />
+    <string id="bannercraft_crafting_statdisplay_ammo_limit" text="Ammo Limit: " />
+    <string id="bannercraft_crafting_statdisplay_ammo_stack_amount" text="Stack Amount: " />
+    <string id="bannercraft_crafting_material_type_none" text="None" />
+    <string id="bannercraft_crafting_material_type_cloth" text="Cloth" />
+    <string id="bannercraft_crafting_material_type_leather" text="Leather" />
+    <string id="bannercraft_crafting_material_type_chainmail" text="Chainmail" />
+    <string id="bannercraft_crafting_material_type_plate" text="Plate" />
+    <string id="bannercraft_crafting_stamina_display" text="{HERONAME} requires more stamina for this action. {HERONAME} has {CURRENT} stamina and needs {REQUIRED} stamina." />
+    <string id="bannercraft_item_modifiers_legendary" text="Legendary {ITEMNAME}" />
+    <string id="bannercraft_mcm_maximum_botch_chance" text="Maximum botch chance" />
+    <string id="bannercraft_mcm_maximum_botch_chance_description" text="Maximum chance to botch crafting when Crafting skill level is lower than difficulty." />
+    <string id="bannercraft_mcm_use_vanilla_smelting_calculations" text="Use Vanilla smelting calculations" />
+    <string id="bannercraft_mcm_use_vanilla_smelting_calculations_description" text="Use vanilla smelting calculations that turn 0.8 weight pugios into 2.5 weight of materials." />
+    <string id="bannercraft_mcm_allow_smelting_other_items" text="Allow smelting other items" />
+    <string id="bannercraft_mcm_allow_smelting_other_items_description" text="Allow smelting other items such as armor, shields, etc as long as they return at least one material" />
+    <string id="bannercraft_mcm_crafting_penalty_threshold" text="Crafting penalty threshold" />
+    <string id="bannercraft_mcm_crafting_penalty_threshold_description" text="How much higher your skill has to be than the item difficulty before you have no chance of making a bad item." />
+    <string id="bannercraft_mcm_crafting_material_cost" text="Material cost modifier" />
+    <string id="bannercraft_mcm_crafting_material_cost_description" text="How much the material cost is multiplied by when crafting. Default is x1.00" />
+    <string id="bannercraft_mcm_crafting_additional_material_cost" text="Additional material cost modifier" />
+    <string id="bannercraft_mcm_crafting_additional_material_cost_description" text="How much the additional materials cost is multiplied by when crafting. Default is x1.00" />
+    <string id="bannercraft_mcm_crafting_legendary_added_chance" text="Legendary added chance" />
+    <string id="bannercraft_mcm_crafting_legendary_added_chance_description" text="Added chance to get a Legendary crafting result." />
+    <string id="bannercraft_mcm_crafting_masterwork_added_chance" text="Masterwork added chance" />
+    <string id="bannercraft_mcm_crafting_masterwork_added_chance_description" text="Added chance to get a Masterwork crafting result." />
+    <string id="bannercraft_mcm_crafting_fine_added_chance" text="Fine added chance" />
+    <string id="bannercraft_mcm_crafting_fine_added_chance_description" text="Added chance to get a Fine crafting result." />
+    <string id="bannercraft_mcm_crafting_common_added_chance" text="Common added chance" />
+    <string id="bannercraft_mcm_crafting_common_added_chance_description" text="Added chance to get a Common crafting result." />
+    <string id="bannercraft_mcm_crafting_inferior_added_chance" text="Inferior added chance" />
+    <string id="bannercraft_mcm_crafting_inferior_added_chance_description" text="Added chance to get a Inferior crafting result." />
+    <string id="bannercraft_mcm_crafting_poor_added_chance" text="Poor added chance" />
+    <string id="bannercraft_mcm_crafting_poor_added_chance_description" text="Added chance to get a Poor crafting result." />
+    <string id="bannercraft_mcm_no_materials_required" text="No materials required" />
+    <string id="bannercraft_mcm_no_materials_required_description" text="If enabled, crafting will not require any materials." />
+    <string id="bannercraft_mcm_difficulty_one" text="Set difficulty to 1" />
+    <string id="bannercraft_mcm_difficulty_one_description" text="If enabled, crafting difficulty will be set to 1." />
+    <string id="bannercraft_mcm_no_stamina_required" text="No stamina required" />
+    <string id="bannercraft_mcm_no_stamina_required_description" text="If enabled, crafting will not require any stamina." />
+    <string id="bannercraft_crafting_botched" text="{HERO} has botched {ITEM}!" />
+    <string id="bannercraft_mcm_group_main" text="BannerCraft" />
+    <string id="bannercraft_mcm_group_behaviours" text="Behaviours" />
+    <string id="bannercraft_mcm_group_cheats" text="Cheats" />
+    <string id="bannercraft_mcm_use_old_modifier_behaviour" text="Use old modifier behaviour" />
+    <string id="bannercraft_mcm_use_old_modifier_behaviour_description" text="Use the modifier (quality) rules from older BannerCraft versions instead of the vanilla based ones." />
+    <string id="bannercraft_mcm_group_chances" text="Chances" />
+    <string id="bannercraft_mcm_allow_crafting_normal_weapons" text="Allow crafting normal weapons" />
+    <string id="bannercraft_mcm_allow_crafting_normal_weapons_description" text="Allow crafting normal weapons in Craft mode." />
+    <string id="bannercraft_crafted_barding" text="Horse Armor Crafted!" />
+    <string id="bannercraft_crafted_headarmor" text="Head Armor Crafted!" />
+    <string id="bannercraft_crafted_shoulderarmor" text="Shoulder Armor Crafted!" />
+    <string id="bannercraft_crafted_bodyarmor" text="Body Armor Crafted!" />
+    <string id="bannercraft_crafted_armarmor" text="Arm Armor Crafted!" />
+    <string id="bannercraft_crafted_legarmor" text="Leg Armor Crafted!" />
+    <string id="bannercraft_crafted_shield" text="Shield Crafted!" />
+    <string id="bannercraft_crafted_bow" text="Bow Crafted!" />
+    <string id="bannercraft_crafted_crossbow" text="Crossbow Crafted!" />
+    <string id="bannercraft_crafted_arrows" text="Arrows Crafted!" />
+    <string id="bannercraft_crafted_bolts" text="Bolts Crafted!" />
+    <string id="bannercraft_crafted_banner" text="Banner Crafted!" />
+    <string id="bannercraft_crafted_weapon" text="Weapon Crafted!" />
+    <string id="bannercraft_crafted_other" text="Something Crafted!" />
+  </strings>
+</base>

@@ -15,17 +15,17 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private bool _isVisible;
 
-        private List<TextObject> _templatesList;
+        private List<(TextObject Name, ItemType ItemType)> _templatesList;
 
-        public ArmorClassSelectionPopupVM(List<TextObject> templatesList, Action<int> onSelect)
+        public ArmorClassSelectionPopupVM(List<(TextObject Name, ItemType ItemType)> templatesList, Action<int> onSelect)
         {
             ArmorClasses = new MBBindingList<ArmorClassVM>();
             _onSelect = onSelect;
             _templatesList = templatesList;
 
-            foreach (TextObject templates in _templatesList)
+            for (int i = 0; i < _templatesList.Count; i++)
             {
-                ArmorClasses.Add(new ArmorClassVM(_templatesList.IndexOf(templates), templates, ExecuteSelectArmorClass));
+                ArmorClasses.Add(new ArmorClassVM(i, _templatesList[i].Name, _templatesList[i].ItemType, ExecuteSelectArmorClass));
             }
 
             RefreshList();

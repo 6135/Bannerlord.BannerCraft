@@ -59,6 +59,8 @@
 																						<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="40" Text="@TemplateName" Brush="Crafting.Order.Card.Header" VerticalAlignment="Center" HorizontalAlignment="Center" />
 																					</Children>
 																				</ListPanel>
+																				<!-- Icon -->
+																				<Widget DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="72" SuggestedHeight="70" HorizontalAlignment="Center" VerticalAlignment="Center" MarginTop="30" Sprite="@IconSprite" Color="#FFE09EFF" />
 																			</Children>
 																		</Widget>
 																	</Children>

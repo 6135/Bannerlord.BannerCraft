@@ -655,7 +655,7 @@ namespace Bannerlord.BannerCraft.Mixins
         private static void ShowBotchedMessage(Hero hero, TextObject itemName)
         {
             // Make it obvious that crafting failed so it doesn't look like the item disappeared.
-            TextObject message = new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
+            TextObject message = new TextObject("{=bannercraft_crafting_botched}{HERO} has botched {ITEM}!")
                 .SetTextVariable("HERO", hero.Name)
                 .SetTextVariable("ITEM", itemName);
 

@@ -27,7 +27,7 @@ namespace Bannerlord.BannerCraft
         private float _craftingCostAdditionalModifier = 1f;
 
         [SettingPropertyFloatingInteger("{=bannercraft_mcm_crafting_material_cost}Material cost modifier", 0f, 5f, "x0.00", HintText = "{=bannercraft_mcm_crafting_material_cost_description}How much the material cost is multiplied by when crafting. Default is x1.00", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Behaviours")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_behaviours}Behaviours")]
         public float CraftingCostModifier
         {
             get => _craftingCostModifier;
@@ -42,7 +42,7 @@ namespace Bannerlord.BannerCraft
         }
 
         [SettingPropertyFloatingInteger("{=bannercraft_mcm_crafting_additional_material_cost}Additional material cost modifier", 0f, 5f, "x0.00", HintText = "{=bannercraft_mcm_crafting_additional_material_cost_description}How much the additional materials cost is multiplied by when crafting. Default is x1.00", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Behaviours")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_behaviours}Behaviours")]
         public float CraftingCostAdditionalModifier
         {
             get => _craftingCostAdditionalModifier;
@@ -57,7 +57,7 @@ namespace Bannerlord.BannerCraft
         }
 
         [SettingPropertyBool("{=bannercraft_mcm_no_materials_required}No materials required", HintText = "{=bannercraft_mcm_no_materials_required_description}If enabled, crafting will not require any materials.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Cheats")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_cheats}Cheats")]
         public bool NoMaterialsRequired
         {
             get => _noMaterialsRequired;
@@ -72,7 +72,7 @@ namespace Bannerlord.BannerCraft
         }
 
         [SettingPropertyBool("{=bannercraft_mcm_no_stamina_required}No stamina required", HintText = "{=bannercraft_mcm_no_stamina_required_description}If enabled, crafting will not require any stamina.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Cheats")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_cheats}Cheats")]
         public bool NoStaminaRequired
         {
             get => _noStaminaRequired;
@@ -87,7 +87,7 @@ namespace Bannerlord.BannerCraft
         }
 
         [SettingPropertyBool("{=bannercraft_mcm_difficulty_one}Set difficulty to 1", HintText = "{=bannercraft_mcm_difficulty_one_description}If enabled, crafting difficulty will be set to 1.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Cheats")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_cheats}Cheats")]
         public bool NoSkillRequired
         {
             get => _noSkillRequired;
@@ -107,8 +107,8 @@ namespace Bannerlord.BannerCraft
          */
         private bool _useOldModifierBehaviour = false;
 
-        [SettingPropertyBool("Use old modifier behaviour", HintText = "Use old modifier behaviour", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Behaviours")]
+        [SettingPropertyBool("{=bannercraft_mcm_use_old_modifier_behaviour}Use old modifier behaviour", HintText = "{=bannercraft_mcm_use_old_modifier_behaviour_description}Use the modifier (quality) rules from older BannerCraft versions instead of the vanilla based ones.", RequireRestart = false)]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_behaviours}Behaviours")]
         public bool UseOldModifierBehaviour
         {
             get => _useOldModifierBehaviour;
@@ -125,7 +125,7 @@ namespace Bannerlord.BannerCraft
         private float _legendaryChanceIncrease = 0f;
 
         [SettingPropertyFloatingInteger("{=bannercraft_mcm_crafting_legendary_added_chance}Legendary added chance", 0f, 1f, "#0%", Order = 5, HintText = "{=bannercraft_mcm_crafting_legendary_added_chance_description}Added chance to get a Legendary crafting result.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Cheats/Chances")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_cheats}Cheats/{=bannercraft_mcm_group_chances}Chances")]
         public float LegendaryChanceIncrease
         {
             get => _legendaryChanceIncrease;
@@ -142,7 +142,7 @@ namespace Bannerlord.BannerCraft
         private float _masterworkChanceIncrease = 0f;
 
         [SettingPropertyFloatingInteger("{=bannercraft_mcm_crafting_masterwork_added_chance}Masterwork added chance", 0f, 1f, "#0%", Order = 4, HintText = "{=bannercraft_mcm_crafting_masterwork_added_chance_description}Added chance to get a Masterwork crafting result.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Cheats/Chances")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_cheats}Cheats/{=bannercraft_mcm_group_chances}Chances")]
         public float MasterworkChanceIncrease
         {
             get => _masterworkChanceIncrease;
@@ -159,7 +159,7 @@ namespace Bannerlord.BannerCraft
         private float _fineChanceIncrease = 0f;
 
         [SettingPropertyFloatingInteger("{=bannercraft_mcm_crafting_fine_added_chance}Fine added chance", 0f, 1f, "#0%", Order = 3, HintText = "{=bannercraft_mcm_crafting_fine_added_chance_description}Added chance to get a Fine crafting result.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Cheats/Chances")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_cheats}Cheats/{=bannercraft_mcm_group_chances}Chances")]
         public float FineChanceIncrease
         {
             get => _fineChanceIncrease;
@@ -176,7 +176,7 @@ namespace Bannerlord.BannerCraft
         private float _commonChanceIncrease = 0f;
 
         [SettingPropertyFloatingInteger("{=bannercraft_mcm_crafting_common_added_chance}Common added chance", 0f, 1f, "#0%", Order = 2, HintText = "{=bannercraft_mcm_crafting_common_added_chance_description}Added chance to get a Common crafting result.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Cheats/Chances")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_cheats}Cheats/{=bannercraft_mcm_group_chances}Chances")]
         public float CommonChanceIncrease
         {
             get => _commonChanceIncrease;
@@ -193,7 +193,7 @@ namespace Bannerlord.BannerCraft
         private float _inferiorChanceIncrease = 0f;
 
         [SettingPropertyFloatingInteger("{=bannercraft_mcm_crafting_inferior_added_chance}Inferior added chance", 0f, 1f, "#0%", Order = 1, HintText = "{=bannercraft_mcm_crafting_inferior_added_chance_description}Added chance to get a Inferior crafting result.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Cheats/Chances")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_cheats}Cheats/{=bannercraft_mcm_group_chances}Chances")]
         public float InferiorChanceIncrease
         {
             get => _inferiorChanceIncrease;
@@ -210,7 +210,7 @@ namespace Bannerlord.BannerCraft
         private float _poorChanceIncrease = 0f;
 
         [SettingPropertyFloatingInteger("{=bannercraft_mcm_crafting_poor_added_chance}Poor added chance", 0f, 1f, "#0%", Order = 0, HintText = "{=bannercraft_mcm_crafting_poor_added_chance_description}Added chance to get a Poor crafting result.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Cheats/Chances")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_cheats}Cheats/{=bannercraft_mcm_group_chances}Chances")]
         public float PoorChanceIncrease
         {
             get => _poorChanceIncrease;
@@ -234,7 +234,7 @@ namespace Bannerlord.BannerCraft
         public override string FormatType => "json";
 
         [SettingPropertyFloatingInteger("{=bannercraft_mcm_maximum_botch_chance}Maximum botch chance", 0f, 1f, "#0%", Order = 2, HintText = "{=bannercraft_mcm_maximum_botch_chance_description}Maximum chance to botch crafting when Crafting skill level is lower than difficulty.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Behaviours")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_behaviours}Behaviours")]
         public float MaximumBotchChance
         {
             get => _maximumBotchChance;
@@ -249,7 +249,7 @@ namespace Bannerlord.BannerCraft
         }
 
         [SettingPropertyBool("{=bannercraft_mcm_use_vanilla_smelting_calculations}Use Vanilla smelting calculations", HintText = "{=bannercraft_mcm_use_vanilla_smelting_calculations_description}Use vanilla smelting calculations that turn 0.8 weight pugios into 2.5 weight of materials.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Behaviours")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_behaviours}Behaviours")]
         public bool DefaultSmeltingModel
         {
             get => _defaultSmeltingModel;
@@ -264,7 +264,7 @@ namespace Bannerlord.BannerCraft
         }
 
         [SettingPropertyBool("{=bannercraft_mcm_allow_smelting_other_items}Allow smelting other items", HintText = "{=bannercraft_mcm_allow_smelting_other_items_description}Allow smelting other items such as armor, shields, etc as long as they return at least one material", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Behaviours")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_behaviours}Behaviours")]
         public bool AllowSmeltingOtherItems
         {
             get => _allowSmeltingOtherItems;
@@ -279,7 +279,7 @@ namespace Bannerlord.BannerCraft
         }
 
         [SettingPropertyInteger("{=bannercraft_mcm_crafting_penalty_threshold}Crafting penalty threshold", 0, 100, HintText = "{=bannercraft_mcm_crafting_penalty_threshold_description}How much higher your skill has to be than the item difficulty before you have no chance of making a bad item.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Behaviours")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_behaviours}Behaviours")]
         public int SkillOverDifficultyBeforeNoPenalty
         {
             get => _skillOverDifficultyBeforeNoPenalty;
@@ -294,7 +294,7 @@ namespace Bannerlord.BannerCraft
         }
 
         [SettingPropertyBool("{=bannercraft_mcm_allow_crafting_normal_weapons}Allow crafting normal weapons", HintText = "{=bannercraft_mcm_allow_crafting_normal_weapons_description}Allow crafting normal weapons in Craft mode.", RequireRestart = false)]
-        [SettingPropertyGroup("BannerCraft/Behaviours")]
+        [SettingPropertyGroup("{=bannercraft_mcm_group_main}BannerCraft/{=bannercraft_mcm_group_behaviours}Behaviours")]
         public bool AllowCraftingNormalWeapons
         {
             get => _allowCraftingNormalWeapons;
