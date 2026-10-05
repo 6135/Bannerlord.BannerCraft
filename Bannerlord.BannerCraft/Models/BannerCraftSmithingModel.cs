@@ -418,7 +418,8 @@ namespace Bannerlord.BannerCraft.Models
                     metalRatio = itemType switch
                     {
                         ItemType.Bow => 0.8f,
-                        ItemType.Crossbow => 1f,
+                        // Crossbows are mostly a wooden stock, all metal made them cost far more than anything else.
+                        ItemType.Crossbow => 0.5f,
                         ItemType.Arrows => 0.4f,
                         ItemType.Bolts => 0.4f,
                         _ => metalRatio
@@ -427,7 +428,7 @@ namespace Bannerlord.BannerCraft.Models
                     weightTotal = itemType switch
                     {
                         ItemType.Bow => weightTotal * 4f,
-                        ItemType.Crossbow => weightTotal * 4f,
+                        ItemType.Crossbow => weightTotal * 2.5f,
                         ItemType.Arrows => weightTotal * item.PrimaryWeapon.MaxDataValue * 4f,
                         ItemType.Bolts => weightTotal * item.PrimaryWeapon.MaxDataValue * 4f,
                         _ => weightTotal

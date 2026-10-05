@@ -24,7 +24,7 @@
         <NavigationForcedScopeCollectionTargeter CollectionParent="..\CraftingResult" />
         <NavigationScopeTargeter ScopeID="CraftingResultPopupScope" ScopeParent="..\CraftingResult" ScopeMovements="Vertical" />
 
-        <ListPanel Id="CraftingResult" DataSource="{ArmorCraftResultPopup}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="330" MarginRight="330" MarginTop="150" MarginBottom="180" StackLayout.LayoutMethod="VerticalBottomToTop">
+        <ListPanel Id="CraftingResult" DataSource="{ArmorCraftResultPopup}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="330" MarginRight="330" MarginTop="220" MarginBottom="180" StackLayout.LayoutMethod="VerticalTopToBottom">
           <Children>
             <!-- Popup -->
             <Widget Id="PopupParent" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="BlankWhiteSquare_9" Color="#000000FF">
@@ -130,7 +130,7 @@
             </Widget>
 
             <!--Finalize Crafting Button-->
-            <Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="286" SuggestedHeight="82" HorizontalAlignment="Center" PositionYOffset="-19">
+            <Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="286" SuggestedHeight="82" HorizontalAlignment="Center" VerticalAlignment="Bottom" PositionYOffset="-19">
               <Children>
                 <ButtonWidget Id="FinalActionButtonWidget" DoNotPassEventsToChildren="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="Standard.PopupCloseButton" IsEnabled="@CanConfirm" Command.Click="ExecuteFinalizeCrafting">
                   <Children>

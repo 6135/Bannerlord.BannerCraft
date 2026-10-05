@@ -35,49 +35,81 @@ namespace Bannerlord.BannerCraft.Patches
 
         private static Func<SmeltingVM, Action<SmeltingItemVM, bool>> GetProcessLockItemAction { get; }
 
-        public static void Postfix(ref SmeltingVM __instance)
+        /// <summary>
+        /// Whether a non crafted weapon item (armor, shields, banners, etc.) can be smelted.
+        /// </summary>
+        public static bool CanSmeltOtherItem(ItemObject? item)
         {
-            bool allowCraftingOtherItems = Settings.Instance?.AllowSmeltingOtherItems ?? false;
-            if (allowCraftingOtherItems)
+            if (item == null || item.IsCraftedWeapon || !(Settings.Instance?.AllowSmeltingOtherItems ?? false))
             {
-                var smithingModel = Campaign.Current.Models.SmithingModel;
+                return false;
+            }
 
-                var playerItemRoster = GetPlayerItemRoster(__instance);
-                var onItemSelection = GetOnItemSelectionAction(__instance);
-                var processLockItem = GetProcessLockItemAction(__instance);
+            if (ArmorCraftingVM.ItemTypeIsWeapon(ArmorCraftingVM.GetItemType(item)))
+            {
+                return false;
+            }
 
-                for (int i = 0; i < playerItemRoster.Count; i++)
+            return Campaign.Current.Models.SmithingModel.GetSmeltingOutputForItem(item).Any(output => output > 0);
+        }
+
+        public static void Postfix(SmeltingVM __instance)
+        {
+            // Better Smithing builds its own list, which BetterSmithingPatches already extends.
+            // Adding items here as well duplicated them and bypassed its locked items filter.
+            if (BetterSmithingPatches.IsBetterSmithingLoaded)
+            {
+                return;
+            }
+
+            if (!(Settings.Instance?.AllowSmeltingOtherItems ?? false))
+            {
+                return;
+            }
+
+            var playerItemRoster = GetPlayerItemRoster(__instance);
+            var onItemSelection = GetOnItemSelectionAction(__instance);
+            var processLockItem = GetProcessLockItemAction(__instance);
+            var currentSelectedItem = __instance.CurrentSelectedItem;
+
+            for (int i = 0; i < playerItemRoster.Count; i++)
+            {
+                var elementCopyAtIndex = playerItemRoster.GetElementCopyAtIndex(i);
+                var equipmentElement = elementCopyAtIndex.EquipmentElement;
+                if (!CanSmeltOtherItem(equipmentElement.Item))
                 {
-                    var elementCopyAtIndex = playerItemRoster.GetElementCopyAtIndex(i);
-                    var item = elementCopyAtIndex.EquipmentElement.Item;
-                    var itemType = ArmorCraftingVM.GetItemType(item);
-                    var smeltingOutputs = smithingModel.GetSmeltingOutputForItem(item);
-                    var givesOutput = smeltingOutputs.Any(output => output > 0);
-                    if (!ArmorCraftingVM.ItemTypeIsWeapon(itemType) && givesOutput)
-                    {
-                        bool isLocked = IsItemLocked(__instance, elementCopyAtIndex.EquipmentElement);
-
-                        SmeltingItemVM smeltingItem = new SmeltingItemVM(
-                            elementCopyAtIndex.EquipmentElement,
-                            onItemSelection,
-                            processLockItem,
-                            isLocked,
-                            elementCopyAtIndex.Amount);
-                        //if it's already added, don't add it again
-                        if (!__instance.SmeltableItemList.Any(smeltableItem => smeltableItem.EquipmentElement.Item.Equals(item)))
-                            __instance.SmeltableItemList.Add(smeltingItem);
-                    }
+                    continue;
                 }
 
-                if (__instance.SmeltableItemList.Count == 0)
+                // The same item with a different modifier is a separate entry, just like in vanilla.
+                if (__instance.SmeltableItemList.Any(smeltableItem => smeltableItem.EquipmentElement.IsEqualTo(equipmentElement)))
                 {
-                    __instance.CurrentSelectedItem = null;
-                } /* if has values and current value is set to null, then get first or default on updated list*/
-                else if (__instance.CurrentSelectedItem is null)
-                {
-                    var newItem = __instance.SmeltableItemList.FirstOrDefault();
-                    onItemSelection(newItem);
+                    continue;
                 }
+
+                bool isLocked = IsItemLocked(__instance, equipmentElement);
+                SmeltingItemVM smeltingItem = new SmeltingItemVM(
+                    equipmentElement,
+                    onItemSelection,
+                    processLockItem,
+                    isLocked,
+                    elementCopyAtIndex.Amount);
+
+                if (currentSelectedItem != null && currentSelectedItem.EquipmentElement.IsEqualTo(equipmentElement))
+                {
+                    onItemSelection(smeltingItem);
+                }
+
+                __instance.SmeltableItemList.Add(smeltingItem);
+            }
+
+            if (__instance.SmeltableItemList.Count == 0)
+            {
+                __instance.CurrentSelectedItem = null;
+            }
+            else if (__instance.CurrentSelectedItem is null)
+            {
+                onItemSelection(__instance.SmeltableItemList.First());
             }
         }
     }

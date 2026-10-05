@@ -1,4 +1,19 @@
 Changelog
+v1.4.6
+Built against each supported game version (1.3.4 - 1.4.8) instead of always against 1.3.13.
+Fixed the smelt and refine buttons being enabled without a valid selection (smelting/refining did nothing) and smelting being blocked by the weapon crafting stamina cost.
+Fixed locked and duplicated items in the smelting list when Better Smithing is installed.
+"Allow smelting other items" is now respected when Better Smithing is installed.
+Items with different modifiers are now listed separately in the smelting list, with their full name (e.g. Rusty, Lordly).
+Fixed a crash when opening the inventory after a save/reload with items crafted from runtime weapon designs, and repaired items affected by it.
+Crafting failures (botches) now show a clearer message, including in the message log.
+Botching a weapon no longer uses stamina twice, respects the no materials/stamina/difficulty cheats, and can't happen without the required materials.
+Fixed the Done button overlapping the item image in the armor crafting result popup, and the popup title not showing.
+Enter now crafts and confirms in armor crafting mode.
+Fixed the uncloseable popup in the smithy with Banner Kings / Banner Kings Redux installed.
+Reduced the material cost of crossbows.
+Malformed items from other mods no longer break the armor crafting list.
+
 v1.0.26.0
 Added 3 cheats. 
 
