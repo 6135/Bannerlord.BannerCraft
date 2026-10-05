@@ -15,9 +15,23 @@ namespace Bannerlord.BannerCraft
     {
         private static readonly string Namespace = typeof(SubModule).Namespace;
 
+        private static readonly string[] BannerKingsCraftingExtensions =
+        {
+            "BannerKings.UI.Extensions.CraftingMixin",
+            "BannerKings.UI.Extensions.CraftingArmorLeftPanelExtension1",
+            "BannerKings.UI.Extensions.CraftingArmorLeftPanelExtension2",
+            "BannerKings.UI.Extensions.CraftingInsertArmorCategoryExtension",
+            "BannerKings.UI.Extensions.CraftingInsertHoursExtension",
+            "BannerKings.UI.Extensions.RefinementCategoryButtonPatch",
+            "BannerKings.UI.Extensions.CraftingCategoryButtonPatch",
+            "BannerKings.UI.Extensions.SmeltingCategoryButtonPatch",
+            "BannerKings.UI.Extensions.MainActionButtonPatch",
+            "BannerKings.UI.Extensions.CraftingCancelButtonPatch",
+        };
+
         private readonly UIExtender _extender = UIExtender.Create(Namespace);
-        private readonly UIExtender? _bannerKingsExtender = UIExtender.GetUIExtenderFor("BannerKings");
         private readonly Harmony _harmony = new(Namespace);
+        private bool _bannerKingsCraftingDisabled;
 
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
@@ -41,18 +55,41 @@ namespace Bannerlord.BannerCraft
 
             _extender.Register(typeof(SubModule).Assembly);
             _extender.Enable();
-            // Disable Banner Kings' armor crafting mixin and prefabs.
-            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingMixin"));
-            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingArmorLeftPanelExtension1"));
-            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingArmorLeftPanelExtension2"));
-            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingInsertArmorCategoryExtension"));
-            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingInsertHoursExtension"));
-            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.RefinementCategoryButtonPatch"));
-            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingCategoryButtonPatch"));
-            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.SmeltingCategoryButtonPatch"));
-            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.MainActionButtonPatch"));
-            _bannerKingsExtender?.Disable(AccessTools.TypeByName("BannerKings.UI.Extensions.CraftingCancelButtonPatch"));
             _harmony.PatchAll();
+        }
+
+        protected override void OnBeforeInitialModuleScreenSetAsRoot()
+        {
+            base.OnBeforeInitialModuleScreenSetAsRoot();
+
+            // Done here rather than in OnSubModuleLoad so it also works when Banner Kings (or Banner Kings Redux)
+            // loads after BannerCraft. Otherwise its crafting UI stays half enabled and leaves a popup that can't be closed.
+            DisableBannerKingsCrafting();
+        }
+
+        private void DisableBannerKingsCrafting()
+        {
+            if (_bannerKingsCraftingDisabled)
+            {
+                return;
+            }
+
+            var bannerKingsExtender = UIExtender.GetUIExtenderFor("BannerKings");
+            if (bannerKingsExtender == null)
+            {
+                return;
+            }
+
+            foreach (var typeName in BannerKingsCraftingExtensions)
+            {
+                var type = AccessTools.TypeByName(typeName);
+                if (type != null)
+                {
+                    bannerKingsExtender.Disable(type);
+                }
+            }
+
+            _bannerKingsCraftingDisabled = true;
         }
 
         private static T? GetGameModel<T>(IGameStarter gameStarterObject) where T : GameModel

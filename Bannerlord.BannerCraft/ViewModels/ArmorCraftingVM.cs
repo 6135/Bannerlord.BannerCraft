@@ -49,7 +49,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         private MBBindingList<ArmorTierFilterTypeVM> _tierFilters;
 
         private MBBindingList<ArmorItemVM> _armors;
-        private ArmorItemVM _currentItem;
+        private ArmorItemVM? _currentItem;
         private int _selectedPieceTypeIndex;
         private ArmorPieceTierFlag _currentTierFilter;
 
@@ -196,7 +196,7 @@ namespace Bannerlord.BannerCraft.ViewModels
             get => _currentItem;
             set
             {
-                if (value != _currentItem && value is not null)
+                if (value != _currentItem)
                 {
                     _currentItem = value;
                     OnPropertyChangedWithValue(value, "CurrentItem");
@@ -232,6 +232,44 @@ namespace Bannerlord.BannerCraft.ViewModels
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Whether a game item can be offered in the BannerCraft crafting list.
+        /// </summary>
+        public static bool IsCraftableItem(ItemObject item)
+        {
+            if (item.IsCraftedByPlayer || item.ItemCategory == null)
+            {
+                return false;
+            }
+
+            /*
+             * Weapon designs created at runtime by the smithy (ids "crafted_item_N") are only restored on load
+             * when vanilla tracks them as crafted items. Copies made here aren't, so after a save/reload they
+             * come back without an item category and crash the inventory when their price is calculated.
+             * Weapons defined in XML also have a weapon design (with HashedCode == StringId) and are fine.
+             */
+            if (item.WeaponDesign != null && item.StringId.StartsWith("crafted_item", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (item.ItemFlags.HasAnyFlag(ItemFlags.CannotBePickedUp))
+            {
+                return false;
+            }
+
+            return GetItemType(item) switch
+            {
+                ItemType.HeadArmor or ItemType.ShoulderArmor or ItemType.BodyArmor or ItemType.ArmArmor or ItemType.LegArmor or ItemType.Barding
+                    => item.ArmorComponent != null,
+                ItemType.Shield or ItemType.Bow or ItemType.Crossbow or ItemType.Arrows or ItemType.Bolts
+                or ItemType.OneHandedWeapon or ItemType.TwoHandedWeapon or ItemType.Polearm or ItemType.Thrown
+                    => item.WeaponComponent?.PrimaryWeapon != null,
+                ItemType.Banner => true,
+                _ => false
+            };
         }
 
         public static bool AllowItemType(ItemType itemType)
@@ -404,8 +442,7 @@ namespace Bannerlord.BannerCraft.ViewModels
                     ItemType itemType = GetItemType(item);
                     if (itemType == ItemType.Invalid
                         || itemType != _selectedItemType
-                        || item.IsCraftedByPlayer
-                        || item.ItemFlags.HasAnyFlag(ItemFlags.CannotBePickedUp))
+                        || !IsCraftableItem(item))
                     {
                         continue;
                     }
@@ -421,7 +458,14 @@ namespace Bannerlord.BannerCraft.ViewModels
                         continue;
                     }
 
-                    Armors.Add(new ArmorItemVM(this, item, smithingModel.CalculateArmorDifficulty(item), itemType));
+                    try
+                    {
+                        Armors.Add(new ArmorItemVM(this, item, smithingModel.CalculateArmorDifficulty(item), itemType));
+                    }
+                    catch (Exception)
+                    {
+                        // A malformed item (usually from another mod) shouldn't break the whole crafting screen.
+                    }
                 }
 
             if (!AllowItemType(_selectedItemType))
@@ -1170,12 +1214,7 @@ namespace Bannerlord.BannerCraft.ViewModels
         {
             _equipmentElement = equipmentElement;
 
-            string itemName = "";
-            if (_equipmentElement.ItemModifier != null)
-            {
-                itemName += _equipmentElement.ItemModifier.Name.ToString();
-            }
-            itemName += CurrentItem.Item.Name.ToString();
+            string itemName = _equipmentElement.GetModifiedItemName().ToString();
 
             ArmorCraftResultPopup = new ArmorCraftResultPopupVM(ExecuteFinalizeCrafting, _crafting, ItemFlagIconsList, CurrentItem.Item, itemName, DesignResultPropertyList, ItemVisualModel);
             ArmorCraftResultPopupVisible = true;

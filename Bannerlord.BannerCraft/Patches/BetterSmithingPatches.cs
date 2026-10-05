@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +11,12 @@ namespace Bannerlord.BannerCraft.Patches
 {
     internal static class BetterSmithingPatches
     {
-        private static bool IsOtherCraftedItem(ItemObject item) => item.HasArmorComponent || item.HasSaddleComponent || (item.HasWeaponComponent && (item.PrimaryWeapon.IsShield || item.PrimaryWeapon.IsBow || item.PrimaryWeapon.IsCrossBow || item.PrimaryWeapon.WeaponClass == WeaponClass.Arrow || item.PrimaryWeapon.WeaponClass == WeaponClass.Bolt));
+        private static readonly Lazy<bool> _isBetterSmithingLoaded = new(() => AccessTools.TypeByName("SmeltingItemRosterWrapper") != null);
+
+        public static bool IsBetterSmithingLoaded => _isBetterSmithingLoaded.Value;
+
+        // Uses the same rules as vanilla smelting so the "Allow smelting other items" setting is respected.
+        private static bool IsOtherCraftedItem(ItemObject item) => SmeltingVMPatch.CanSmeltOtherItem(item);
 
         [HarmonyPatch]
         internal static class SmeltingItemRosterWrapperPatch

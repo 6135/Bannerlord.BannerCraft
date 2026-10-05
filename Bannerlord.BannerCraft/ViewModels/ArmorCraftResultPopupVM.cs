@@ -1,9 +1,11 @@
 ﻿using System;
+using TaleWorlds.CampaignSystem.ViewModelCollection.Input;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
 using TaleWorlds.CampaignSystem.ViewModelCollection.WeaponCrafting.WeaponDesign;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection;
 using TaleWorlds.Core.ViewModelCollection.Information;
+using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 
@@ -33,6 +35,8 @@ namespace Bannerlord.BannerCraft.ViewModels
 
         private MBBindingList<WeaponDesignResultPropertyItemVM> _designResultPropertyList;
 
+        private InputKeyItemVM? _doneInputKey;
+
         public ArmorCraftResultPopupVM(Action onFinalize, Crafting crafting, MBBindingList<ItemFlagVM> itemFlagIconsList, ItemObject craftedItem, string itemName, MBBindingList<WeaponDesignResultPropertyItemVM> designResultPropertyList, ItemCollectionElementViewModel itemVisualModel)
         {
             _onFinalize = onFinalize;
@@ -45,6 +49,22 @@ namespace Bannerlord.BannerCraft.ViewModels
             ItemName = itemName;
 
             DoneLbl = GameTexts.FindText("str_done").ToString();
+
+            var confirmHotKey = HotKeyManager.GetCategory("GenericPanelGameKeyCategory")?.GetHotKey("Confirm");
+            if (confirmHotKey != null)
+            {
+                // Like vanilla, only show the key hint when using a gamepad.
+                DoneInputKey = InputKeyItemVM.CreateFromHotKey(confirmHotKey, isConsoleOnly: true);
+            }
+
+            RefreshValues();
+        }
+
+        [DataSourceProperty]
+        public InputKeyItemVM? DoneInputKey
+        {
+            get => _doneInputKey;
+            set => SetField(ref _doneInputKey, value, nameof(DoneInputKey));
         }
 
         [DataSourceProperty]

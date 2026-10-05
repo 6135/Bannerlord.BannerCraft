@@ -166,6 +166,8 @@ namespace Bannerlord.BannerCraft.Mixins
         [DataSourceProperty]
         public static WeakReference<CraftingMixin>? Mixin { get; set; }
 
+        public bool IsAttachedTo(CraftingVM craftingVm) => _craftingVm == craftingVm;
+
         [DataSourceProperty]
         public bool IsInArmorMode
         {
@@ -223,8 +225,19 @@ namespace Bannerlord.BannerCraft.Mixins
             int energyCostForSmithing = 0;
             if (!IsInArmorMode)
             {
-                float botchChance;
-                float randomFloat = MBRandom.RandomFloat;
+                // The result popup handles its own confirmation, crafting again here would make a second weapon.
+                if (_craftingVm.WeaponDesign.IsInFinalCraftingStage)
+                {
+                    return;
+                }
+
+                // Tutorial crafting and anything vanilla won't allow (missing materials or stamina) go straight to vanilla.
+                if (Campaign.Current.GameMode == CampaignGameMode.Tutorial || !_craftingVm.IsMainActionEnabled)
+                {
+                    _craftingVm.ExecuteMainAction();
+                    return;
+                }
+
                 int difficulty;
                 if (_craftingVm.WeaponDesign.IsInOrderMode)
                 {
@@ -234,17 +247,19 @@ namespace Bannerlord.BannerCraft.Mixins
                 {
                     difficulty = _craftingVm.WeaponDesign.CurrentDifficulty;
                 }
-                botchChance = smithingModel.CalculateBotchingChance(_craftingVm.CurrentCraftingHero.Hero, difficulty);
-                if (randomFloat < botchChance)
+                if (noSkillRequired)
                 {
-                    SpendMaterials(_crafting.CurrentWeaponDesign);
-                    MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
-                            .SetTextVariable("HERO", hero.Name)
-                            .SetTextVariable("ITEM", _crafting.CraftedWeaponName),
-                        2000, null, null, "event:/ui/notification/relation");
+                    difficulty = 0;
+                }
+                float botchChance = smithingModel.CalculateBotchingChance(hero, difficulty);
+                if (MBRandom.RandomFloat < botchChance)
+                {
+                    if (!noMaterialsRequired)
+                        SpendMaterials(_crafting.CurrentWeaponDesign);
 
-                    energyCostForSmithing = smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), hero) / 2;
-                    UpdateStamina(craftingBehavior, hero, energyCostForSmithing);
+                    ShowBotchedMessage(hero, _crafting.CraftedWeaponName);
+
+                    energyCostForSmithing = noStaminaRequired ? 0 : smithingModel.GetEnergyCostForSmithing(_crafting.GetCurrentCraftedItemObject(), hero) / 2;
                 }
                 else
                 {
@@ -253,11 +268,11 @@ namespace Bannerlord.BannerCraft.Mixins
             }
             else
             {
-                if (!HaveMaterialsNeeded() || (!HaveEnergy(hero) && !noStaminaRequired))
+                if (ArmorCrafting.CurrentItem == null || !HaveMaterialsNeeded() || (!HaveEnergy(hero) && !noStaminaRequired))
                 {
                     return;
                 }
-                var difficulty = noSkillRequired ? 0 : ArmorCrafting.CurrentItem?.Difficulty ?? 0;
+                var difficulty = noSkillRequired ? 0 : ArmorCrafting.CurrentItem.Difficulty;
                 float botchChance = smithingModel.CalculateBotchingChance(hero, difficulty);
                 var item = ArmorCrafting.CurrentItem.Item;
                 energyCostForSmithing = noStaminaRequired ? 0 : smithingModel.GetEnergyCostForArmor(item, hero);
@@ -270,10 +285,7 @@ namespace Bannerlord.BannerCraft.Mixins
                     /*
                      * Crafting is botched, materials spent, item not crafted
                      */
-                    MBInformationManager.AddQuickInformation(new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
-                            .SetTextVariable("HERO", hero.Name)
-                            .SetTextVariable("ITEM", item.Name),
-                        0, null, null, "event:/ui/notification/relation");
+                    ShowBotchedMessage(hero, item.Name);
 
                     energyCostForSmithing /= 2;
                 }
@@ -420,7 +432,11 @@ namespace Bannerlord.BannerCraft.Mixins
 
             if (IsInArmorMode && baseSmithingModel is BannerCraftSmithingModel smithingModel)
             {
-                var item = ArmorCrafting.CurrentItem.Item;
+                var item = ArmorCrafting.CurrentItem?.Item;
+                if (item == null)
+                {
+                    return 0;
+                }
                 result = smithingModel.GetEnergyCostForArmor(item, hero);
             }
             else
@@ -444,7 +460,7 @@ namespace Bannerlord.BannerCraft.Mixins
         private bool HaveMaterialsNeeded()
         {
             return !(ViewModel.PlayerCurrentMaterials.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0)
-                     || ExtraMaterials.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0));
+                     || (ExtraMaterials?.Any((m) => m.ResourceChangeAmount + m.ResourceAmount < 0) ?? false));
         }
 
         private void UpdateCurrentMaterialCosts()
@@ -556,6 +572,13 @@ namespace Bannerlord.BannerCraft.Mixins
         {
             _refreshEnableMainActionBase?.Invoke(ViewModel, Array.Empty<object>());
 
+            // Vanilla already handles smelting, refinement and weapon crafting.
+            // Overriding it there enabled the button without a valid selection and used the weapon stamina cost.
+            if (!IsInArmorMode)
+            {
+                return;
+            }
+
             var craftingBehavior = Campaign.Current.GetCampaignBehavior<ICraftingCampaignBehavior>();
             var hero = ViewModel.CurrentCraftingHero.Hero;
             bool noStaminaRequired = Settings.Instance?.NoStaminaRequired ?? false;
@@ -627,6 +650,17 @@ namespace Bannerlord.BannerCraft.Mixins
                     }
                 }
             }
+        }
+
+        private static void ShowBotchedMessage(Hero hero, TextObject itemName)
+        {
+            // Make it obvious that crafting failed so it doesn't look like the item disappeared.
+            TextObject message = new TextObject("{=A15k4LQS}{HERO} has botched {ITEM}!")
+                .SetTextVariable("HERO", hero.Name)
+                .SetTextVariable("ITEM", itemName);
+
+            MBInformationManager.AddQuickInformation(message, 3000, null, null, "event:/ui/notification/relation");
+            InformationManager.DisplayMessage(new InformationMessage(message.ToString(), Colors.Red));
         }
 
         private void UpdateStamina(ICraftingCampaignBehavior craftingBehavior, Hero hero, int energyCost)

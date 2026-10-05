@@ -30,6 +30,7 @@
     <DependedModuleMetadata id="StoryMode" order="LoadBeforeThis" />
     <DependedModuleMetadata id="CustomBattle" order="LoadBeforeThis" />
     <DependedModuleMetadata id="BannerKings" order="LoadBeforeThis" optional="true" />
+    <DependedModuleMetadata id="BannerKings.Redux" order="LoadBeforeThis" optional="true" />
   </DependedModuleMetadatas>
   <!-- Community Dependency Metadata -->
   <SubModules>
