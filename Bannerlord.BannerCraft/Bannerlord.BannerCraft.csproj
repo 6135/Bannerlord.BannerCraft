@@ -33,7 +33,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Bannerlord.UIExtenderEx" Version="2.13.2" IncludeAssets="compile" />
-    <PackageReference Include="Bannerlord.MCM" Version="5.11.3" IncludeAssets="compile" />
+    <PackageReference Include="Bannerlord.MCM" Version="5.12.3" IncludeAssets="compile" />
 
     <!-- ReferenceAssemblies -->
 	<PackageReference Include="Bannerlord.ReferenceAssemblies.Core" Version="$(GameVersion).*" PrivateAssets="All" />
