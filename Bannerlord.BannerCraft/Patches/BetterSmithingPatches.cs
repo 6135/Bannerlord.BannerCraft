@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using Bannerlord.BannerCraft.Mixins;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,19 @@ namespace Bannerlord.BannerCraft.Patches
 
         // Uses the same rules as vanilla smelting so the "Allow smelting other items" setting is respected.
         private static bool IsOtherCraftedItem(ItemObject item) => SmeltingVMPatch.CanSmeltOtherItem(item);
+
+        [HarmonyPatch]
+        internal static class MainActionTextModifierPatch
+        {
+            private static MethodBase TargetMethod() => AccessTools.Method(AccessTools.TypeByName("BetterSmithingContinued.MainFrame.MainActionTextModifier"), "OnGameTick");
+
+            // Check whether Better Smithing is loaded.
+            private static bool Prepare() => TargetMethod() != null;
+
+            // Better Smithing sets the main button text every tick for the tab it thinks is open, which doesn't
+            // include BannerCraft's Craft tab, so the button showed "Forge", "Smelt" or "Refine" there instead.
+            private static bool Prefix() => !(CraftingMixin.Mixin != null && CraftingMixin.Mixin.TryGetTarget(out var mixin) && mixin.IsInArmorMode);
+        }
 
         [HarmonyPatch]
         internal static class SmeltingItemRosterWrapperPatch

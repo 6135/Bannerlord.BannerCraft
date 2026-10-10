@@ -18,6 +18,7 @@ using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.Information;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
+using TaleWorlds.MountAndBlade.View;
 
 namespace Bannerlord.BannerCraft.Mixins
 {
@@ -292,6 +293,8 @@ namespace Bannerlord.BannerCraft.Mixins
                 else
                 {
                     CraftItem(smithingModel, hero, item);
+                    // The game only plays this for its own Forge, Smelt and Refine tabs.
+                    UISoundsHelper.PlayUISound("event:/ui/crafting/craft_success");
                 }
 
                 UpdateXp(smithingModel, hero, item);
