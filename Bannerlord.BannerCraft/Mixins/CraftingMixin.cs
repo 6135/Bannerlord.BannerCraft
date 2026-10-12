@@ -662,8 +662,10 @@ namespace Bannerlord.BannerCraft.Mixins
                 .SetTextVariable("HERO", hero.Name)
                 .SetTextVariable("ITEM", itemName);
 
-            MBInformationManager.AddQuickInformation(message, 3000, null, null, "event:/ui/notification/relation");
+            MBInformationManager.AddQuickInformation(message, 3000);
             InformationManager.DisplayMessage(new InformationMessage(message.ToString(), Colors.Red));
+            // The quick information sound didn't play in the smithy, so play it directly like the craft sound.
+            UISoundsHelper.PlayUISound("event:/ui/notification/alert");
         }
 
         private void UpdateStamina(ICraftingCampaignBehavior craftingBehavior, Hero hero, int energyCost)
