@@ -47,6 +47,14 @@ namespace Bannerlord.BannerCraft
             gameStarterObject.AddModel(new BannerCraftSmithingModel(smithingModel));
         }
 
+        public override void OnGameInitializationFinished(Game game)
+        {
+            base.OnGameInitializationFinished(game);
+
+            // Banner Kings Redux only registers its UI extensions in its OnGameStart, so they don't exist yet in the main menu.
+            DisableBannerKingsCrafting();
+        }
+
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
@@ -62,8 +70,8 @@ namespace Bannerlord.BannerCraft
         {
             base.OnBeforeInitialModuleScreenSetAsRoot();
 
-            // Done here rather than in OnSubModuleLoad so it also works when Banner Kings (or Banner Kings Redux)
-            // loads after BannerCraft. Otherwise its crafting UI stays half enabled and leaves a popup that can't be closed.
+            // Done here rather than in OnSubModuleLoad so it also works when Banner Kings loads after BannerCraft.
+            // Otherwise its crafting UI stays half enabled and leaves a popup that can't be closed.
             DisableBannerKingsCrafting();
         }
 

@@ -1,4 +1,8 @@
 Changelog
+v1.4.9
+Fixed the uncloseable popup in the smithy with Banner Kings Redux. Redux adds its crafting UI only when a game starts, so BannerCraft didn't find it to turn it off.
+Weapon names that are too long for the game (e.g. order weapons in Russian) are now shortened, so the crafting result popup can be closed.
+
 v1.4.8
 Crafting an item in the Craft tab now plays the crafting sound.
 Fixed the main button in the Craft tab showing "Forge", "Smelt" or "Refine" when Better Smithing Continued is installed.
